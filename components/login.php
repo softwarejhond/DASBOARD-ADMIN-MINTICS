@@ -152,28 +152,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
             </div>
         </div>
-        <footer class="login-footer">
-            <div class="copyright-info">
-                <p class="text-center login__forgot">
-                    SIVP © Copyright <?php echo date("Y"); ?>
-                    <br>
-                    <a href="https://agenciaeaglesoftware.com/" target="_blank" class="linkEagle">Made by Agencia de Desarrollo Eagle Software</a>
-                    <br>
-                </p>
-
-                <div class="social-icons">
-                    <button onclick="window.open('https://api.whatsapp.com/send/?phone=573015606006&text&type=phone_number&app_absent=0', '_blank')" class="linkEagle">
-                         <img src="../assets/img/whatsapp_logo.svg" alt="Whatsapp logo" class="social-icon">
-                    </button>
-                    <button onclick="window.open('https://www.instagram.com/eaglesoftwares/#', '_blank')" class="linkEagle">
-                        <img src="../assets/img/instagram_logo.svg" alt="Instagram logo" class="social-icon">
-                    </button>
-                    <button onclick="window.open('https://www.facebook.com/eaglesoftwares/', '_blank')" class="linkEagle">
-                        <img src="../assets/img/facebook_logo.svg" alt="Facebook logo" class="social-icon">
-                    </button>
-                </div>
-            </div>
-        </footer>
     </div>
     <script src="js/tooglePassword.js"></script>
     <script src="../components/hooks/lineLogin.js"></script>
