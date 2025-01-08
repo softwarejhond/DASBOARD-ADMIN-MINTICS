@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             $_SESSION['foto'] = htmlspecialchars($foto); // Ruta de la foto del usuario
 
                             // Redirigir al usuario a la página principal
-                            header("location: index.php");
+                            header("location: main.php");
                             exit;
                         } else {
                             $password_err = "Contraseña incorrecta.";
