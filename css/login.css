@@ -152,41 +152,4 @@ input::-moz-focus-inner {
   color: #d0d0d2;
 }
 
-.login-footer {
-  text-align: center; 
-  padding: 20px; 
-  margin-top: 40px;
-}
 
-.login-footer .social-icons {
-  display: flex;
-  justify-content: center; 
-  gap: 10px; 
-  margin-top: 10px; 
-}
-
-.login-footer .social-icons button {
-  background: none; 
-  border: none; 
-  cursor: pointer; 
-}
-
-.login-footer .social-icons img {
-  width: 30px; 
-  height: 30px;
-}
-
-.linkEagle {
-  color: #000;
-    text-decoration: none; 
-}
-.main-logo {
- width: 70px;
-}
-.social-icon{
- width: 25px;
-}
-.logo-container {
-  display: flex;
-  gap: 10px;
-}
