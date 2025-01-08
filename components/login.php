@@ -24,7 +24,7 @@ if (isset($_SESSION["timeout"])) {
 $_SESSION["timeout"] = time();
 
 // Incluir el archivo de conexión
-require_once "controller/conexion.php";
+require_once "../controller/conexion.php";
 
 // Definir variables y inicializar con valores vacíos
 $username = $password = "";
@@ -35,12 +35,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validar que el nombre de usuario no esté vacío
     if (empty(trim($_POST["username"]))) {
         $username_err = "Por favor ingrese su usuario.";
-    } elseif (!filter_var(trim($_POST["username"]), FILTER_VALIDATE_INT)) {
-        // Validar que el ID de usuario sea un número
+    } else if (!filter_var(trim($_POST["username"]), FILTER_VALIDATE_INT)) {
         $username_err = "El usuario debe ser un número.";
     } else {
-        $username = trim($_POST["username"]);
+         $username = trim($_POST["username"]);
     }
+    
 
     // Validar que la contraseña no esté vacía
     if (empty(trim($_POST["password"]))) {
@@ -52,11 +52,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validar credenciales
     if (empty($username_err) && empty($password_err)) {
         // Preparar una declaración SQL
-        $sql = "SELECT id, username, password, nombre, rol, foto FROM users WHERE username = ?";
+       $sql = "SELECT id, username, password, nombre, rol, foto FROM users WHERE username = ?";
 
         if ($stmt = mysqli_prepare($conn, $sql)) {
             // Vincular variables a la declaración preparada como parámetros
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            mysqli_stmt_bind_param($stmt, "i", $param_username); // "i" indica que $username es un entero
             $param_username = $username;
 
             // Intentar ejecutar la declaración preparada
@@ -107,62 +107,77 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/estilo.css?v=0.9">
+    <link rel="stylesheet" href="../css/login.css">
     <link rel="stylesheet" href="css/animacion.css?v=0.9">
     <title>SIVP - Login</title>
-    <link rel="icon" href="img/somosLogo.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 
 <body>
-    <div id="contenedor-login">
-        <div class="presentacion">
-            <div class="titulo text-center">
-                <img src="img/logo.png" alt="logo" width="50%" class="d-block mx-auto">
-                <h2 class="nombreApp">SIVP</h2>
-                <p class="text-center login__forgot">SIVP &copy; Copyright <?php echo date("Y"); ?>
-
-                    <br>
-                    <a href="https://agenciaeaglesoftware.com/" target="_blank" class="linkEagle">Made by Agencia de Desarrollo Eagle Software</a><br>
-                    <a href="https://api.whatsapp.com/send/?phone=573015606006&text&type=phone_number&app_absent=0" target="_blank" class="linkEagle"><i class="bi bi-whatsapp"></i></a>
-                    <a href="https://www.instagram.com/eaglesoftwares/#" target="_blank" class="linkEagle"><i class="bi bi-instagram"></i></a>
-                    <a href="https://www.facebook.com/eaglesoftwares/" target="_blank" class="linkEagle"><i class="bi bi-facebook"></i></a>
-                </p>
+    <div class="page">
+        <div class="container">
+            <div class="left">
+                <div class="login">Iniciar sesión</div>
+                <img src="https://css.mintic.gov.co/mt/mintic/new/img/logo_mintic_24_dark.svg" alt="Logo MinTIC" width="70" style="display: block; margin: 20px auto;">
+                <div class="eula">Inicia sesión con usuario y contraseña</div>
             </div>
-            <div class="contenedor-formulario">
-                <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" class="form-login">
-                    <p><strong><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión </strong> </p>
-                    <img src="img/somosLogo.png" alt="logo" width="50%" class="d-block mx-auto">
-                    <input type="text" placeholder="Nombre de Usuario" name="username" required class="input-login">
-                    <div class="password-container">
-                        <input type="password" placeholder="Contraseña" name="password" required class="input-login" id="passwordInput">
-                        <span class="toggle-password" onclick="togglePassword()">
-                            👁️
-                        </span>
-                    </div>
-                    <input type="submit" value="Iniciar Sesión" name="iniciar" class="btn">
+            <div class="right">
+                <svg viewBox="0 0 320 300">
+                    <defs>
+                        <linearGradient inkscape:collect="always" id="linearGradient" x1="13" y1="193.49992" x2="307"
+                            y2="193.49992" gradientUnits="userSpaceOnUse">
+                            <stop style="stop-color:#ff00ff;" offset="0" id="stop876" />
+                            <stop style="stop-color:#ff0000;" offset="1" id="stop878" />
+                        </linearGradient>
+                    </defs>
+                    <path
+                        d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143" />
+                </svg>
+                <div class="form">
+                    <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" class="form-login">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                        <input type="submit" id="submit" value="Iniciar" name="iniciar">
 
-                    <!-- Mensaje que se mostrará´cuando se haya procesado la solicitud en el servidor -->
-                    <?php if (isset($_POST['iniciar'])) : ?>
-                        <span class="msj-error-input"> <?php echo $password_err ?></span>
-                    <?php endif ?>
-                </form>
+                        <!-- Mensaje que se mostrará´cuando se haya procesado la solicitud en el servidor -->
+                        <?php if (isset($_POST['iniciar'])) : ?>
+                            <span class="msj-error-input"> <?php echo $password_err ?></span>
+                        <?php endif ?>
+                        <?php if (!empty($username_err)) : ?>
+                            <span class="msj-error-input"><?php echo $username_err ?></span>
+                        <?php endif ?>
+                    </form>
+                </div>
             </div>
         </div>
+        <footer class="login-footer">
+            <div class="copyright-info">
+                <p class="text-center login__forgot">
+                    SIVP © Copyright <?php echo date("Y"); ?>
+                    <br>
+                    <a href="https://agenciaeaglesoftware.com/" target="_blank" class="linkEagle">Made by Agencia de Desarrollo Eagle Software</a>
+                    <br>
+                </p>
+
+                <div class="social-icons">
+                    <button onclick="window.open('https://api.whatsapp.com/send/?phone=573015606006&text&type=phone_number&app_absent=0', '_blank')" class="linkEagle">
+                         <img src="../assets/img/whatsapp_logo.svg" alt="Whatsapp logo" class="social-icon">
+                    </button>
+                    <button onclick="window.open('https://www.instagram.com/eaglesoftwares/#', '_blank')" class="linkEagle">
+                        <img src="../assets/img/instagram_logo.svg" alt="Instagram logo" class="social-icon">
+                    </button>
+                    <button onclick="window.open('https://www.facebook.com/eaglesoftwares/', '_blank')" class="linkEagle">
+                        <img src="../assets/img/facebook_logo.svg" alt="Facebook logo" class="social-icon">
+                    </button>
+                </div>
+            </div>
+        </footer>
     </div>
-    <ul class="circles">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-    </ul>
     <script src="js/tooglePassword.js"></script>
+    <script src="../components/hooks/lineLogin.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
