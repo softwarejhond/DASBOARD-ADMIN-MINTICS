@@ -1,30 +1,36 @@
 <?php 
+
 // Incluir la conexión a la base de datos
-include("./controller/conexion.php"); 
+include("conexion.php"); 
 
 // Iniciar sesión
 session_start();
 
-// Habilitar la visualización de errores
-ini_set('display_errors', 1);
-error_reporting(E_ALL); // Mostrar todos los errores
+
+
+// Verificar si la conexión a la base de datos fue exitosa
+if (!$conn) {
+    die("Error de conexión: " . mysqli_connect_error());
+}
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    // Si no está logueado, redirigir a la página de inicio de sesión
+    // Redirigir a la página de inicio de sesión si no está autenticado
     header('Location: components/login.php');
     exit;
 }
 
-// $rol = $infoUsuario['rol']; // Descomentar si se necesita más adelante
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
-    <?php include("./controller/head.php"); // Incluir cabecera ?>
+    <?php include("controller/head.php"); // Incluir cabecera ?>
 </head>
+
 <body>
-    
-    <?php include("./controller/scripts.php"); // Incluir scripts ?>
+    <!-- Contenido de la página -->
+    <?php include("controller/scripts.php"); // Incluir scripts ?>
 </body>
+
 </html>

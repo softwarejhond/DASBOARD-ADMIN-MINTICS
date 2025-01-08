@@ -5,8 +5,15 @@ ini_set('display_errors', 1);
 // Inicializar la sesión
 session_start();
 
+// Verificar si el usuario ya está autenticado
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+    // Si el usuario ya está logueado, redirigir a main.php
+    header("location: main.php");
+    exit;
+}
+
 // Establecer tiempo de vida de la sesión en segundos
-$inactividad = 86400;
+$inactividad = 86400; // 24 horas
 
 // Comprobar si $_SESSION["timeout"] está establecida
 if (isset($_SESSION["timeout"])) {
@@ -24,7 +31,7 @@ if (isset($_SESSION["timeout"])) {
 $_SESSION["timeout"] = time();
 
 // Incluir el archivo de conexión
-require_once "../controller/conexion.php";
+require_once "../conexion.php";
 
 // Definir variables y inicializar con valores vacíos
 $username = $password = "";
@@ -38,9 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else if (!filter_var(trim($_POST["username"]), FILTER_VALIDATE_INT)) {
         $username_err = "El usuario debe ser un número.";
     } else {
-         $username = trim($_POST["username"]);
+        $username = trim($_POST["username"]);
     }
-    
 
     // Validar que la contraseña no esté vacía
     if (empty(trim($_POST["password"]))) {
@@ -52,11 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validar credenciales
     if (empty($username_err) && empty($password_err)) {
         // Preparar una declaración SQL
-       $sql = "SELECT id, username, password, nombre, rol, foto FROM users WHERE username = ?";
+        $sql = "SELECT id, username, password, nombre, rol, foto FROM users WHERE username = ?";
 
         if ($stmt = mysqli_prepare($conn, $sql)) {
             // Vincular variables a la declaración preparada como parámetros
-            mysqli_stmt_bind_param($stmt, "i", $param_username); // "i" indica que $username es un entero
+            mysqli_stmt_bind_param($stmt, "s", $param_username); // "s" indica que $username es una cadena
             $param_username = $username;
 
             // Intentar ejecutar la declaración preparada
@@ -71,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     if (mysqli_stmt_fetch($stmt)) {
                         if (password_verify($password, $hashed_password)) {
                             // La contraseña es correcta, iniciar una nueva sesión
-                            // Ya hemos comenzado la sesión anteriormente
 
                             // Almacenar datos del usuario en la sesión
                             $_SESSION['loggedin'] = true; // Indica que el usuario ha iniciado sesión
@@ -141,12 +146,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <input type="password" id="password" name="password" required>
                         <input type="submit" id="submit" value="Iniciar" name="iniciar">
 
-                        <!-- Mensaje que se mostrará´cuando se haya procesado la solicitud en el servidor -->
-                        <?php if (isset($_POST['iniciar'])) : ?>
-                            <span class="msj-error-input"> <?php echo $password_err ?></span>
-                        <?php endif ?>
+                        <!-- Mensaje que se mostrará cuando se haya procesado la solicitud en el servidor -->
                         <?php if (!empty($username_err)) : ?>
                             <span class="msj-error-input"><?php echo $username_err ?></span>
+                        <?php endif ?>
+                        <?php if (!empty($password_err)) : ?>
+                            <span class="msj-error-input"><?php echo $password_err ?></span>
                         <?php endif ?>
                     </form>
                 </div>
@@ -156,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <script src="js/tooglePassword.js"></script>
     <script src="../components/hooks/lineLogin.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9m0l2ddQg73ANnBWrLfXzVhptJkICXQX92oOsOD2" crossorigin="anonymous"></script>
 </body>
 
 </html>
