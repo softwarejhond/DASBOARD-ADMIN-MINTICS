@@ -1,6 +1,6 @@
 <?php 
 // Incluir la conexión a la base de datos
-include("controller/conexion.php"); 
+include("./controller/conexion.php"); 
 
 // Iniciar sesión
 session_start();
@@ -21,10 +21,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php include("controller/head.php"); // Incluir cabecera ?>
+    <?php include("./controller/head.php"); // Incluir cabecera ?>
 </head>
 <body>
     
-    <?php include("controller/scripts.php"); // Incluir scripts ?>
+    <?php include("./controller/scripts.php"); // Incluir scripts ?>
 </body>
 </html>
