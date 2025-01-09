@@ -16,20 +16,20 @@
                     <a class="nav-link" href="empresa.php">Institución</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="perfil.php">Perfil</a>
+                    <a class="nav-link" href="#">Perfil</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Filtros
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="listaReparaciones.php">Lista de reparaciones</a></li>
-                        <li><a class="dropdown-item" href="#">Lista de reparadores</a></li>
-                        <li><a class="dropdown-item" href="#">Lista de retiros programados</a></li>
+                        <li><a class="dropdown-item" href="listaReparaciones.php">#</a></li>
+                        <li><a class="dropdown-item" href="#">#</a></li>
+                        <li><a class="dropdown-item" href="#">#</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="administradores.php">Lista de administradores</a></li>
+                        <li><a class="dropdown-item" href="#">Lista de administradores</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -37,21 +37,22 @@
                         IPC
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#actualizarIPC">IPC</a></li>
-                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#actualizarIPCLocales">IPC LOCALES</a></li>
+                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#actualizarIPC">#</a></li>
+                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#actualizarIPCLocales">#</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="agenda.php">Agenda</a>
+                    <a class="nav-link" href="#">#</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="actualizar-smtp.php">SMTP</a>
+                    <a class="nav-link" href="#">#</a>
                 </li>
             </ul>
             <!-- Mostrar el nombre del usuario logueado -->
             <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                   
+                    <img src="<?php echo htmlspecialchars($infoUsuario['foto']); ?>" alt="Perfil" class="rounded-circle" width="40" height="40">
+                    <?php echo htmlspecialchars($infoUsuario['nombre']); ?> 
                     <div class="spinner-grow spinner-grow-sm" role="status" style="color:#00976a">
                         <span class="visually-hidden">Loading...</span>
                     </div>

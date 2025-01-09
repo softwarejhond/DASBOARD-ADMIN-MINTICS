@@ -1,0 +1,45 @@
+<?php
+function obtenerInformacionUsuario()
+{
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start(); // Asegúrate de que la sesión esté iniciada
+    }
+
+    // Debug: Mostrar el estado de las variables de sesión
+    // var_dump($_SESSION); // Esto te mostrará todas las variables de sesión
+
+    // Verificar si las variables de sesión están establecidas correctamente
+    if (isset($_SESSION['loggedin'], $_SESSION['nombre'], $_SESSION['rol'], $_SESSION['username'], $_SESSION['foto']) && $_SESSION['loggedin'] === true) {
+        $mensajeRol = rolUsuario($_SESSION['rol']); // Obtener el mensaje basado en el rol
+
+        return [
+            'nombre' => htmlspecialchars($_SESSION['nombre']),
+            'rol' => $mensajeRol,
+            'usuario' => htmlspecialchars($_SESSION['username']),
+            'foto' => htmlspecialchars($_SESSION['foto'])
+        ];
+    } else {
+        return [
+            'nombre' => 'Usuario no logueado',
+            'rol' => 'Rol no definido',
+            'usuario' => 'Usuario no definido',
+            'foto' => 'foto no definida'
+        ];
+    }
+}
+
+function rolUsuario($rol)
+{
+    switch ($rol) {
+        case 1:
+            return "Administrador";
+        case 2:
+            return "Operario";
+        case 3:
+            return "Aprobador";
+        case 4:
+            return "Editor";
+        default:
+            return "Rol desconocido";
+    }
+}
