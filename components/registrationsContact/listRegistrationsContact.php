@@ -1,27 +1,18 @@
 <?php
-// Habilitar reporte de errores para depuración
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Asegurarse de que la conexión a la base de datos esté configurada
-if (!isset($conn) || !$conn) {
-    die('Error: La conexión a la base de datos no está configurada.');
-}
+// Mantén el código PHP para la conexión y demás operaciones
 
 // Inicializar la variable de mensaje
 $mensajeToast = '';
 
-// Actualizar estado de la propiedad si se envió el formulario
+// Procesamiento de la actualización de estado
 if (isset($_POST['btnActualizarEstado'])) {
-    $codigo = $_POST['codigo']; // Obtener el código de la propiedad desde el formulario
-    $nuevoEstado = $_POST['nuevoEstado']; // Obtener el nuevo estado
+    $codigo = $_POST['codigo'];
+    $nuevoEstado = $_POST['nuevoEstado'];
 
-    // Consulta SQL para actualizar el estado
+    // Actualización en la base de datos
     $updateSql = "UPDATE user_register SET status = ? WHERE number_id = ?";
     $stmt = $conn->prepare($updateSql);
-
-    // Usar bind_param correctamente con tipos: 's' para string y 'i' para entero
-    $stmt->bind_param('si', $nuevoEstado, $codigo); // Preparar la consulta para ejecutar
+    $stmt->bind_param('si', $nuevoEstado, $codigo);
 
     if ($stmt->execute()) {
         $mensajeToast = 'Estado actualizado correctamente.';
@@ -30,7 +21,7 @@ if (isset($_POST['btnActualizarEstado'])) {
     }
 }
 
-// Consulta SQL para obtener los datos
+// Obtener los datos
 $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
         FROM user_register
         INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
@@ -40,56 +31,46 @@ $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
         ORDER BY user_register.first_name ASC";
 
 $result = $conn->query($sql);
-
-// Si la consulta tiene resultados, generar los datos
 $data = [];
+
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        // Agregar acciones a cada fila
         $row['acciones'] = '
-        <td><button class="btn bg-lime-dark "><i class="bi bi-eye-fill"></i></button></td>
-        <td>
-            <form method="POST" class="d-inline" onsubmit="return confirmarActualizacion();">
-                <input type="hidden" name="codigo" value="' . htmlspecialchars($row["number_id"]) . '">
-                <div class="input-group">
-                    <select class="form-control" name="nuevoEstado" required>
-                        <option value="1" ' . ($row["status"] == 'NUEVO' ? 'selected' : '') . '>NUEVO</option>
-                        <option value="2" ' . ($row["status"] == 'ACEPTADO' ? 'selected' : '') . '>ACEPTADO</option>
-                        <option value="3" ' . ($row["status"] == 'DENEGADO' ? 'selected' : '') . '>DENEGADO</option>
-                    </select>
-                    <div class="input-group-append">
-                        <button type="submit" name="btnActualizarEstado" class="btn bg-indigo-dark text-white ">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </td>';
+      <td>
+    <form method="POST" class="d-inline" onsubmit="return confirmarActualizacion();">
+        <input type="hidden" name="codigo" value="' . htmlspecialchars($row["number_id"]) . '">
+        <div class="input-group">
+            <select class="form-control" name="nuevoEstado" required>
+                <option value="1" ' . ($row["status"] == 'NUEVO' ? 'selected' : '') . '>NUEVO</option>
+                <option value="2" ' . ($row["status"] == 'ACEPTADO' ? 'selected' : '') . '>ACEPTADO</option>
+                <option value="3" ' . ($row["status"] == 'DENEGADO' ? 'selected' : '') . '>DENEGADO</option>
+            </select>
+            <div class="input-group-append">
+                <button type="submit" name="btnActualizarEstado" class="btn bg-indigo-dark text-white ">
+                    <i class="bi bi-pencil-fill"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</td>';
 
-        // Concatenar el nombre y el apellido
-        $fullName = $row['first_name'] . ' ' . $row['second_name'] . ' ' . $row['first_last'] . ' ' . $row['second_last'];
-        // Calcular la edad
+        // Calcular edad
         $birthday = new DateTime($row['birthdate']);
         $now = new DateTime();
-        $age = $now->diff($birthday)->y; // Obtener la diferencia de años
+        $age = $now->diff($birthday)->y;
+        $row['age'] = $age;
 
-        // Guardar fila de datos
-        $row['age'] = $age; // Agregar la edad al array de datos
-
-        // Guardar fila de datos
         $data[] = $row;
     }
 } else {
-    // Si no hay datos, mostrar mensaje
     echo '<div class="alert alert-info">No hay datos disponibles.</div>';
 }
 ?>
 
-<!-- Tabla -->
 <div class="table-responsive">
     <table id="listaInscritos" class="table table-hover table-bordered">
         <thead class="thead-dark">
-            <tr>
+            <tr class="text-center">
                 <th>Tipo ID</th>
                 <th>Número ID</th>
                 <th>Nombre Completo</th>
@@ -103,8 +84,12 @@ if ($result && $result->num_rows > 0) {
                 <th>Municipio</th>
                 <th>Dirección</th>
                 <th>Estado actual</th>
-                <th></th>
-                <th></th>
+                <th><h2 type="button" 
+                        data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-custom-class="custom-tooltip"
+                        data-bs-title="Cambiar medio de contacto">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </h2></th>
             </tr>
         </thead>
         <tbody>
@@ -113,28 +98,39 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                     <td><?php echo htmlspecialchars($row['number_id']); ?></td>
                     <td><?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['second_name']) . ' ' . htmlspecialchars($row['first_last']) . ' ' . htmlspecialchars($row['second_last']); ?></td>
-                    <td>
+                    <td><?php echo $row['age']; ?></td>
+                    <td><?php echo htmlspecialchars($row['email']); ?></td>
+                    <td><?php echo htmlspecialchars($row['first_phone']); ?></td>
+                    <td><?php echo htmlspecialchars($row['second_phone']); ?></td>
+                    <td id="medioContacto_<?php echo $row['number_id']; ?>">
                         <?php
-                        // Si la edad es mayor a 17, mostrar el botón con la edad
-                        if ($row['age'] > 17) {
-                            echo '<button class="btn bg-magenta-dark text-white">' . $row['age'] . '</button>';
-                        } else {
-                            // Si no, solo mostrar la edad como texto
-                            echo htmlspecialchars($row['age']);
+                        // Asigna la clase y el ícono según el valor de 'contactMedium'
+                        $btnClass = '';
+                        $btnText = htmlspecialchars($row['contactMedium']); // El texto del botón
+                        $icon = ''; // Variable para el ícono
+
+                        if ($row['contactMedium'] == 'WhatsApp') {
+                            $btnClass = 'bg-lime-dark'; // Verde para WhatsApp
+                            $icon = '<i class="bi bi-whatsapp"></i>'; // Ícono de WhatsApp
+                        } elseif ($row['contactMedium'] == 'Teléfono') {
+                            $btnClass = 'bg-teal-dark'; // Azul para Teléfono
+                            $icon = '<i class="bi bi-telephone"></i>'; // Ícono de Teléfono
+                        } elseif ($row['contactMedium'] == 'Correo') {
+                            $btnClass = 'bg-amber-light'; // Amarillo para Correo
+                            $icon = '<i class="bi bi-envelope"></i>'; // Ícono de Correo
                         }
+
+                        // Mostrar el botón con la clase y el ícono correspondiente
+                        echo '<button class="btn ' . $btnClass . '">' . $icon . ' ' . $btnText . '</button>';
                         ?>
                     </td>
-                    <td><?php echo htmlspecialchars($row['email']); ?></td>
-                    <td><?php echo htmlspecialchars($row['first_phone']) . ' / '; ?></td>
-                    <td><?php echo htmlspecialchars($row['second_phone']); ?></td>
-                    <?php include("components/registrationsContact/updateContactMedium.php"); ?>
+
                     <td><?php echo htmlspecialchars($row['program']); ?></td>
                     <td><?php echo htmlspecialchars($row['departamento']); ?></td>
                     <td><?php echo htmlspecialchars($row['municipio']); ?></td>
                     <td><?php echo htmlspecialchars($row['address']); ?></td>
                     <td>
                         <?php
-                        // Mapeo de los valores del estado
                         switch ($row['status']) {
                             case '1':
                                 echo '<button class="btn bg-orange-dark"><i class="bi bi-star-fill"></i> NUEVO</button>';
@@ -146,42 +142,138 @@ if ($result && $result->num_rows > 0) {
                                 echo '<button class="btn bg-red-dark text-white"><i class="bi bi-x-circle"></i> DENEGADO</button>';
                                 break;
                             default:
-                                echo 'Estado desconocido'; // En caso de que haya un valor inesperado
+                                echo 'Estado desconocido';
                                 break;
                         }
                         ?>
                     </td>
-                    <?php echo $row['acciones']; ?>
+                    <td>
+                        <button class="btn btn-primary" onclick="mostrarModalActualizar(<?php echo $row['number_id']; ?>)">Actualizar Medio de Contacto</button>
+                    </td>
+
                 </tr>
-
-
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
 
-<!-- Toastr CSS -->
+<script>
+   function mostrarModalActualizar(id) {
+    // Crear el modal dinámicamente con un select de opciones
+    const modalHtml = `
+    <div id="modalActualizar" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Actualizar Medio de Contacto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formActualizarMedio">
+                        <div class="form-group">
+                            <label for="nuevoMedio">Seleccionar nuevo medio de contacto:</label>
+                            <select class="form-control" id="nuevoMedio" name="nuevoMedio" required>
+                                <option value="Correo">Correo</option>
+                                <option value="Teléfono">Teléfono</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="id" value="${id}">
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
+
+    // Añadir el modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Mostrar el modal
+    $('#modalActualizar').modal('show');
+
+    // Manejar el envío del formulario con confirmación
+    $('#formActualizarMedio').on('submit', function(e) {
+        e.preventDefault();
+
+        if (confirm("¿Está seguro de que desea actualizar el medio de contacto?")) {
+            const nuevoMedio = $('#nuevoMedio').val();
+            actualizarMedioContacto(id, nuevoMedio);
+            $('#modalActualizar').modal('hide');
+        } else {
+            toastr.info("La actualización ha sido cancelada.");
+        }
+    });
+}
+
+
+    function actualizarMedioContacto(id, nuevoMedio) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_medio_contacto.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                const response = xhr.responseText;
+                console.log("Respuesta del servidor: " + response); // Depuración
+
+                if (response == "success") {
+                    // Obtener el nuevo botón con clase e ícono
+                    const result = getBtnClass(nuevoMedio); // Llamar a la función que devuelve la clase y el ícono
+                    const botonHtml = `<button class="btn ${result.btnClass}">${result.icon} ${nuevoMedio}</button>`;
+
+                    // Actualizar el contenido de la celda correspondiente en la tabla
+                    document.getElementById("medioContacto_" + id).innerHTML = botonHtml; // Cambiar el HTML completo del botón
+                    toastr.success("El medio de contacto se actualizó correctamente.");
+                } else {
+                    toastr.error("Hubo un error al actualizar el medio de contacto.");
+                }
+            }
+        };
+        xhr.send("id=" + id + "&nuevoMedio=" + nuevoMedio);
+    }
+
+
+    // Función para obtener la clase del botón según el medio de contacto
+    function getBtnClass(medio) {
+        let btnClass = '';
+        let icon = '';
+
+        if (medio == 'WhatsApp') {
+            btnClass = 'bg-lime-dark'; // Verde para WhatsApp
+            icon = '<i class="bi bi-whatsapp"></i>'; // Ícono de WhatsApp
+        } else if (medio == 'Teléfono') {
+            btnClass = 'bg-teal-dark'; // Azul para Teléfono
+            icon = '<i class="bi bi-telephone"></i>'; // Ícono de Teléfono
+        } else if (medio == 'Correo') {
+            btnClass = 'bg-amber-light'; // Amarillo para Correo
+            icon = '<i class="bi bi-envelope"></i>'; // Ícono de Correo
+        }
+
+        return {
+            btnClass,
+            icon
+        }; // Devuelve tanto la clase como el ícono
+    }
+    function confirmarActualizacion() {
+    // Mostrar un mensaje de confirmación
+    if (confirm("¿Está seguro de que desea actualizar el medio de contacto?")) {
+        return true; // Si el usuario confirma, se permite el envío del formulario
+    } else {
+        return false; // Si el usuario cancela, no se envía el formulario
+    }
+}
+
+</script>
+
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
-    $(document).ready(function() {
-        // Inicialización de la tabla
-        $('#propiedadesVenta').DataTable({
-            responsive: true,
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-            }
-        });
-
-        // Mostrar mensaje de toast si existe
-        <?php if ($mensajeToast): ?>
-            toastr.success("<?php echo $mensajeToast; ?>");
-        <?php endif; ?>
-    });
-
-    // Función de confirmación de actualización
-    function confirmarActualizacion() {
-        return confirm("¿Está seguro de que desea actualizar el estado de este usuario?");
-    }
+    <?php if ($mensajeToast): ?>
+        toastr.success("<?php echo $mensajeToast; ?>");
+    <?php endif; ?>
 </script>
