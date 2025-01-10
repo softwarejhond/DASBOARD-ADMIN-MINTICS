@@ -1,8 +1,6 @@
 <?php
 // Mantén el código PHP para la conexión y demás operaciones
-
-// Inicializar la variable de mensaje
-$mensajeToast = '';
+$mensajeToast = ''; // Mensaje para el toast
 
 // Procesamiento de la actualización de estado
 if (isset($_POST['btnActualizarEstado'])) {
@@ -36,8 +34,8 @@ $data = [];
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $row['acciones'] = '
-      <td>
-    <form method="POST" class="d-inline" onsubmit="return confirmarActualizacion();">
+    <td>
+    <form id="formActualizacionEstado' . $row["number_id"] . '" class="d-inline" method="POST" onsubmit="return actualizarEstado(' . $row["number_id"] . ', event);">
         <input type="hidden" name="codigo" value="' . htmlspecialchars($row["number_id"]) . '">
         <div class="input-group">
             <select class="form-control" name="nuevoEstado" required>
@@ -65,6 +63,7 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo '<div class="alert alert-info">No hay datos disponibles.</div>';
 }
+
 ?>
 
 <div class="table-responsive">
@@ -131,6 +130,7 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['address']); ?></td>
                     <td>
                         <?php
+                        // Mostrar el estado
                         switch ($row['status']) {
                             case '1':
                                 echo '<button class="btn bg-orange-dark"><i class="bi bi-star-fill"></i> NUEVO</button>';
@@ -159,9 +159,12 @@ if ($result && $result->num_rows > 0) {
 
 <script>
    function mostrarModalActualizar(id) {
-    // Crear el modal dinámicamente con un select de opciones
+    // Remover cualquier modal previo del DOM
+    $('#modalActualizar_' + id).remove();
+
+    // Crear el modal dinámicamente con un identificador único
     const modalHtml = `
-    <div id="modalActualizar" class="modal" tabindex="-1" role="dialog">
+    <div id="modalActualizar_${id}" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -171,10 +174,10 @@ if ($result && $result->num_rows > 0) {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="formActualizarMedio">
+                    <form id="formActualizarMedio_${id}">
                         <div class="form-group">
-                            <label for="nuevoMedio">Seleccionar nuevo medio de contacto:</label>
-                            <select class="form-control" id="nuevoMedio" name="nuevoMedio" required>
+                            <label for="nuevoMedio_${id}">Seleccionar nuevo medio de contacto:</label>
+                            <select class="form-control" id="nuevoMedio_${id}" name="nuevoMedio" required>
                                 <option value="Correo">Correo</option>
                                 <option value="Teléfono">Teléfono</option>
                                 <option value="WhatsApp">WhatsApp</option>
@@ -187,22 +190,22 @@ if ($result && $result->num_rows > 0) {
             </div>
         </div>
     </div>
-`;
+    `;
 
     // Añadir el modal al DOM
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 
     // Mostrar el modal
-    $('#modalActualizar').modal('show');
+    $('#modalActualizar_' + id).modal('show');
 
     // Manejar el envío del formulario con confirmación
-    $('#formActualizarMedio').on('submit', function(e) {
+    $('#formActualizarMedio_' + id).on('submit', function(e) {
         e.preventDefault();
 
         if (confirm("¿Está seguro de que desea actualizar el medio de contacto?")) {
-            const nuevoMedio = $('#nuevoMedio').val();
+            const nuevoMedio = $('#nuevoMedio_' + id).val();
             actualizarMedioContacto(id, nuevoMedio);
-            $('#modalActualizar').modal('hide');
+            $('#modalActualizar_' + id).modal('hide');
         } else {
             toastr.info("La actualización ha sido cancelada.");
         }
@@ -210,30 +213,30 @@ if ($result && $result->num_rows > 0) {
 }
 
 
-    function actualizarMedioContacto(id, nuevoMedio) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "components/registrationsContact/actualizar_medio_contacto.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                const response = xhr.responseText;
-                console.log("Respuesta del servidor: " + response); // Depuración
+function actualizarMedioContacto(id, nuevoMedio) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "components/registrationsContact/actualizar_medio_contacto.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            const response = xhr.responseText;
+            console.log("Respuesta del servidor: " + response);
 
-                if (response == "success") {
-                    // Obtener el nuevo botón con clase e ícono
-                    const result = getBtnClass(nuevoMedio); // Llamar a la función que devuelve la clase y el ícono
-                    const botonHtml = `<button class="btn ${result.btnClass}">${result.icon} ${nuevoMedio}</button>`;
+            if (response == "success") {
+                const result = getBtnClass(nuevoMedio);
+                const botonHtml = `<button class="btn ${result.btnClass}">${result.icon} ${nuevoMedio}</button>`;
 
-                    // Actualizar el contenido de la celda correspondiente en la tabla
-                    document.getElementById("medioContacto_" + id).innerHTML = botonHtml; // Cambiar el HTML completo del botón
-                    toastr.success("El medio de contacto se actualizó correctamente.");
-                } else {
-                    toastr.error("Hubo un error al actualizar el medio de contacto.");
-                }
+                // Actualizar solo el botón específico
+                document.querySelector("#medioContacto_" + id).innerHTML = botonHtml;
+
+                toastr.success("El medio de contacto se actualizó correctamente.");
+            } else {
+                toastr.error("Hubo un error al actualizar el medio de contacto.");
             }
-        };
-        xhr.send("id=" + id + "&nuevoMedio=" + nuevoMedio);
-    }
+        }
+    };
+    xhr.send("id=" + id + "&nuevoMedio=" + encodeURIComponent(nuevoMedio));
+}
 
 
     // Función para obtener la clase del botón según el medio de contacto
@@ -242,38 +245,25 @@ if ($result && $result->num_rows > 0) {
         let icon = '';
 
         if (medio == 'WhatsApp') {
-            btnClass = 'bg-lime-dark'; // Verde para WhatsApp
-            icon = '<i class="bi bi-whatsapp"></i>'; // Ícono de WhatsApp
+            btnClass = 'bg-lime-dark';
+            icon = '<i class="bi bi-whatsapp"></i>';
         } else if (medio == 'Teléfono') {
-            btnClass = 'bg-teal-dark'; // Azul para Teléfono
-            icon = '<i class="bi bi-telephone"></i>'; // Ícono de Teléfono
+            btnClass = 'bg-teal-dark';
+            icon = '<i class="bi bi-telephone"></i>';
         } else if (medio == 'Correo') {
-            btnClass = 'bg-amber-light'; // Amarillo para Correo
-            icon = '<i class="bi bi-envelope"></i>'; // Ícono de Correo
+            btnClass = 'bg-amber-light';
+            icon = '<i class="bi bi-envelope"></i>';
         }
 
-        return {
-            btnClass,
-            icon
-        }; // Devuelve tanto la clase como el ícono
+        return { btnClass, icon };
     }
-    function confirmarActualizacion() {
-    // Mostrar un mensaje de confirmación
-    if (confirm("¿Está seguro de que desea actualizar el medio de contacto?")) {
-        return true; // Si el usuario confirma, se permite el envío del formulario
-    } else {
-        return false; // Si el usuario cancela, no se envía el formulario
-    }
-}
 
+    <?php if ($mensajeToast): ?>
+        toastr.success("<?php echo $mensajeToast; ?>");
+    <?php endif; ?>
 </script>
 
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<script>
-    <?php if ($mensajeToast): ?>
-        toastr.success("<?php echo $mensajeToast; ?>");
-    <?php endif; ?>
-</script>
