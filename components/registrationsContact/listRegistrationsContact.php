@@ -169,14 +169,13 @@ if ($result && $result->num_rows > 0) {
 
         // Crear el modal dinámicamente con un identificador único
         const modalHtml = `
-    <div id="modalActualizar_${id}" class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+    <div id="modalActualizar_${id}" class="modal fade"  aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Actualizar Medio de Contacto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <div class="modal-header bg-indigo-dark">
+                    <h5 class="modal-title text-center"><i class="bi bi-arrow-left-right"></i> Actualizar Medio de Contacto</h5>
+                      <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+            
                 </div>
                 <div class="modal-body">
                     <form id="formActualizarMedio_${id}">
@@ -188,8 +187,9 @@ if ($result && $result->num_rows > 0) {
                                 <option value="WhatsApp">WhatsApp</option>
                             </select>
                         </div>
+                        <br>
                         <input type="hidden" name="id" value="${id}">
-                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                        <button type="submit" class="btn bg-indigo-dark text-white">Actualizar</button>
                     </form>
                 </div>
             </div>
