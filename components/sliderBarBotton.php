@@ -23,7 +23,7 @@
               <a href="propiedadesAceptacion.php">
                   <label class="checkbox-wrapper">
                       <span class="checkbox-tile">
-                          <span class="checkbox-icon">
+                          <span class="checkbox-icon icono text-indigo-dark">
                               <i class="bi bi-house-check-fill icono text-indigo-dark "></i>
                           </span>
                           <span class="checkbox-label">Ingresar</span>

@@ -16,7 +16,7 @@
                     <a class="nav-link" href="empresa.php">Institución</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Perfil</a>
+                    <a class="nav-link" href="profile.php">Perfil</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -62,7 +62,7 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" href="perfil.php">Perfil</a></li>
-                    <li><a class="dropdown-item" href="../controller/close.php">Cerrar sesión</a></li>
+                    <li><a class="dropdown-item" href="controller/close.php">Cerrar sesión</a></li>
                 </ul>
             </div>
         </div>

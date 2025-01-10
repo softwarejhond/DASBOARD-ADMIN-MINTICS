@@ -31,7 +31,7 @@ if (isset($_SESSION["timeout"])) {
 $_SESSION["timeout"] = time();
 
 // Incluir el archivo de conexión
-require_once "../conexion.php";
+require_once "conexion.php";
 
 // Definir variables y inicializar con valores vacíos
 $username = $password = "";
@@ -112,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="css/animacion.css?v=0.9">
     <title>SIVP - Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -140,10 +140,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </svg>
                 <div class="form">
                     <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" class="form-login">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                        <label for="username">Usuario</label>
+                        <input type="text" id="username" name="username" required placeholder="1234567890" >
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" name="password" required placeholder="********">
                         <input type="submit" id="submit" value="Iniciar" name="iniciar">
 
                         <!-- Mensaje que se mostrará cuando se haya procesado la solicitud en el servidor -->
@@ -159,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
     <script src="js/tooglePassword.js"></script>
-    <script src="../components/hooks/lineLogin.js"></script>
+    <script src="components/hooks/lineLogin.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9m0l2ddQg73ANnBWrLfXzVhptJkICXQX92oOsOD2" crossorigin="anonymous"></script>
 </body>

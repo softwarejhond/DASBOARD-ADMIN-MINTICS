@@ -16,7 +16,7 @@ if (!$conn) {
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     // Redirigir a la página de inicio de sesión si no está autenticado
-    header('Location: components/login.php');
+    header('Location: login.php');
     exit;
 }
 

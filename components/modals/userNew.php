@@ -1,8 +1,6 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-include("./conexion.php"); // Conexión a la base de datos
-
 // Inicializa el mensaje vacío
 $mensaje = '';
 $tipo_mensaje = ''; // Para determinar el tipo de mensaje (success, error, etc.)

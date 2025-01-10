@@ -20,15 +20,17 @@
                         </span>
                     </label>
                 </div>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Registrar daño">
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Contacto de registros">
+                <a href="registrarionsContact.php">
                     <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReporte" data-bs-toggle="modal">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
-                                <i class="bi bi-bug icono"></i>
+                            <i class="bi bi-person-lines-fill icono"></i>
                             </span>
-                            <span class="checkbox-label ">Añadir</span>
+                            <span class="checkbox-label ">Ingresar</span>
                         </span>
                     </label>
+                    </a>
                 </div>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir reparador">
                     <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReparador" data-bs-toggle="modal">
@@ -124,5 +126,5 @@
             </fieldset>
         </div>
     </div>
-    <?php include("../controller/footer.php"); ?>
+    <?php include("controller/footer.php"); ?>
 </div>
