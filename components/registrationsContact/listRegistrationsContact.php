@@ -83,12 +83,14 @@ if ($result && $result->num_rows > 0) {
                 <th>Municipio</th>
                 <th>Dirección</th>
                 <th>Estado actual</th>
-                <th><h2 type="button" 
+                <th>
+                    <h2 type="button"
                         data-bs-toggle="tooltip" data-bs-placement="top"
                         data-bs-custom-class="custom-tooltip"
                         data-bs-title="Cambiar medio de contacto">
                         <i class="bi bi-arrow-left-right"></i>
-                    </h2></th>
+                    </h2>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -133,13 +135,13 @@ if ($result && $result->num_rows > 0) {
                         // Mostrar el estado
                         switch ($row['status']) {
                             case '1':
-                                echo '<button class="btn bg-orange-dark"><i class="bi bi-star-fill"></i> NUEVO</button>';
+                                echo '<button class="btn bg-orange-dark w-100"><i class="bi bi-star-fill"></i> NUEVO</button>';
                                 break;
                             case '2':
-                                echo '<button class="btn bg-teal-dark text-white"><i class="bi bi-check2-circle"></i> ACEPTADO</button>';
+                                echo '<button class="btn bg-teal-dark text-white w-100"><i class="bi bi-check2-circle"></i> ACEPTADO</button>';
                                 break;
                             case '3':
-                                echo '<button class="btn bg-red-dark text-white"><i class="bi bi-x-circle"></i> DENEGADO</button>';
+                                echo '<button class="btn bg-red-dark text-white w-100"><i class="bi bi-x-circle"></i> DENEGADO</button>';
                                 break;
                             default:
                                 echo 'Estado desconocido';
@@ -148,7 +150,10 @@ if ($result && $result->num_rows > 0) {
                         ?>
                     </td>
                     <td>
-                        <button class="btn btn-primary" onclick="mostrarModalActualizar(<?php echo $row['number_id']; ?>)">Actualizar Medio de Contacto</button>
+                        <button class="btn bg-magenta-dark text-white" onclick="mostrarModalActualizar(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="Cambiar medio de contacto">
+                            <i class="bi bi-arrow-left-right"></i></button>
                     </td>
 
                 </tr>
@@ -158,12 +163,12 @@ if ($result && $result->num_rows > 0) {
 </div>
 
 <script>
-   function mostrarModalActualizar(id) {
-    // Remover cualquier modal previo del DOM
-    $('#modalActualizar_' + id).remove();
+    function mostrarModalActualizar(id) {
+        // Remover cualquier modal previo del DOM
+        $('#modalActualizar_' + id).remove();
 
-    // Crear el modal dinámicamente con un identificador único
-    const modalHtml = `
+        // Crear el modal dinámicamente con un identificador único
+        const modalHtml = `
     <div id="modalActualizar_${id}" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -192,51 +197,51 @@ if ($result && $result->num_rows > 0) {
     </div>
     `;
 
-    // Añadir el modal al DOM
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
+        // Añadir el modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-    // Mostrar el modal
-    $('#modalActualizar_' + id).modal('show');
+        // Mostrar el modal
+        $('#modalActualizar_' + id).modal('show');
 
-    // Manejar el envío del formulario con confirmación
-    $('#formActualizarMedio_' + id).on('submit', function(e) {
-        e.preventDefault();
+        // Manejar el envío del formulario con confirmación
+        $('#formActualizarMedio_' + id).on('submit', function(e) {
+            e.preventDefault();
 
-        if (confirm("¿Está seguro de que desea actualizar el medio de contacto?")) {
-            const nuevoMedio = $('#nuevoMedio_' + id).val();
-            actualizarMedioContacto(id, nuevoMedio);
-            $('#modalActualizar_' + id).modal('hide');
-        } else {
-            toastr.info("La actualización ha sido cancelada.");
-        }
-    });
-}
-
-
-function actualizarMedioContacto(id, nuevoMedio) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "components/registrationsContact/actualizar_medio_contacto.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            const response = xhr.responseText;
-            console.log("Respuesta del servidor: " + response);
-
-            if (response == "success") {
-                const result = getBtnClass(nuevoMedio);
-                const botonHtml = `<button class="btn ${result.btnClass}">${result.icon} ${nuevoMedio}</button>`;
-
-                // Actualizar solo el botón específico
-                document.querySelector("#medioContacto_" + id).innerHTML = botonHtml;
-
-                toastr.success("El medio de contacto se actualizó correctamente.");
+            if (confirm("¿Está seguro de que desea actualizar el medio de contacto?")) {
+                const nuevoMedio = $('#nuevoMedio_' + id).val();
+                actualizarMedioContacto(id, nuevoMedio);
+                $('#modalActualizar_' + id).modal('hide');
             } else {
-                toastr.error("Hubo un error al actualizar el medio de contacto.");
+                toastr.info("La actualización ha sido cancelada.");
             }
-        }
-    };
-    xhr.send("id=" + id + "&nuevoMedio=" + encodeURIComponent(nuevoMedio));
-}
+        });
+    }
+
+
+    function actualizarMedioContacto(id, nuevoMedio) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_medio_contacto.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                const response = xhr.responseText;
+                console.log("Respuesta del servidor: " + response);
+
+                if (response == "success") {
+                    const result = getBtnClass(nuevoMedio);
+                    const botonHtml = `<button class="btn ${result.btnClass}">${result.icon} ${nuevoMedio}</button>`;
+
+                    // Actualizar solo el botón específico
+                    document.querySelector("#medioContacto_" + id).innerHTML = botonHtml;
+
+                    toastr.success("El medio de contacto se actualizó correctamente.");
+                } else {
+                    toastr.error("Hubo un error al actualizar el medio de contacto.");
+                }
+            }
+        };
+        xhr.send("id=" + id + "&nuevoMedio=" + encodeURIComponent(nuevoMedio));
+    }
 
 
     // Función para obtener la clase del botón según el medio de contacto
@@ -245,17 +250,20 @@ function actualizarMedioContacto(id, nuevoMedio) {
         let icon = '';
 
         if (medio == 'WhatsApp') {
-            btnClass = 'bg-lime-dark';
+            btnClass = 'bg-lime-dark w-100';
             icon = '<i class="bi bi-whatsapp"></i>';
         } else if (medio == 'Teléfono') {
-            btnClass = 'bg-teal-dark';
+            btnClass = 'bg-teal-dark w-100';
             icon = '<i class="bi bi-telephone"></i>';
         } else if (medio == 'Correo') {
-            btnClass = 'bg-amber-light';
+            btnClass = 'bg-amber-light w-100';
             icon = '<i class="bi bi-envelope"></i>';
         }
 
-        return { btnClass, icon };
+        return {
+            btnClass,
+            icon
+        };
     }
 
     <?php if ($mensajeToast): ?>
@@ -266,4 +274,3 @@ function actualizarMedioContacto(id, nuevoMedio) {
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
