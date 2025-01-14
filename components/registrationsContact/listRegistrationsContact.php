@@ -71,18 +71,25 @@ if ($result && $result->num_rows > 0) {
         <thead class="thead-dark">
             <tr class="text-center">
                 <th>Tipo ID</th>
-                <th>Número ID</th>
+                <th>Número</th>
                 <th>Nombre Completo</th>
                 <th>Edad</th>
                 <th>Correo</th>
-                <th>Teléfono 1</th>
-                <th>Teléfono 2</th>
+                <th>Teléfono principal</th>
+                <th>Teléfono secundario</th>
                 <th>Medio de contacto</th>
-                <th>Programa</th>
+                <th>Contacto de emergencia</th>
+                <th>Teléfono del contacto</th>
+                <th>Nacionalidad</th>
                 <th>Departamento</th>
-                <th>Municipio</th>
-                <th>Dirección</th>
-                <th>Estado actual</th>
+                <th>municipio</th>
+                <th>Ocupación</th>
+                <th>Tiempo de obligaciones</th>
+                <th>Sede de elección</th>
+                <th>Programa de interes</th>
+                <th>Horario</th>
+                <th>Dispositivo</th>
+                <th>Estado</th>
                 <th>
                     <h2 type="button"
                         data-bs-toggle="tooltip" data-bs-placement="top"
@@ -104,44 +111,103 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['first_phone']); ?></td>
                     <td><?php echo htmlspecialchars($row['second_phone']); ?></td>
                     <td id="medioContacto_<?php echo $row['number_id']; ?>">
+                    <?php
+// Asigna la clase y el ícono según el valor de 'contactMedium'
+$btnClass = '';
+$btnText = htmlspecialchars($row['contactMedium']); // El texto que aparecerá en la tooltip
+$icon = ''; // Ícono correspondiente
+
+if ($row['contactMedium'] === 'WhatsApp') {
+    $btnClass = 'bg-lime-dark w-100 text-white'; // Verde para WhatsApp
+    $icon = '<i class="bi bi-whatsapp"></i>'; // Ícono de WhatsApp
+} elseif ($row['contactMedium'] === 'Teléfono') {
+    $btnClass = 'bg-teal-dark w-100 text-white'; // Azul para Teléfono
+    $icon = '<i class="bi bi-telephone"></i>'; // Ícono de Teléfono
+} elseif ($row['contactMedium'] === 'Correo') {
+    $btnClass = 'bg-orange-light w-100 '; // Amarillo para Correo
+    $icon = '<i class="bi bi-envelope"></i>'; // Ícono de Correo
+} else {
+    $btnClass = 'btn-secondary w-100'; // Clase genérica si no coincide
+    $icon = '<i class="bi bi-question-circle"></i>'; // Ícono genérico
+}
+
+// Mostrar el botón con la clase, ícono y tooltip correspondientes
+echo '<button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
+    data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">' . $icon . ' </button>';
+?>
+
+                    </td>
+
+                    <td><?php echo htmlspecialchars($row['emergency_contact_name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['emergency_contact_number']); ?></td>
+                    <td><?php echo htmlspecialchars($row['nationality']); ?></td>
+                    <td>
                         <?php
-                        // Asigna la clase y el ícono según el valor de 'contactMedium'
-                        $btnClass = '';
-                        $btnText = htmlspecialchars($row['contactMedium']); // El texto del botón
-                        $icon = ''; // Variable para el ícono
-
-                        if ($row['contactMedium'] == 'WhatsApp') {
-                            $btnClass = 'bg-lime-dark'; // Verde para WhatsApp
-                            $icon = '<i class="bi bi-whatsapp"></i>'; // Ícono de WhatsApp
-                        } elseif ($row['contactMedium'] == 'Teléfono') {
-                            $btnClass = 'bg-teal-dark'; // Azul para Teléfono
-                            $icon = '<i class="bi bi-telephone"></i>'; // Ícono de Teléfono
-                        } elseif ($row['contactMedium'] == 'Correo') {
-                            $btnClass = 'bg-amber-light'; // Amarillo para Correo
-                            $icon = '<i class="bi bi-envelope"></i>'; // Ícono de Correo
+                        $departamento = htmlspecialchars($row['departamento']);
+                        if ($departamento === 'CUNDINAMARCA') {
+                            echo '<button class="btn btn-info w-100">' . $departamento . '</button>'; // Botón verde para CUNDINAMARCA
+                        } elseif ($departamento === 'BOYACÁ') {
+                            echo '<button class="btn bg-indigo-light w-100">' . $departamento . '</button>'; // Botón azul para BOYACÁ
+                        } else {
+                            echo '<span>' . $departamento . '</span>'; // Texto normal para otros valores
                         }
-
-                        // Mostrar el botón con la clase y el ícono correspondiente
-                        echo '<button class="btn ' . $btnClass . '">' . $icon . ' ' . $btnText . '</button>';
                         ?>
                     </td>
 
-                    <td><?php echo htmlspecialchars($row['program']); ?></td>
-                    <td><?php echo htmlspecialchars($row['departamento']); ?></td>
                     <td><?php echo htmlspecialchars($row['municipio']); ?></td>
-                    <td><?php echo htmlspecialchars($row['address']); ?></td>
+                    <td><?php echo htmlspecialchars($row['occupation']); ?></td>
+                    <td><?php echo htmlspecialchars($row['time_obligations']); ?></td>
+                    <td><?php echo htmlspecialchars($row['headquarters']); ?></td>
+                    <td><?php echo htmlspecialchars($row['program']); ?></td>
+                    <td class="text-center">
+                        <button type="button" class="btn bg-indigo-light"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="<?php echo htmlspecialchars($row['schedules']); ?>">
+                            <i class="bi bi-clock-history"></i>
+                        </button>
+                    </td>
+                    <?php
+// Asigna la clase, ícono y texto del tooltip según el valor de 'technologies'
+$btnClass = '';
+$btnText = htmlspecialchars($row['technologies']); // El texto que aparecerá en la tooltip
+$icon = ''; // Ícono correspondiente
+
+if ($row['technologies'] === 'computador') {
+    $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
+    $icon = '<i class="bi bi-laptop"></i>'; // Ícono de computador
+} elseif ($row['technologies'] === 'smartphone') {
+    $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
+    $icon = '<i class="bi bi-phone"></i>'; // Ícono de smartphone
+} elseif ($row['technologies'] === 'tablet') {
+    $btnClass = 'bg-amber-light text-white'; // Clase para tablet
+    $icon = '<i class="bi bi-tablet"></i>'; // Ícono de tablet
+} else {
+    $btnClass = 'btn-secondary'; // Clase genérica si no coincide
+    $icon = '<i class="bi bi-question-circle"></i>'; // Ícono genérico
+}
+
+// Mostrar el botón con la clase, ícono y tooltip correspondientes
+echo '<td class="text-center">
+        <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
+        data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
+            ' . $icon . '
+        </button>
+      </td>';
+?>
+
                     <td>
                         <?php
                         // Mostrar el estado
                         switch ($row['status']) {
                             case '1':
-                                echo '<button class="btn bg-orange-dark w-100"><i class="bi bi-star-fill"></i> NUEVO</button>';
+                                echo '<button class="btn bg-orange-dark w-100"> NUEVO</button>';
                                 break;
                             case '2':
-                                echo '<button class="btn bg-teal-dark text-white w-100"><i class="bi bi-check2-circle"></i> ACEPTADO</button>';
+                                echo '<button class="btn bg-teal-dark text-white w-100">ACEPTADO</button>';
                                 break;
                             case '3':
-                                echo '<button class="btn bg-red-dark text-white w-100"><i class="bi bi-x-circle"></i> DENEGADO</button>';
+                                echo '<button class="btn bg-red-dark text-white w-100">DENEGADO</button>';
                                 break;
                             default:
                                 echo 'Estado desconocido';
