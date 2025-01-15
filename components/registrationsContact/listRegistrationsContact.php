@@ -91,12 +91,9 @@ if ($result && $result->num_rows > 0) {
                 <th>Dispositivo</th>
                 <th>Estado</th>
                 <th>
-                    <h2 type="button"
-                        data-bs-toggle="tooltip" data-bs-placement="top"
-                        data-bs-custom-class="custom-tooltip"
-                        data-bs-title="Cambiar medio de contacto">
-                        <i class="bi bi-arrow-left-right"></i>
-                    </h2>
+                    <button type="button" class="btn bg-magenta-dark text-white" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Cambiar medio de contacto">
+                        <i class="bi bi-toggles"></i>
+                    </button>
                 </th>
             </tr>
         </thead>
@@ -118,23 +115,28 @@ $btnText = htmlspecialchars($row['contactMedium']); // El texto que aparecerá e
 $icon = ''; // Ícono correspondiente
 
 if ($row['contactMedium'] === 'WhatsApp') {
-    $btnClass = 'bg-lime-dark w-100 text-white'; // Verde para WhatsApp
+    $btnClass = 'btn bg-lime-dark text-white'; // Verde para WhatsApp
     $icon = '<i class="bi bi-whatsapp"></i>'; // Ícono de WhatsApp
 } elseif ($row['contactMedium'] === 'Teléfono') {
-    $btnClass = 'bg-teal-dark w-100 text-white'; // Azul para Teléfono
+    $btnClass = 'btn bg-teal-dark text-white'; // Azul para Teléfono
     $icon = '<i class="bi bi-telephone"></i>'; // Ícono de Teléfono
 } elseif ($row['contactMedium'] === 'Correo') {
-    $btnClass = 'bg-orange-light w-100 '; // Amarillo para Correo
+    $btnClass = 'btn bg-orange-light'; // Amarillo para Correo
     $icon = '<i class="bi bi-envelope"></i>'; // Ícono de Correo
 } else {
-    $btnClass = 'btn-secondary w-100'; // Clase genérica si no coincide
+    $btnClass = 'btn btn-secondary'; // Clase genérica si no coincide
     $icon = '<i class="bi bi-question-circle"></i>'; // Ícono genérico
+    $btnText = 'Desconocido'; // Texto genérico
 }
 
 // Mostrar el botón con la clase, ícono y tooltip correspondientes
-echo '<button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
-    data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">' . $icon . ' </button>';
+echo '<button type="button" class="'.$btnClass.'" data-bs-toggle="tooltip" data-bs-placement="top" title="'.$btnText.'">'
+    .$icon.
+    '</button>';
 ?>
+
+
+
 
                     </td>
 
@@ -168,33 +170,33 @@ echo '<button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-pla
                         </button>
                     </td>
                     <?php
-// Asigna la clase, ícono y texto del tooltip según el valor de 'technologies'
-$btnClass = '';
-$btnText = htmlspecialchars($row['technologies']); // El texto que aparecerá en la tooltip
-$icon = ''; // Ícono correspondiente
+                    // Asigna la clase, ícono y texto del tooltip según el valor de 'technologies'
+                    $btnClass = '';
+                    $btnText = htmlspecialchars($row['technologies']); // El texto que aparecerá en la tooltip
+                    $icon = ''; // Ícono correspondiente
 
-if ($row['technologies'] === 'computador') {
-    $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
-    $icon = '<i class="bi bi-laptop"></i>'; // Ícono de computador
-} elseif ($row['technologies'] === 'smartphone') {
-    $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
-    $icon = '<i class="bi bi-phone"></i>'; // Ícono de smartphone
-} elseif ($row['technologies'] === 'tablet') {
-    $btnClass = 'bg-amber-light text-white'; // Clase para tablet
-    $icon = '<i class="bi bi-tablet"></i>'; // Ícono de tablet
-} else {
-    $btnClass = 'btn-secondary'; // Clase genérica si no coincide
-    $icon = '<i class="bi bi-question-circle"></i>'; // Ícono genérico
-}
+                    if ($row['technologies'] === 'computador') {
+                        $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
+                        $icon = '<i class="bi bi-laptop"></i>'; // Ícono de computador
+                    } elseif ($row['technologies'] === 'smartphone') {
+                        $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
+                        $icon = '<i class="bi bi-phone"></i>'; // Ícono de smartphone
+                    } elseif ($row['technologies'] === 'tablet') {
+                        $btnClass = 'bg-amber-light text-white'; // Clase para tablet
+                        $icon = '<i class="bi bi-tablet"></i>'; // Ícono de tablet
+                    } else {
+                        $btnClass = 'btn-secondary'; // Clase genérica si no coincide
+                        $icon = '<i class="bi bi-question-circle"></i>'; // Ícono genérico
+                    }
 
-// Mostrar el botón con la clase, ícono y tooltip correspondientes
-echo '<td class="text-center">
+                    // Mostrar el botón con la clase, ícono y tooltip correspondientes
+                    echo '<td class="text-center">
         <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
         data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
             ' . $icon . '
         </button>
       </td>';
-?>
+                    ?>
 
                     <td>
                         <?php
@@ -336,6 +338,7 @@ echo '<td class="text-center">
         toastr.success("<?php echo $mensajeToast; ?>");
     <?php endif; ?>
 </script>
+<script></script>
 
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
