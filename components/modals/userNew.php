@@ -69,21 +69,8 @@ if (isset($_POST['crearUsuario'])) {
     }
 }
 
-// Mostrar el mensaje en un toast (en la interfaz)
+// Mostrar el mensaje en un SweetAlert (en la interfaz)
 ?>
-
-<!-- Toast Container -->
-<div class="toast-container top-0 bottom-0 end-0 p-3">
-    <div id="liveToast" class="toast <?php echo $tipo_mensaje === 'success' ? 'bg-lime-light' : 'bg-amber-light'; ?>" role="alert" aria-live="assertive" aria-atomic="true" style="display: <?php echo !empty($mensaje) ? 'block' : 'none'; ?>;">
-        <div class="toast-header">
-            <strong class="me-auto"><i class="bi bi-exclamation-square-fill"></i> <?php echo $tipo_mensaje === 'success' ? 'Éxito' : 'Error'; ?></strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            <?php echo $mensaje; ?>
-        </div>
-    </div>
-</div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModalNuevoAdmin" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
@@ -136,12 +123,16 @@ if (isset($_POST['crearUsuario'])) {
 </div>
 
 <script>
-    // Mostrar el toast cuando haya un mensaje
     document.addEventListener('DOMContentLoaded', function() {
-        const toastEl = document.getElementById('liveToast');
-        if (toastEl && toastEl.style.display === 'block') {
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
+        <?php if (!empty($mensaje)): ?>
+            Swal.fire({
+                icon: '<?php echo $tipo_mensaje; ?>', // 'success' or 'error'
+                title: '<?php echo $tipo_mensaje === 'success' ? 'Éxito' : 'Error'; ?>',
+                text: '<?php echo $mensaje; ?>',
+                confirmButtonText: 'Aceptar',
+                timer: 5000, // Elimina la alerta después de 5 segundos
+                timerProgressBar: true, // Muestra una barra de progreso
+            });
+        <?php endif; ?>
     });
 </script>

@@ -25,18 +25,18 @@
                     <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReporte" data-bs-toggle="modal">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
-                            <i class="bi bi-person-lines-fill icono"></i>
+                            <i class="bi bi-people-fill icono"></i>
                             </span>
                             <span class="checkbox-label ">Ingresar</span>
                         </span>
                     </label>
                     </a>
                 </div>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir reparador">
-                    <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReparador" data-bs-toggle="modal">
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir asesor">
+                    <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoAsesor" data-bs-toggle="modal">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
-                                <i class="bi bi-tools icono"></i>
+                            <i class="bi bi-people-fill icono"></i>
                             </span>
                             <span class="checkbox-label">Añadir</span>
                         </span>

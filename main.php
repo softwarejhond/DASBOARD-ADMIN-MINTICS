@@ -39,6 +39,8 @@ $rol = $infoUsuario['rol'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Dashboard</title>
     <link rel="icon" href="https://css.mintic.gov.co/mt/mintic/new/img/logo_mintic_24_dark.svg" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
@@ -48,6 +50,7 @@ $rol = $infoUsuario['rol'];
     <?php include("controller/header.php"); ?>
     <?php include("components/sliderBar.php"); ?>
     <?php include("components/modals/userNew.php"); ?>
+    <?php include("components/modals/newAdvisor.php"); ?>
     <br><br>
     </body>
     <div style="margin-top: 50px;">
@@ -60,13 +63,14 @@ $rol = $infoUsuario['rol'];
                 <br><br>
                 <hr>
                 <?php include("components/contadoresCards.php"); ?>
+
+                <?php //include("components/aceptUsers/updateStatus.php");  ?>
                 <div class="row">
                     <div class="col-sm-12 col-md-3 col-lg-3">
-                        <?php //include("components/aceptUsers/updateStatus.php");  ?>
                         <?php include("components/graphics/gender.php");  ?>
                     </div>
-                    <div class="col-sm-12 col-md-12 col-lg-6">
-                        <br>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <?php include("components/graphics/stratum.php");  ?>
                     </div>
                 </div>
             </div>
@@ -82,6 +86,7 @@ $rol = $infoUsuario['rol'];
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.js"></script>
     <!-- <script src="js/real-time-update-contadores.js?v=0.3"></script> -->
     <script src="js/dataTables.js?v=0.2"></script>
     <script>

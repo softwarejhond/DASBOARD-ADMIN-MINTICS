@@ -44,6 +44,7 @@ $rol = $infoUsuario['rol'];
     <?php include("controller/header.php"); ?>
     <?php include("components/sliderBar.php"); ?>
     <?php include("components/modals/userNew.php"); ?>
+    <?php include("components/modals/newAdvisor.php"); ?>
     <br><br>
     </body>
     <div style="margin-top: 50px;">
