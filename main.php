@@ -15,7 +15,10 @@ include("components/filters/takeUser.php");
 
 $infoUsuario = obtenerInformacionUsuario(); // Obtén la información del usuario
 $rol = $infoUsuario['rol'];
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -36,6 +39,9 @@ $rol = $infoUsuario['rol'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Dashboard</title>
     <link rel="icon" href="https://css.mintic.gov.co/mt/mintic/new/img/logo_mintic_24_dark.svg" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 </head>
 
 <body style="background-color:white">
@@ -55,10 +61,9 @@ $rol = $infoUsuario['rol'];
                 <hr>
                 <?php include("components/contadoresCards.php"); ?>
                 <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-12">
-                        <?php //include("components/aceptUsers/updateStatus.php"); 
-                        
-                        ?>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <?php //include("components/aceptUsers/updateStatus.php");  ?>
+                        <?php include("components/graphics/gender.php");  ?>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6">
                         <br>
@@ -67,18 +72,18 @@ $rol = $infoUsuario['rol'];
             </div>
         </div>
     </div>
-    
+
+
+
     <?php include("controller/footer.php"); ?>
     <?php include("controller/botonFlotanteDerecho.php"); ?>
     <?php include("components/sliderBarBotton.php"); ?>
-
     <!-- Scripts de Bootstrap, DataTables y personalizaciones -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="js/real-time-update-contadores.js?v=0.3"></script>
+    <!-- <script src="js/real-time-update-contadores.js?v=0.3"></script> -->
     <script src="js/dataTables.js?v=0.2"></script>
-
     <script>
         $(document).ready(function() {
             $('#link-dashboard').addClass('pagina-activa');
@@ -94,6 +99,7 @@ $rol = $infoUsuario['rol'];
         });
     </script>
     <script>
+        /*
     // Función para hacer la solicitud AJAX y mostrar el total en una alerta
     function mostrarTotalEnAlerta() {
         // Hacer la solicitud AJAX al script PHP
@@ -108,6 +114,7 @@ $rol = $infoUsuario['rol'];
 
     // Llamar a la función al cargar la página
     window.onload = mostrarTotalEnAlerta;
+    */
 </script>
 
 </body>
