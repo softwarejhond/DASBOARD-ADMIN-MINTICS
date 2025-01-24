@@ -90,7 +90,7 @@ if ($result && $result->num_rows > 0) {
                 <th>Horario</th>
                 <th>Dispositivo</th>
                 <th>Internet</th>
-                <th>Estado</th>
+                <th>Resultado</th>
                 <th>
                     <button type="button" class="btn bg-magenta-dark text-white" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Cambiar medio de contacto">
                         <i class="bi bi-toggles"></i>
