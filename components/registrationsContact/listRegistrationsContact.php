@@ -20,13 +20,31 @@ if (isset($_POST['btnActualizarEstado'])) {
 }
 
 // Obtener los datos
-$sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
-        FROM user_register
-        INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
-        INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
-        WHERE departamentos.id_departamento IN (15, 25)
-        AND user_register.status = '1' 
-        ORDER BY user_register.first_name ASC";
+$sql = "SELECT 
+    user_register.*,
+    municipios.municipio, 
+    departamentos.departamento, 
+    advisors.name as advisor_name,
+    call_information.id as call_id, 
+    call_information.contact_established, 
+    call_information.detail, 
+    call_information.contact_medium,
+    call_information.still_interested, 
+    call_information.observation, 
+    call_information.registration_date as call_registration_date
+FROM user_register
+INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
+INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
+LEFT JOIN call_information ON user_register.number_id = call_information.user_register_id
+LEFT JOIN advisors ON call_information.advisor_id = advisors.idAdvisor
+WHERE departamentos.id_departamento IN (15, 25)
+AND user_register.status = '1'
+ORDER BY CASE 
+    WHEN call_information.id IS NULL THEN 1 
+    ELSE 0 
+END,
+user_register.first_name ASC";
+
 
 $result = $conn->query($sql);
 $data = [];
@@ -90,12 +108,9 @@ if ($result && $result->num_rows > 0) {
                 <th>Horario</th>
                 <th>Dispositivo</th>
                 <th>Internet</th>
-                <th>Resultado</th>
-                <th>
-                    <button type="button" class="btn bg-magenta-dark text-white" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Cambiar medio de contacto">
-                        <i class="bi bi-toggles"></i>
-                    </button>
-                </th>
+                <th>Estado</th>
+                <th>Medio de contacto</th>
+                <th>Información de llamada</th>
             </tr>
         </thead>
         <tbody>
@@ -198,29 +213,29 @@ if ($result && $result->num_rows > 0) {
         </button>
       </td>';
                     ?>
-                    
+
                     <?php
-                       $btnClass = '';
-                       $btnText = htmlspecialchars($row['internet']); // El texto que aparecerá en la tooltip
-                       $icon = ''; // Ícono correspondiente
-   
-                        // Mostrar el estado internet
-                        if ($row['internet'] === 'Sí') {
-                            $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
-                            $icon = '<i class="bi bi-router-fill"></i>'; // Ícono de computador
-                        } elseif ($row['internet'] === 'No') {
-                            $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
-                            $icon = '<i class="bi bi-wifi-off"></i>'; // Ícono de smartphone
-                        } 
-                          // Mostrar el botón con la clase, ícono y tooltip correspondientes
+                    $btnClass = '';
+                    $btnText = htmlspecialchars($row['internet']); // El texto que aparecerá en la tooltip
+                    $icon = ''; // Ícono correspondiente
+
+                    // Mostrar el estado internet
+                    if ($row['internet'] === 'Sí') {
+                        $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
+                        $icon = '<i class="bi bi-router-fill"></i>'; // Ícono de computador
+                    } elseif ($row['internet'] === 'No') {
+                        $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
+                        $icon = '<i class="bi bi-wifi-off"></i>'; // Ícono de smartphone
+                    }
+                    // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
                     <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
                     data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
                         ' . $icon . '
                     </button>
                   </td>'
-                        ?>
-                    
+                    ?>
+
                     <td>
                         <?php
                         // Mostrar el estado
@@ -246,9 +261,35 @@ if ($result && $result->num_rows > 0) {
                             data-bs-title="Cambiar medio de contacto">
                             <i class="bi bi-arrow-left-right"></i></button>
                     </td>
-
+                    <td>
+                        <button type="button" class="btn bg-indigo-light text-white" data-bs-toggle="modal" data-bs-target="#modalLlamada_<?php echo $row['number_id']; ?>">
+                            <i class="bi bi-telephone"></i>
+                        </button>
+                    </td>
                 </tr>
-            <?php endforeach; ?>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modalLlamada_<?php echo $row['number_id']; ?>" tabindex="-1" aria-labelledby="modalLlamadaLabel_<?php echo $row['number_id']; ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-indigo-dark">
+                                <h5 class="modal-title" id="modalLlamadaLabel_<?php echo $row['number_id']; ?>"><i class="bi bi-telephone"></i> Información de Llamada</h5>
+                                <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Asesor:</strong> <?php echo isset($row['advisor_name']) ? htmlspecialchars($row['advisor_name']) : 'No asignado'; ?></p>
+                                <p><strong>Medio de Contacto:</strong> <?php echo isset($row['contact_medium']) ? htmlspecialchars($row['contact_medium']) : 'No registrado'; ?></p>
+                                <p><strong>Detalle:</strong> <?php echo isset($row['detail']) ? htmlspecialchars($row['detail']) : 'Sin detalles'; ?></p>
+                                <p><strong>Estableció Contacto:</strong> <?php echo isset($row['contact_established']) ? htmlspecialchars($row['contact_established']) : 'No registrado'; ?></p>
+                                <p><strong>Aún Interesado:</strong> <?php echo isset($row['still_interested']) ? htmlspecialchars($row['still_interested']) : 'Sin información'; ?></p>
+                                <p><strong>Observación:</strong> <?php echo isset($row['observation']) ? htmlspecialchars($row['observation']) : 'Sin observaciones'; ?></p>
+                                <p><strong>Fecha de Registro:</strong> <?php echo isset($row['call_registration_date']) ? htmlspecialchars($row['call_registration_date']) : 'No registrado'; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php endforeach; ?>+
         </tbody>
     </table>
 </div>
@@ -361,7 +402,6 @@ if ($result && $result->num_rows > 0) {
         toastr.success("<?php echo $mensajeToast; ?>");
     <?php endif; ?>
 </script>
-<script></script>
 
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
