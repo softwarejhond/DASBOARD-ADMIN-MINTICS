@@ -7,15 +7,59 @@ if (isset($_POST['btnActualizarEstado'])) {
     $codigo = $_POST['codigo'];
     $nuevoEstado = $_POST['nuevoEstado'];
 
-    // Actualización en la base de datos
-    $updateSql = "UPDATE user_register SET status = ? WHERE number_id = ?";
-    $stmt = $conn->prepare($updateSql);
-    $stmt->bind_param('si', $nuevoEstado, $codigo);
+    // Obtener los datos del usuario para verificar las condiciones
+    $userSql = "SELECT * FROM user_register WHERE number_id = ?";
+    $stmtUser  = $conn->prepare($userSql);
+    $stmtUser ->bind_param('i', $codigo);
+    $stmtUser ->execute();
+    $resultUser  = $stmtUser ->get_result();
 
-    if ($stmt->execute()) {
-        $mensajeToast = 'Estado actualizado correctamente.';
+    if ($resultUser  && $resultUser ->num_rows > 0) {
+        $userData = $resultUser ->fetch_assoc();
+
+        // Calcular edad
+        $birthday = new DateTime($userData['birthdate']);
+        $now = new DateTime();
+        $age = $now->diff($birthday)->y;
+
+        // Verificar condiciones
+        $isAccepted = false;
+        if ($userData['mode'] === 'Presencial') {
+            if (
+                $userData['typeID'] === 'C.C' && $age > 17 &&
+                (strtoupper($userData['departament']) === 25 || strtoupper($userData['departament']) === 15) &&
+                $userData['internet'] === 'Sí'
+            ) {
+                $isAccepted = true;
+            }
+        } elseif ($userData['mode'] === 'Virtual') {
+            if (
+                $userData['typeID'] === 'C.C' && $age > 17 &&
+                (strtoupper($userData['departament']) === 25 || strtoupper($userData['departament']) === 15) &&
+                $userData['internet'] === 'Sí' &&
+                $userData['technologies'] === 'computador'
+            ) {
+                $isAccepted = true;
+            }
+        }
+
+        // Si se cumplen las condiciones, actualizar el estado a "ACEPTADO"
+        if ($isAccepted) {
+            $nuevoEstado = 'ACEPTADO'; // Cambiar el estado a "ACEPTADO"
+        }
+
+        // Actualización en la base de datos
+        $updateSql = "UPDATE user_register SET status = ? WHERE number_id = ?";
+        $stmt = $conn->prepare($updateSql);
+        $stmt->bind_param('si', $nuevoEstado, $codigo);
+
+        if ($stmt->execute()) {
+            $mensajeToast = 'Estado actualizado correctamente.';
+        } else {
+            $mensajeToast = "Error al actualizar el estado: {$stmt->error}"; // Muestra el error
+        }
     } else {
-        $mensajeToast = 'Error al actualizar el estado.';
+        $mensajeToast = 'Usuario no encontrado.';
     }
 }
 
@@ -28,29 +72,38 @@ $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
         AND user_register.status = '1' 
         ORDER BY user_register.first_name ASC";
 
+$sqlContactLog = "SELECT cl.*, a.name AS advisor_name
+                  FROM contact_log cl
+                  LEFT JOIN advisors a ON cl.idAdvisor = a.id
+                  WHERE cl.number_id = ?";
+
 $result = $conn->query($sql);
 $data = [];
 
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $row['acciones'] = '
-    <td>
-    <form id="formActualizacionEstado' . $row["number_id"] . '" class="d-inline" method="POST" onsubmit="return actualizarEstado(' . $row["number_id"] . ', event);">
-        <input type="hidden" name="codigo" value="' . htmlspecialchars($row["number_id"]) . '">
-        <div class="input-group">
-            <select class="form-control" name="nuevoEstado" required>
-                <option value="1" ' . ($row["status"] == 'NUEVO' ? 'selected' : '') . '>NUEVO</option>
-                <option value="2" ' . ($row["status"] == 'ACEPTADO' ? 'selected' : '') . '>ACEPTADO</option>
-                <option value="3" ' . ($row["status"] == 'DENEGADO' ? 'selected' : '') . '>DENEGADO</option>
-            </select>
-            <div class="input-group-append">
-                <button type="submit" name="btnActualizarEstado" class="btn bg-indigo-dark text-white ">
-                    <i class="bi bi-pencil-fill"></i>
-                </button>
-            </div>
-        </div>
-    </form>
-</td>';
+        // Obtener los datos de contact_log para el número de ID actual
+        $stmtContactLog = $conn->prepare($sqlContactLog);
+        $stmtContactLog->bind_param('i', $row['number_id']);
+        $stmtContactLog->execute();
+        $resultContactLog = $stmtContactLog->get_result();
+        $contactLogs = $resultContactLog->fetch_all(MYSQLI_ASSOC);
+
+        // Si hay registros, asignar los valores
+        if (!empty($contactLogs)) {
+            $row['advisor_name'] = $contactLogs[0]['advisor_name'];
+            $row['detail'] = $contactLogs[0]['details'];
+            $row['contact_established'] = $contactLogs[0]['contact_established'];
+            $row['still_interested'] = $contactLogs[0]['continues_interested'];
+            $row['observation'] = $contactLogs[0]['observation'];
+        } else {
+            // Si no hay registros, asignar valores por defecto
+            $row['advisor_name'] = 'No registrado';
+            $row['detail'] = 'Sin detalles';
+            $row['contact_established'] = 0; // Cambiado a 0
+            $row['still_interested'] = 0; // Cambiado a 0
+            $row['observation'] = 'Sin observaciones';
+        }
 
         // Calcular edad
         $birthday = new DateTime($row['birthdate']);
@@ -63,7 +116,6 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo '<div class="alert alert-info">No hay datos disponibles.</div>';
 }
-
 ?>
 
 <div class="table-responsive">
@@ -90,12 +142,9 @@ if ($result && $result->num_rows > 0) {
                 <th>Horario</th>
                 <th>Dispositivo</th>
                 <th>Internet</th>
-                <th>Resultado</th>
-                <th>
-                    <button type="button" class="btn bg-magenta-dark text-white" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Cambiar medio de contacto">
-                        <i class="bi bi-toggles"></i>
-                    </button>
-                </th>
+                <th>Estado</th>
+                <th>Medio de contacto</th>
+                <th>Información de llamada</th>
             </tr>
         </thead>
         <tbody>
@@ -135,10 +184,6 @@ if ($result && $result->num_rows > 0) {
                             . $icon .
                             '</button>';
                         ?>
-
-
-
-
                     </td>
 
                     <td><?php echo htmlspecialchars($row['emergency_contact_name']); ?></td>
@@ -148,11 +193,11 @@ if ($result && $result->num_rows > 0) {
                         <?php
                         $departamento = htmlspecialchars($row['departamento']);
                         if ($departamento === 'CUNDINAMARCA') {
-                            echo '<button class="btn bg-lime-light w-100"><b>' . $departamento . '</b></button>'; // Botón verde para CUNDINAMARCA
+                            echo "<button class='btn bg-lime-light w-100'><b>{$departamento}</b></button>"; // Botón verde para CUNDINAMARCA
                         } elseif ($departamento === 'BOYACÁ') {
-                            echo '<button class="btn bg-indigo-light w-100"><b>' . $departamento . '</b></button>'; // Botón azul para BOYACÁ
+                            echo "<button class='btn bg-indigo-light w-100'><b>{$departamento}</b></button>"; // Botón azul para BOYACÁ
                         } else {
-                            echo '<span>' . $departamento . '</span>'; // Texto normal para otros valores
+                            echo "<span>{$departamento}</span>"; // Texto normal para otros valores
                         }
                         ?>
                     </td>
@@ -198,45 +243,56 @@ if ($result && $result->num_rows > 0) {
         </button>
       </td>';
                     ?>
-                    
+
                     <?php
-                       $btnClass = '';
-                       $btnText = htmlspecialchars($row['internet']); // El texto que aparecerá en la tooltip
-                       $icon = ''; // Ícono correspondiente
-   
-                        // Mostrar el estado internet
-                        if ($row['internet'] === 'Sí') {
-                            $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
-                            $icon = '<i class="bi bi-router-fill"></i>'; // Ícono de computador
-                        } elseif ($row['internet'] === 'No') {
-                            $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
-                            $icon = '<i class="bi bi-wifi-off"></i>'; // Ícono de smartphone
-                        } 
-                          // Mostrar el botón con la clase, ícono y tooltip correspondientes
+                    $btnClass = '';
+                    $btnText = htmlspecialchars($row['internet']); // El texto que aparecerá en la tooltip
+                    $icon = ''; // Ícono correspondiente
+
+                    // Mostrar el estado internet
+                    if ($row['internet'] === 'Sí') {
+                        $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
+                        $icon = '<i class="bi bi-router-fill"></i>'; // Ícono de computador
+                    } elseif ($row['internet'] === 'No') {
+                        $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
+                        $icon = '<i class="bi bi-wifi-off"></i>'; // Ícono de smartphone
+                    }
+                    // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
                     <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
                     data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
                         ' . $icon . '
                     </button>
                   </td>'
-                        ?>
-                    
+                    ?>
+
                     <td>
                         <?php
-                        // Mostrar el estado
-                        switch ($row['status']) {
-                            case '1':
-                                echo '<button class="btn bg-orange-dark w-100"> NUEVO</button>';
-                                break;
-                            case '2':
-                                echo '<button class="btn bg-teal-dark text-white w-100">ACEPTADO</button>';
-                                break;
-                            case '3':
-                                echo '<button class="btn bg-red-dark text-white w-100">DENEGADO</button>';
-                                break;
-                            default:
-                                echo 'Estado desconocido';
-                                break;
+                        // Verificar condiciones para cada registro
+                        $isAccepted = false;
+                        if ($row['mode'] === 'Presencial') {
+                            if (
+                                $row['typeID'] === 'C.C' && $row['age'] > 17 &&
+                                (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
+                                $row['internet'] === 'Sí'
+                            ) {
+                                $isAccepted = true;
+                            }
+                        } elseif ($row['mode'] === 'Virtual') {
+                            if (
+                                $row['typeID'] === 'C.C' && $row['age'] > 17 &&
+                                (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
+                                $row['internet'] === 'Sí' &&
+                                $row['technologies'] === 'computador'
+                            ) {
+                                $isAccepted = true;
+                            }
+                        }
+
+                        if ($isAccepted) {
+                            echo '<button class="btn bg-teal-dark w-100">CUMPLE</button>';
+                        } else {
+                            echo '<button class="btn bg-danger text-white w-100">NO CUMPLE</button>';
                         }
                         ?>
                     </td>
@@ -246,8 +302,67 @@ if ($result && $result->num_rows > 0) {
                             data-bs-title="Cambiar medio de contacto">
                             <i class="bi bi-arrow-left-right"></i></button>
                     </td>
-
+                    <td class="text-center">
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalLlamada_<?php echo $row['number_id']; ?>">
+                            <i class="bi bi-telephone"></i>
+                        </button>
+                    </td>
                 </tr>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modalLlamada_<?php echo $row['number_id']; ?>" tabindex="-1" aria-labelledby="modalLlamadaLabel_<?php echo $row['number_id']; ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-indigo-dark">
+                                <h5 class="modal-title" id="modalLlamadaLabel_<?php echo $row['number_id']; ?>"><i class="bi bi-telephone"></i> Información de Llamada</h5>
+                                <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="formActualizarLlamada_<?php echo $row['number_id']; ?>" method="POST" onsubmit="return actualizarLlamada(<?php echo $row['number_id']; ?>)">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <p><strong>Asesor actual:</strong> <?php echo htmlspecialchars($row['advisor_name']); ?></p>
+                                        <input type="hidden" name="advisor_name" value="<?php echo htmlspecialchars($row['advisor_name']); ?>">
+                                        <p><strong>ID de asesor:</strong> <?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></p>
+                                    </div>
+                                    <hr class="hr" />
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Detalle:</strong></label>
+                                        <select class="form-control" name="details">
+                                            <option value="Sin detalles" <?php if ($row['detail'] == 'Sin detalles') echo 'selected'; ?>>Sin detalles</option>
+                                            <option value="Número equivocado" <?php if ($row['detail'] == 'Número equivocado') echo 'selected'; ?>>Número equivocado</option>
+                                            <option value="Teléfono apagado" <?php if ($row['detail'] == 'Teléfono apagado') echo 'selected'; ?>>Teléfono apagado</option>
+                                            <option value="Teléfono desconectado" <?php if ($row['detail'] == 'Teléfono desconectado') echo 'selected'; ?>>Teléfono desconectado</option>
+                                            <option value="Sin señal" <?php if ($row['detail'] == 'Sin señal') echo 'selected'; ?>>Sin señal</option>
+                                            <option value="No contestan" <?php if ($row['detail'] == 'No contestan') echo 'selected'; ?>>No contestan</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Estableció Contacto:</strong></label>
+                                        <select class="form-control" name="contact_established">
+                                            <option value="0" <?php if ($row['contact_established'] == 0) echo 'selected'; ?>>No</option>
+                                            <option value="1" <?php if ($row['contact_established'] == 1) echo 'selected'; ?>>Sí</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Aún Interesado:</strong></label>
+                                        <select class="form-control" name="continues_interested">
+                                            <option value="0" <?php if ($row['still_interested'] == 0) echo 'selected'; ?>>No</option>
+                                            <option value="1" <?php if ($row['still_interested'] == 1) echo 'selected'; ?>>Sí</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Observación:</strong></label>
+                                        <textarea rows="3" class="form-control" name="observation"><?php echo htmlspecialchars($row['observation']); ?></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer position-relative d-flex justify-content-center">
+                                    <button type="submit" class="btn bg-indigo-dark text-white">Actualizar Información</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             <?php endforeach; ?>
         </tbody>
     </table>
@@ -308,7 +423,6 @@ if ($result && $result->num_rows > 0) {
         });
     }
 
-
     function actualizarMedioContacto(id, nuevoMedio) {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_medio_contacto.php", true);
@@ -334,7 +448,6 @@ if ($result && $result->num_rows > 0) {
         xhr.send("id=" + id + "&nuevoMedio=" + encodeURIComponent(nuevoMedio));
     }
 
-
     // Función para obtener la clase del botón según el medio de contacto
     function getBtnClass(medio) {
         let btnClass = '';
@@ -357,12 +470,44 @@ if ($result && $result->num_rows > 0) {
         };
     }
 
-    <?php if ($mensajeToast): ?>
-        toastr.success("<?php echo $mensajeToast; ?>");
-    <?php endif; ?>
-</script>
-<script></script>
+    function actualizarLlamada(id) {
+        const form = document.getElementById('formActualizarLlamada_' + id);
+        if (!form) {
+            console.error('Formulario no encontrado');
+            return false;
+        }
 
+        const formData = new FormData(form);
+        formData.append('number_id', id);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_llamada.php", true);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    const response = xhr.responseText;
+                    if (response.trim() === "success") {
+                        toastr.success("La información de la llamada se actualizó correctamente.");
+                        location.reload();
+                    } else {
+                        toastr.error("Error: " + response);
+                    }
+                } else {
+                    toastr.error("Error en la conexión con el servidor");
+                }
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error("Error de red");
+            toastr.error("Error de conexión");
+        };
+
+        xhr.send(formData);
+        return false;
+    }
+</script>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

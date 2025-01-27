@@ -1,9 +1,9 @@
 <?php
 //datos del servidor
 $server = "localhost";
-$username = "u609911669_dashboard";
-$password = "Oikid@a#ip6g";
-$bd = "u609911669_dashboard";
+$username = "root";
+$password = "";
+$bd = "dashboard";
 //creamos una conexión
 $conn = mysqli_connect($server, $username, $password, $bd);
 //Chequeamos la conexión
