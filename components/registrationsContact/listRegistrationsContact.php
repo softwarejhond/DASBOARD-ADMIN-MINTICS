@@ -9,13 +9,13 @@ if (isset($_POST['btnActualizarEstado'])) {
 
     // Obtener los datos del usuario para verificar las condiciones
     $userSql = "SELECT * FROM user_register WHERE number_id = ?";
-    $stmtUser    = $conn->prepare($userSql);
-    $stmtUser->bind_param('i', $codigo);
-    $stmtUser->execute();
-    $resultUser    = $stmtUser->get_result();
+    $stmtUser  = $conn->prepare($userSql);
+    $stmtUser ->bind_param('i', $codigo);
+    $stmtUser ->execute();
+    $resultUser  = $stmtUser ->get_result();
 
-    if ($resultUser    && $resultUser->num_rows > 0) {
-        $userData = $resultUser->fetch_assoc();
+    if ($resultUser  && $resultUser ->num_rows > 0) {
+        $userData = $resultUser ->fetch_assoc();
 
         // Calcular edad
         $birthday = new DateTime($userData['birthdate']);
@@ -43,16 +43,10 @@ if (isset($_POST['btnActualizarEstado'])) {
             }
         }
 
-        // Debug: Verificar si se cumplen las condiciones
-        var_dump($isAccepted); // Muestra si se cumplen las condiciones
-
         // Si se cumplen las condiciones, actualizar el estado a "ACEPTADO"
         if ($isAccepted) {
             $nuevoEstado = 'ACEPTADO'; // Cambiar el estado a "ACEPTADO"
         }
-
-        // Debug: Verificar el nuevo estado
-        var_dump($nuevoEstado); // Muestra el nuevo estado antes de la actualización
 
         // Actualización en la base de datos
         $updateSql = "UPDATE user_register SET status = ? WHERE number_id = ?";
@@ -102,16 +96,13 @@ if ($result && $result->num_rows > 0) {
             $row['contact_established'] = $contactLogs[0]['contact_established'];
             $row['still_interested'] = $contactLogs[0]['continues_interested'];
             $row['observation'] = $contactLogs[0]['observation'];
-            $row['call_registration_date'] = $contactLogs[0]['contact_date'];
         } else {
             // Si no hay registros, asignar valores por defecto
             $row['advisor_name'] = 'No registrado';
-            $row['contact_medium'] = 'No registrado';
             $row['detail'] = 'Sin detalles';
-            $row['contact_established'] = 'No registrado';
-            $row['still_interested'] = 'Sin información';
+            $row['contact_established'] = 0; // Cambiado a 0
+            $row['still_interested'] = 0; // Cambiado a 0
             $row['observation'] = 'Sin observaciones';
-            $row['call_registration_date'] = 'No registrado';
         }
 
         // Calcular edad
@@ -332,7 +323,6 @@ if ($result && $result->num_rows > 0) {
                                         <p><strong>Asesor actual:</strong> <?php echo htmlspecialchars($row['advisor_name']); ?></p>
                                         <input type="hidden" name="advisor_name" value="<?php echo htmlspecialchars($row['advisor_name']); ?>">
                                         <p><strong>ID de asesor:</strong> <?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></p>
-
                                     </div>
                                     <hr class="hr" />
                                     <div class="mb-3">
@@ -372,7 +362,6 @@ if ($result && $result->num_rows > 0) {
                         </div>
                     </div>
                 </div>
-
 
             <?php endforeach; ?>
         </tbody>
@@ -482,9 +471,6 @@ if ($result && $result->num_rows > 0) {
     }
 
     function actualizarLlamada(id) {
-        // Debug para ver si la función se ejecuta
-        console.log('Iniciando actualización para ID:', id);
-
         const form = document.getElementById('formActualizarLlamada_' + id);
         if (!form) {
             console.error('Formulario no encontrado');
@@ -494,35 +480,21 @@ if ($result && $result->num_rows > 0) {
         const formData = new FormData(form);
         formData.append('number_id', id);
 
-        // Debug para ver datos del formulario
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
-
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_llamada.php", true);
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
-                console.log("Estado:", xhr.status);
-                console.log("Respuesta:", xhr.responseText);
-
                 if (xhr.status == 200) {
-                    try {
-                        const response = xhr.responseText;
-                        if (response.trim() === "success") {
-                            alert.success("La información de la llamada se actualizó correctamente.");
-                            // Recargar la página o actualizar la tabla
-                            location.reload();
-                        } else {
-                            alert.error("Error: " + response);
-                        }
-                    } catch (e) {
-                        console.error('Error al procesar respuesta:', e);
-                        alert.error("Error al procesar la respuesta del servidor");
+                    const response = xhr.responseText;
+                    if (response.trim() === "success") {
+                        toastr.success("La información de la llamada se actualizó correctamente.");
+                        location.reload();
+                    } else {
+                        toastr.error("Error: " + response);
                     }
                 } else {
-                    alert.error("Error en la conexión con el servidor");
+                    toastr.error("Error en la conexión con el servidor");
                 }
             }
         };

@@ -13,24 +13,14 @@ if (!isset($conn) || !$conn) {
 // Verificar que los datos necesarios se hayan enviado mediante POST
 if (isset($_POST['number_id']) && isset($_POST['advisor_name']) && isset($_POST['details']) && 
     isset($_POST['contact_established']) && isset($_POST['continues_interested']) && 
-    isset($_POST['observation']) && isset($_POST['contact_date'])) {
+    isset($_POST['observation'])) {
     
-    // Depuración: Verifica los valores recibidos
-    error_log("ID recibido: " . $_POST['number_id']);
-    error_log("Asesor recibido: " . $_POST['advisor_name']);
-    error_log("Detalles recibidos: " . $_POST['details']);
-    error_log("Contacto establecido recibido: " . $_POST['contact_established']);
-    error_log("Continúa interesado recibido: " . $_POST['continues_interested']);
-    error_log("Observación recibida: " . $_POST['observation']);
-    error_log("Fecha de contacto recibida: " . $_POST['contact_date']);
-
     $number_id = $_POST['number_id'];
     $advisor_name = $_POST['advisor_name'];
     $details = $_POST['details'];
-    $contact_established = $_POST['contact_established'];
-    $continues_interested = $_POST['continues_interested'];
+    $contact_established = intval($_POST['contact_established']); // Convertir a entero
+    $continues_interested = intval($_POST['continues_interested']); // Convertir a entero
     $observation = $_POST['observation'];
-    $contact_date = $_POST['contact_date'];
 
     // Verificar que el number_id sea un número entero
     if (!is_numeric($number_id)) {
@@ -38,40 +28,59 @@ if (isset($_POST['number_id']) && isset($_POST['advisor_name']) && isset($_POST[
         exit;
     }
 
+    // Obtener el ID del asesor
+    $advisorQuery = "SELECT id FROM advisors WHERE name = ?";
+    $stmtAdvisor = $conn->prepare($advisorQuery);
+    $stmtAdvisor->bind_param('s', $advisor_name);
+    $stmtAdvisor->execute();
+    $resultAdvisor = $stmtAdvisor->get_result();
+    
+    if ($resultAdvisor->num_rows > 0) {
+        $advisorRow = $resultAdvisor->fetch_assoc();
+        $advisor_id = $advisorRow['id'];
+    } else {
+        echo "advisor_not_found";
+        exit;
+    }
+
     // Consulta SQL para actualizar la información de llamadas
     $updateSql = "UPDATE contact_log 
-                  SET idAdvisor = (SELECT id FROM advisors WHERE name = ?), 
+                  SET idAdvisor = ?, 
                       details = ?, 
                       contact_established = ?, 
                       continues_interested = ?, 
-                      observation = ?, 
-                      contact_date = ? 
+                      observation = ? 
                   WHERE number_id = ?";
     $stmt = $conn->prepare($updateSql);
 
     if ($stmt) {
         // Vincular los parámetros para la consulta preparada
-        $stmt->bind_param('ssiiisi', $advisor_name, $details, $contact_established, $continues_interested, $observation, $contact_date, $number_id);
+        // Cambiar el orden de los parámetros para que coincida con la consulta
+        $stmt->bind_param('isiisi', 
+            $advisor_id, 
+            $details, 
+            $contact_established, 
+            $continues_interested, 
+            $observation, 
+            $number_id
+        );
 
         // Ejecutar la consulta
         if ($stmt->execute()) {
             echo "success"; // Devolver éxito si la actualización fue exitosa
         } else {
-            // Log de error para depuración
-            error_log("Error en la ejecución de la consulta: " . $stmt->error);
-            echo "error"; // Devolver error si hubo un problema con la consulta
+            // Mostrar el error específico para depuración
+            echo "error: " . $stmt->error;
         }
 
         // Cerrar la consulta preparada
         $stmt->close();
     } else {
-        // Log de error si la preparación de la consulta falló
-        error_log("Error al preparar la consulta: " . $conn->error);
-        echo "error"; // Si la preparación de la consulta falló
+        // Mostrar el error de preparación de la consulta
+        echo "prepare_error: " . $conn->error;
     }
 } else {
-    // Log de error si no se enviaron los datos requeridos
-    error_log("Datos no enviados correctamente: " . json_encode($_POST));
-    echo "invalid_data"; // Si no se enviaron los datos requeridos
+    // Mostrar qué datos específicos faltan
+    echo "invalid_data. Datos recibidos: " . json_encode($_POST);
 }
 ?>
