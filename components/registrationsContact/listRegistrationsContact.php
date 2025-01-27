@@ -65,12 +65,12 @@ if (isset($_POST['btnActualizarEstado'])) {
 
 // Obtener los datos
 $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
-        FROM user_register
-        INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
-        INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
-        WHERE departamentos.id_departamento IN (15, 25)
-        AND user_register.status = '1' 
-        ORDER BY user_register.first_name ASC";
+    FROM user_register
+    INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
+    INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
+    WHERE departamentos.id_departamento IN (15, 25)
+    AND user_register.status = '1' 
+    ORDER BY user_register.first_name ASC";
 
 $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
                   FROM contact_log cl
@@ -124,6 +124,7 @@ if ($result && $result->num_rows > 0) {
             <tr class="text-center">
                 <th>Tipo ID</th>
                 <th>Número</th>
+                <th>Foto de ID</th>
                 <th>Nombre Completo</th>
                 <th>Edad</th>
                 <th>Correo</th>
@@ -152,6 +153,41 @@ if ($result && $result->num_rows > 0) {
                 <tr>
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                     <td><?php echo htmlspecialchars($row['number_id']); ?></td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalID_<?php echo $row['number_id']; ?>">
+                            <i class="bi bi-card-image"></i>
+                        </button>
+
+                        <!-- Modal para mostrar las imágenes -->
+                        <div class="modal fade" id="modalID_<?php echo $row['number_id']; ?>" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-indigo-dark">
+                                        <h5 class="modal-title">Imágenes de Identificación</h5>
+                                        <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-12 mb-4">
+                                                <h6>Frente del documento</h6>
+                                                <img src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>" 
+                                                     class="img-fluid w-100" 
+                                                     style="max-height: 400px; object-fit: contain;"
+                                                     alt="Frente ID">
+                                            </div>
+                                            <div class="col-12">
+                                                <h6>Reverso del documento</h6>
+                                                <img src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>" 
+                                                     class="img-fluid w-100"
+                                                     style="max-height: 400px; object-fit: contain;" 
+                                                     alt="Reverso ID">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                     <td><?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['second_name']) . ' ' . htmlspecialchars($row['first_last']) . ' ' . htmlspecialchars($row['second_last']); ?></td>
                     <td><?php echo $row['age']; ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
