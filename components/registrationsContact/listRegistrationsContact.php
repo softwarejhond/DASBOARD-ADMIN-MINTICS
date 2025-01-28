@@ -357,31 +357,58 @@ if ($result && $result->num_rows > 0) {
                             </div>
                             <form id="formActualizarLlamada_<?php echo $row['number_id']; ?>" method="POST" onsubmit="return actualizarLlamada(<?php echo $row['number_id']; ?>)">
                                 <div class="modal-body">
+
+                                    <div class="mb-3"><u><strong>Asesor actual:</strong></u></div>
+                                    <hr class="hr" />
                                     <div class="mb-3">
+
                                         <label class="form-label"><strong>ID de asesor:</strong></label>
-                                        <input type="text" class="form-control" name="idAdvisor" value="<?php echo htmlspecialchars($row['idAdvisor']); ?>" readonly>
+                                        <input type="text" class="form-control" name="idAdvisor" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
 
                                         <div class="mb-3">
-                                            <label class="form-label"><strong>Asesor:</strong></label>
-                                            <select class="form-control" disabled>
-                                                <?php
+                                            <label class="form-label"><strong>Nombre:</strong></label>
+                                            <input type="text" class="form-control" readonly value="<?php
                                                 // Consulta para obtener todos los asesores
                                                 $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
                                                 $resultAsesores = $conn->query($sqlAsesores);
 
-                                                // Mostrar opción por defecto
-                                                echo '<option value="">Seleccione un asesor</option>';
-
-                                                // Mostrar cada asesor como una opción
+                                                // Buscar y mostrar el nombre del asesor correspondiente
                                                 if ($resultAsesores && $resultAsesores->num_rows > 0) {
                                                     while ($asesor = $resultAsesores->fetch_assoc()) {
-                                                        $selected = ($asesor['idAdvisor'] == $row['idAdvisor']) ? 'selected' : '';
-                                                        echo '<option value="' . $asesor['idAdvisor'] . '" ' . $selected . '>' .
-                                                            htmlspecialchars($asesor['name']) . '</option>';
+                                                        if ($asesor['idAdvisor'] == $_SESSION['username']) {
+                                                            echo htmlspecialchars($asesor['name']);
+                                                            break;
+                                                        }
                                                     }
                                                 }
-                                                ?>
-                                            </select>
+                                            ?>">
+                                        </div>
+                                    </div>
+                                    <hr class="hr" />
+
+                                    <div class="mb-3"><strong>Asesor de anterior llamada:</strong></div>
+                                    <div class="mb-3">
+                                        
+                                        <label class="form-label"><strong>ID de asesor:</strong></label>
+                                        <input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($row['idAdvisor']); ?>">
+
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>Nombre:</strong></label>
+                                            <input type="text" class="form-control" readonly value="<?php
+                                                // Consulta para obtener todos los asesores
+                                                $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                $resultAsesores = $conn->query($sqlAsesores);
+
+                                                // Buscar y mostrar el nombre del asesor correspondiente
+                                                if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                    while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                        if ($asesor['idAdvisor'] == $row['idAdvisor']) {
+                                                            echo htmlspecialchars($asesor['name']);
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            ?>">
                                         </div>
                                     </div>
                                     <hr class="hr" />
@@ -548,13 +575,12 @@ if ($result && $result->num_rows > 0) {
                 if (xhr.status == 200) {
                     const response = xhr.responseText;
                     if (response.trim() === "success") {
-                        toastr.success("La información de la llamada se actualizó correctamente.");
                         location.reload();
                     } else {
-                        toastr.error("Error: " + response);
+                        console.error("Error: " + response);
                     }
                 } else {
-                    toastr.error("Error en la conexión con el servidor");
+                    console.error("Error en la conexión con el servidor");
                 }
             }
         };
