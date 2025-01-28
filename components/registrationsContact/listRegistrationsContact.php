@@ -9,13 +9,13 @@ if (isset($_POST['btnActualizarEstado'])) {
 
     // Obtener los datos del usuario para verificar las condiciones
     $userSql = "SELECT * FROM user_register WHERE number_id = ?";
-    $stmtUser  = $conn->prepare($userSql);
-    $stmtUser ->bind_param('i', $codigo);
-    $stmtUser ->execute();
-    $resultUser  = $stmtUser ->get_result();
+    $stmtUser   = $conn->prepare($userSql);
+    $stmtUser->bind_param('i', $codigo);
+    $stmtUser->execute();
+    $resultUser  = $stmtUser->get_result();
 
-    if ($resultUser  && $resultUser ->num_rows > 0) {
-        $userData = $resultUser ->fetch_assoc();
+    if ($resultUser  && $resultUser->num_rows > 0) {
+        $userData = $resultUser->fetch_assoc();
 
         // Calcular edad
         $birthday = new DateTime($userData['birthdate']);
@@ -91,14 +91,16 @@ if ($result && $result->num_rows > 0) {
 
         // Si hay registros, asignar los valores
         if (!empty($contactLogs)) {
-            $row['advisor_name'] = $contactLogs[0]['advisor_name'];
+            $row['idAdvisor'] = $contactLogs[0]['idAdvisor'];
+            $row['advisor_name'] = $contactLogs[0]['advisor_name']; // Nombre del asesor
             $row['detail'] = $contactLogs[0]['details'];
             $row['contact_established'] = $contactLogs[0]['contact_established'];
             $row['still_interested'] = $contactLogs[0]['continues_interested'];
             $row['observation'] = $contactLogs[0]['observation'];
         } else {
             // Si no hay registros, asignar valores por defecto
-            $row['advisor_name'] = 'No registrado';
+            $row['idAdvisor'] = 'No registrado';
+            $row['advisor_name'] = 'Sin asignar';
             $row['detail'] = 'Sin detalles';
             $row['contact_established'] = 0; // Cambiado a 0
             $row['still_interested'] = 0; // Cambiado a 0
@@ -135,11 +137,11 @@ if ($result && $result->num_rows > 0) {
                 <th>Teléfono del contacto</th>
                 <th>Nacionalidad</th>
                 <th>Departamento</th>
-                <th>municipio</th>
+                <th>Municipio</th>
                 <th>Ocupación</th>
                 <th>Tiempo de obligaciones</th>
                 <th>Sede de elección</th>
-                <th>Programa de interes</th>
+                <th>Programa de interés</th>
                 <th>Horario</th>
                 <th>Dispositivo</th>
                 <th>Internet</th>
@@ -170,17 +172,17 @@ if ($result && $result->num_rows > 0) {
                                         <div class="row">
                                             <div class="col-12 mb-4">
                                                 <h6>Frente del documento</h6>
-                                                <img src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>" 
-                                                     class="img-fluid w-100" 
-                                                     style="max-height: 400px; object-fit: contain;"
-                                                     alt="Frente ID">
+                                                <img src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
+                                                    class="img-fluid w-100"
+                                                    style="max-height: 400px; object-fit: contain;"
+                                                    alt="Frente ID">
                                             </div>
                                             <div class="col-12">
                                                 <h6>Reverso del documento</h6>
-                                                <img src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>" 
-                                                     class="img-fluid w-100"
-                                                     style="max-height: 400px; object-fit: contain;" 
-                                                     alt="Reverso ID">
+                                                <img src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
+                                                    class="img-fluid w-100"
+                                                    style="max-height: 400px; object-fit: contain;"
+                                                    alt="Reverso ID">
                                             </div>
                                         </div>
                                     </div>
@@ -356,9 +358,29 @@ if ($result && $result->num_rows > 0) {
                             <form id="formActualizarLlamada_<?php echo $row['number_id']; ?>" method="POST" onsubmit="return actualizarLlamada(<?php echo $row['number_id']; ?>)">
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <p><strong>Asesor actual:</strong> <?php echo htmlspecialchars($row['advisor_name']); ?></p>
-                                        <input type="hidden" name="advisor_name" value="<?php echo htmlspecialchars($row['advisor_name']); ?>">
-                                        <p><strong>ID de asesor:</strong> <?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></p>
+                                        <p><strong>ID de asesor:</strong> <?php echo htmlspecialchars($row['idAdvisor']); ?></p>
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>Asesor:</strong></label>
+                                            <select class="form-control" name="idAdvisor" required disabled>
+                                                <?php
+                                                // Consulta para obtener todos los asesores
+                                                $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                $resultAsesores = $conn->query($sqlAsesores);
+                                                
+                                                // Mostrar opción por defecto
+                                                echo '<option value="">Seleccione un asesor</option>';
+                                                
+                                                // Mostrar cada asesor como una opción
+                                                if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                    while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                        $selected = ($asesor['idAdvisor'] == $row['idAdvisor']) ? 'selected' : '';
+                                                        echo '<option value="' . $asesor['id'] . '" ' . $selected . '>' . 
+                                                            htmlspecialchars($asesor['name']) . '</option>';
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
                                     </div>
                                     <hr class="hr" />
                                     <div class="mb-3">
@@ -543,6 +565,15 @@ if ($result && $result->num_rows > 0) {
         xhr.send(formData);
         return false;
     }
+
+    xhr.onerror = function() {
+        console.error("Error de red");
+        toastr.error("Error de conexión");
+    };
+
+    xhr.send(formData);
+    return false;
+    
 </script>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
