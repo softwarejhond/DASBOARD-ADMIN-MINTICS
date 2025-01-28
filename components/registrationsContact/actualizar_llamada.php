@@ -30,8 +30,8 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
         exit;
     }
 
-    // Obtener el ID del asesor
-    $advisorQuery = "SELECT idAdvisor FROM advisors WHERE name = ?";
+    // Verificar si el asesor existe
+    $advisorQuery = "SELECT idAdvisor FROM advisors WHERE idAdvisor = ?";
     $stmtAdvisor = $conn->prepare($advisorQuery);
     $stmtAdvisor->bind_param('s', $idAdvisor);
     $stmtAdvisor->execute();

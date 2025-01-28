@@ -358,23 +358,25 @@ if ($result && $result->num_rows > 0) {
                             <form id="formActualizarLlamada_<?php echo $row['number_id']; ?>" method="POST" onsubmit="return actualizarLlamada(<?php echo $row['number_id']; ?>)">
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <p><strong>ID de asesor:</strong> <?php echo htmlspecialchars($row['idAdvisor']); ?></p>
+                                        <label class="form-label"><strong>ID de asesor:</strong></label>
+                                        <input type="text" class="form-control" name="idAdvisor" value="<?php echo htmlspecialchars($row['idAdvisor']); ?>" readonly>
+
                                         <div class="mb-3">
                                             <label class="form-label"><strong>Asesor:</strong></label>
-                                            <select class="form-control" name="idAdvisor" required disabled>
+                                            <select class="form-control" disabled>
                                                 <?php
                                                 // Consulta para obtener todos los asesores
                                                 $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
                                                 $resultAsesores = $conn->query($sqlAsesores);
-                                                
+
                                                 // Mostrar opción por defecto
                                                 echo '<option value="">Seleccione un asesor</option>';
-                                                
+
                                                 // Mostrar cada asesor como una opción
                                                 if ($resultAsesores && $resultAsesores->num_rows > 0) {
                                                     while ($asesor = $resultAsesores->fetch_assoc()) {
                                                         $selected = ($asesor['idAdvisor'] == $row['idAdvisor']) ? 'selected' : '';
-                                                        echo '<option value="' . $asesor['id'] . '" ' . $selected . '>' . 
+                                                        echo '<option value="' . $asesor['idAdvisor'] . '" ' . $selected . '>' .
                                                             htmlspecialchars($asesor['name']) . '</option>';
                                                     }
                                                 }
@@ -565,15 +567,6 @@ if ($result && $result->num_rows > 0) {
         xhr.send(formData);
         return false;
     }
-
-    xhr.onerror = function() {
-        console.error("Error de red");
-        toastr.error("Error de conexión");
-    };
-
-    xhr.send(formData);
-    return false;
-    
 </script>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
