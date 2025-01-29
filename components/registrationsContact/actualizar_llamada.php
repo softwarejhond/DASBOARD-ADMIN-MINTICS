@@ -84,4 +84,8 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
 } else {
     // Mostrar qué datos específicos faltan
     echo "invalid_data. Datos recibidos: " . json_encode($_POST);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 78c60e265bce7915443d3a7cf0acdaed967325a7

@@ -443,7 +443,7 @@ if ($result && $result->num_rows > 0) {
                                     </div>
                                 </div>
                                 <div class="modal-footer position-relative d-flex justify-content-center">
-                                    <button type="submit" class="btn bg-indigo-dark text-white">Actualizar Información</button>
+                                    <button type="submit" class="btn bg-indigo-dark text-white" onclick="setTimeout(() => { location.reload(); }, 500);">Actualizar Información</button>
                                 </div>
                             </form>
                         </div>
@@ -575,9 +575,21 @@ if ($result && $result->num_rows > 0) {
                 if (xhr.status == 200) {
                     const response = xhr.responseText;
                     if (response.trim() === "success") {
+<<<<<<< HEAD
                         location.reload();
                     } else {
                         console.error("Error: " + response);
+=======
+                        // Close the modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
+                        modal.hide();
+                        
+                        // Update the call information in real-time
+                        updateCallInfo(id, formData);
+                    } else if (response.trim() === "success") {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
+                        modal.hide();
+>>>>>>> 78c60e265bce7915443d3a7cf0acdaed967325a7
                     }
                 } else {
                     console.error("Error en la conexión con el servidor");
@@ -586,12 +598,41 @@ if ($result && $result->num_rows > 0) {
         };
 
         xhr.onerror = function() {
-            console.error("Error de red");
             toastr.error("Error de conexión");
         };
 
         xhr.send(formData);
         return false;
+    }
+
+    function updateCallInfo(id, formData) {
+        // Get values from form data
+        const details = formData.get('details');
+        const contactEstablished = formData.get('contact_established') === '1' ? 'Sí' : 'No';
+        const stillInterested = formData.get('continues_interested') === '1' ? 'Sí' : 'No';
+        const observation = formData.get('observation');
+        const idAdvisor = formData.get('idAdvisor');
+
+        // Get current date and time
+        const now = new Date().toLocaleString();
+
+        // Update the modal content
+        const modalBody = document.querySelector(`#modalLlamada_${id} .modal-body`);
+        if (modalBody) {
+            // Update form fields
+            const detailsSelect = modalBody.querySelector('select[name="details"]');
+            const contactSelect = modalBody.querySelector('select[name="contact_established"]');
+            const interestedSelect = modalBody.querySelector('select[name="continues_interested"]');
+            const observationTextarea = modalBody.querySelector('textarea[name="observation"]');
+
+            if (detailsSelect) detailsSelect.value = details;
+            if (contactSelect) contactSelect.value = formData.get('contact_established');
+            if (interestedSelect) interestedSelect.value = formData.get('continues_interested');
+            if (observationTextarea) observationTextarea.value = observation;
+        }
+
+        // Show updating notification
+        toastr.info('Actualizando información...');
     }
 </script>
 
