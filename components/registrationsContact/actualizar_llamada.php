@@ -1,5 +1,7 @@
 <?php
-include_once('../../controller/conexion.php');
+include_once '../../controller/conexion.php';
+
+var_dump($_POST);
 
 // Habilitar reporte de errores para depuración
 error_reporting(E_ALL);
@@ -11,12 +13,12 @@ if (!isset($conn) || !$conn) {
 }
 
 // Verificar que los datos necesarios se hayan enviado mediante POST
-if (isset($_POST['number_id']) && isset($_POST['advisor_name']) && isset($_POST['details']) && 
+if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['details']) && 
     isset($_POST['contact_established']) && isset($_POST['continues_interested']) && 
     isset($_POST['observation'])) {
     
     $number_id = $_POST['number_id'];
-    $advisor_name = $_POST['advisor_name'];
+    $idAdvisor = $_POST['idAdvisor'];
     $details = $_POST['details'];
     $contact_established = intval($_POST['contact_established']); // Convertir a entero
     $continues_interested = intval($_POST['continues_interested']); // Convertir a entero
@@ -28,16 +30,16 @@ if (isset($_POST['number_id']) && isset($_POST['advisor_name']) && isset($_POST[
         exit;
     }
 
-    // Obtener el ID del asesor
-    $advisorQuery = "SELECT id FROM advisors WHERE name = ?";
+    // Verificar si el asesor existe
+    $advisorQuery = "SELECT idAdvisor FROM advisors WHERE idAdvisor = ?";
     $stmtAdvisor = $conn->prepare($advisorQuery);
-    $stmtAdvisor->bind_param('s', $advisor_name);
+    $stmtAdvisor->bind_param('s', $idAdvisor);
     $stmtAdvisor->execute();
     $resultAdvisor = $stmtAdvisor->get_result();
     
     if ($resultAdvisor->num_rows > 0) {
         $advisorRow = $resultAdvisor->fetch_assoc();
-        $advisor_id = $advisorRow['id'];
+        $advisor_id = $advisorRow['idAdvisor'];
     } else {
         echo "advisor_not_found";
         exit;
@@ -56,8 +58,8 @@ if (isset($_POST['number_id']) && isset($_POST['advisor_name']) && isset($_POST[
     if ($stmt) {
         // Vincular los parámetros para la consulta preparada
         // Cambiar el orden de los parámetros para que coincida con la consulta
-        $stmt->bind_param('isiisi', 
-            $advisor_id, 
+        $stmt->bind_param('ssiisi', 
+            $idAdvisor, 
             $details, 
             $contact_established, 
             $continues_interested, 
@@ -70,17 +72,16 @@ if (isset($_POST['number_id']) && isset($_POST['advisor_name']) && isset($_POST[
             echo "success"; // Devolver éxito si la actualización fue exitosa
         } else {
             // Mostrar el error específico para depuración
-            echo "error: " . $stmt->error;
+            echo "error: {$stmt->error}";
         }
 
         // Cerrar la consulta preparada
         $stmt->close();
     } else {
         // Mostrar el error de preparación de la consulta
-        echo "prepare_error: " . $conn->error;
+        echo "prepare_error: {$conn->error}";
     }
 } else {
     // Mostrar qué datos específicos faltan
     echo "invalid_data. Datos recibidos: " . json_encode($_POST);
 }
-?>
