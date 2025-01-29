@@ -1,5 +1,7 @@
 <?php
-// Mantén el código PHP para la conexión y demás operaciones
+
+require 'excel_export.php';
+
 $mensajeToast = ''; // Mensaje para el toast
 
 // Procesamiento de la actualización de estado
@@ -118,9 +120,13 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo '<div class="alert alert-info">No hay datos disponibles.</div>';
 }
+
 ?>
 
 <div class="table-responsive">
+    <button id="exportarExcel" class="btn btn-success mb-3">
+        <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+    </button>
     <table id="listaInscritos" class="table table-hover table-bordered">
         <thead class="thead-dark">
             <tr class="text-center">
@@ -368,47 +374,47 @@ if ($result && $result->num_rows > 0) {
                                         <div class="mb-3">
                                             <label class="form-label"><strong>Nombre:</strong></label>
                                             <input type="text" class="form-control" readonly value="<?php
-                                                // Consulta para obtener todos los asesores
-                                                $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
-                                                $resultAsesores = $conn->query($sqlAsesores);
+                                                                                                    // Consulta para obtener todos los asesores
+                                                                                                    $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                                                                    $resultAsesores = $conn->query($sqlAsesores);
 
-                                                // Buscar y mostrar el nombre del asesor correspondiente
-                                                if ($resultAsesores && $resultAsesores->num_rows > 0) {
-                                                    while ($asesor = $resultAsesores->fetch_assoc()) {
-                                                        if ($asesor['idAdvisor'] == $_SESSION['username']) {
-                                                            echo htmlspecialchars($asesor['name']);
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            ?>">
+                                                                                                    // Buscar y mostrar el nombre del asesor correspondiente
+                                                                                                    if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                                                                        while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                                                                            if ($asesor['idAdvisor'] == $_SESSION['username']) {
+                                                                                                                echo htmlspecialchars($asesor['name']);
+                                                                                                                break;
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                    ?>">
                                         </div>
                                     </div>
                                     <hr class="hr" />
 
                                     <div class="mb-3"><strong>Asesor de anterior llamada:</strong></div>
                                     <div class="mb-3">
-                                        
+
                                         <label class="form-label"><strong>ID de asesor:</strong></label>
                                         <input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($row['idAdvisor']); ?>">
 
                                         <div class="mb-3">
                                             <label class="form-label"><strong>Nombre:</strong></label>
                                             <input type="text" class="form-control" readonly value="<?php
-                                                // Consulta para obtener todos los asesores
-                                                $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
-                                                $resultAsesores = $conn->query($sqlAsesores);
+                                                                                                    // Consulta para obtener todos los asesores
+                                                                                                    $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                                                                    $resultAsesores = $conn->query($sqlAsesores);
 
-                                                // Buscar y mostrar el nombre del asesor correspondiente
-                                                if ($resultAsesores && $resultAsesores->num_rows > 0) {
-                                                    while ($asesor = $resultAsesores->fetch_assoc()) {
-                                                        if ($asesor['idAdvisor'] == $row['idAdvisor']) {
-                                                            echo htmlspecialchars($asesor['name']);
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            ?>">
+                                                                                                    // Buscar y mostrar el nombre del asesor correspondiente
+                                                                                                    if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                                                                        while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                                                                            if ($asesor['idAdvisor'] == $row['idAdvisor']) {
+                                                                                                                echo htmlspecialchars($asesor['name']);
+                                                                                                                break;
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                    ?>">
                                         </div>
                                     </div>
                                     <hr class="hr" />
@@ -583,7 +589,7 @@ if ($result && $result->num_rows > 0) {
                         // Close the modal
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
-                        
+
                         // Update the call information in real-time
                         updateCallInfo(id, formData);
                     } else if (response.trim() === "success") {
@@ -634,6 +640,10 @@ if ($result && $result->num_rows > 0) {
         // Show updating notification
         toastr.info('Actualizando información...');
     }
+
+    document.getElementById('exportarExcel').addEventListener('click', function() {
+        window.location.href = '?exportar=excel';
+    });
 </script>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
