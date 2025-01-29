@@ -1,7 +1,5 @@
 <?php
 
-require 'excel_export.php';
-
 $mensajeToast = ''; // Mensaje para el toast
 
 // Procesamiento de la actualización de estado
@@ -635,9 +633,6 @@ if ($result && $result->num_rows > 0) {
         toastr.info('Actualizando información...');
     }
 
-    document.getElementById('exportarExcel').addEventListener('click', function() {
-        window.location.href = '?exportar=excel';
-    });
 </script>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
