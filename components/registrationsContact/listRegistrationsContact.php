@@ -109,9 +109,9 @@ if ($result && $result->num_rows > 0) {
             $lastLog = end($contactLogs);
             $row['idAdvisor'] = $lastLog['idAdvisor'];
             $row['advisor_name'] = $lastLog['advisor_name'];
-            $row['details'] = $lastLog['details']; 
+            $row['details'] = $lastLog['details'];
             $row['contact_established'] = $lastLog['contact_established'];
-            $row['continues_interested'] = $lastLog['continues_interested']; 
+            $row['continues_interested'] = $lastLog['continues_interested'];
             $row['observation'] = $lastLog['observation'];
         } else {
             // Si no hay registros, asignar valores por defecto
@@ -177,91 +177,100 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                     <td><?php echo htmlspecialchars($row['number_id']); ?></td>
                     <td>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalID_<?php echo $row['number_id']; ?>">
-        <i class="bi bi-card-image"></i>
-    </button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalID_<?php echo $row['number_id']; ?>">
+                            <i class="bi bi-card-image"></i>
+                        </button>
 
-    <!-- Modal para mostrar las imágenes -->
-    <div class="modal fade" id="modalID_<?php echo $row['number_id']; ?>" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-indigo-dark">
-                    <h5 class="modal-title">Imágenes de Identificación</h5>
-                    <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body position-relative" style="overflow: visible;">
-                    <div class="row">
-                        <!-- Frente del documento -->
-                        <div class="col-12 mb-4 text-center">
-                            <h6>Frente del documento</h6>
-                            <div class="position-relative overflow-visible">
-                                <img id="idImageFront_<?php echo $row['number_id']; ?>" 
-                                    src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
-                                    class="img-fluid w-100 zoomable"
-                                    style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
-                                    alt="Frente ID"
-                                    onclick="toggleZoom('idImageFront_<?php echo $row['number_id']; ?>')">
-                            </div>
-                            <div class="mt-2">
-                                <button class="btn btn-primary" onclick="rotateImage('idImageFront_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
-                                <button class="btn btn-primary" onclick="rotateImage('idImageFront_<?php echo $row['number_id']; ?>', 90)">↻ Rotar Derecha</button>
+                        <!-- Modal para mostrar las imágenes -->
+                        <div class="modal fade" id="modalID_<?php echo $row['number_id']; ?>" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-indigo-dark">
+                                        <h5 class="modal-title">Imágenes de Identificación</h5>
+                                        <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body position-relative" style="overflow: visible;">
+                                        <div class="row">
+                                            <!-- Frente del documento -->
+                                            <div class="col-12 mb-4 text-center">
+                                                <h6>Frente del documento</h6>
+                                                <div class="position-relative overflow-visible">
+                                                    <img id="idImageFront_<?php echo $row['number_id']; ?>"
+                                                        src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
+                                                        class="img-fluid w-100 zoomable"
+                                                        style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
+                                                        alt="Frente ID"
+                                                        onclick="toggleZoom('idImageFront_<?php echo $row['number_id']; ?>')">
+                                                </div>
+                                                <div class="mt-2">
+                                                    <button class="btn btn-primary" onclick="rotateImage('idImageFront_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
+                                                    <button class="btn btn-primary" onclick="rotateImage('idImageFront_<?php echo $row['number_id']; ?>', 90)">↻ Rotar Derecha</button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Reverso del documento -->
+                                            <div class="col-12 text-center">
+                                                <h6>Reverso del documento</h6>
+                                                <div class="position-relative overflow-visible">
+                                                    <img id="idImageBack_<?php echo $row['number_id']; ?>"
+                                                        src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
+                                                        class="img-fluid w-100 zoomable"
+                                                        style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
+                                                        alt="Reverso ID"
+                                                        onclick="toggleZoom('idImageBack_<?php echo $row['number_id']; ?>')">
+                                                </div>
+                                                <div class="mt-2">
+                                                    <button class="btn btn-primary" onclick="rotateImage('idImageBack_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
+                                                    <button class="btn btn-primary" onclick="rotateImage('idImageBack_<?php echo $row['number_id']; ?>', 90)">↻ Rotar Derecha</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Reverso del documento -->
-                        <div class="col-12 text-center">
-                            <h6>Reverso del documento</h6>
-                            <div class="position-relative overflow-visible">
-                                <img id="idImageBack_<?php echo $row['number_id']; ?>" 
-                                    src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
-                                    class="img-fluid w-100 zoomable"
-                                    style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
-                                    alt="Reverso ID"
-                                    onclick="toggleZoom('idImageBack_<?php echo $row['number_id']; ?>')">
-                            </div>
-                            <div class="mt-2">
-                                <button class="btn btn-primary" onclick="rotateImage('idImageBack_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
-                                <button class="btn btn-primary" onclick="rotateImage('idImageBack_<?php echo $row['number_id']; ?>', 90)">↻ Rotar Derecha</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                        <script>
+                            // Verificar si la variable ya existe en el ámbito global
+                            if (typeof window.imageTransforms === 'undefined') {
+                                window.imageTransforms = {};
+                            }
 
-    <script>
-    // Verificar si la variable ya existe en el ámbito global
-    if (typeof window.imageTransforms === 'undefined') {
-        window.imageTransforms = {};
-    }
+                            function rotateImage(imageId, degrees) {
+                                if (!window.imageTransforms[imageId]) {
+                                    window.imageTransforms[imageId] = {
+                                        rotation: 0,
+                                        scale: 1
+                                    };
+                                }
+                                window.imageTransforms[imageId].rotation += degrees;
+                                applyTransform(imageId);
+                            }
 
-    function rotateImage(imageId, degrees) {
-        if (!window.imageTransforms[imageId]) {
-            window.imageTransforms[imageId] = { rotation: 0, scale: 1 };
-        }
-        window.imageTransforms[imageId].rotation += degrees;
-        applyTransform(imageId);
-    }
+                            function toggleZoom(imageId) {
+                                if (!window.imageTransforms[imageId]) {
+                                    window.imageTransforms[imageId] = {
+                                        rotation: 0,
+                                        scale: 1
+                                    };
+                                }
+                                window.imageTransforms[imageId].scale = window.imageTransforms[imageId].scale === 1 ? 2 : 1;
+                                applyTransform(imageId);
+                            }
 
-    function toggleZoom(imageId) {
-        if (!window.imageTransforms[imageId]) {
-            window.imageTransforms[imageId] = { rotation: 0, scale: 1 };
-        }
-        window.imageTransforms[imageId].scale = window.imageTransforms[imageId].scale === 1 ? 2 : 1;
-        applyTransform(imageId);
-    }
+                            function applyTransform(imageId) {
+                                let imgElement = document.getElementById(imageId);
+                                if (imgElement) {
+                                    let {
+                                        rotation,
+                                        scale
+                                    } = window.imageTransforms[imageId];
+                                    imgElement.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+                                }
+                            }
+                        </script>
 
-    function applyTransform(imageId) {
-        let imgElement = document.getElementById(imageId);
-        if (imgElement) {
-            let { rotation, scale } = window.imageTransforms[imageId];
-            imgElement.style.transform = `rotate(${rotation}deg) scale(${scale})`;
-        }
-    }
-</script>
-
-</td>
+                    </td>
 
                     <td><?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['second_name']) . ' ' . htmlspecialchars($row['first_last']) . ' ' . htmlspecialchars($row['second_last']); ?></td>
                     <td><?php echo $row['age']; ?></td>
@@ -664,40 +673,28 @@ if ($result && $result->num_rows > 0) {
                         modal.hide();
 
                         // Mostrar notificación de éxito
+
+
                         Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
+                            title: '¡Exitoso! 🎉',
                             text: 'La información se ha guardado correctamente.',
-                            toast: true,
-
-                            position: 'center',
-
-                            position: 'top-end',
-
+                            icon: 'success',
                             showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
+                            timer: 4000,
                         });
-
                         // Recargar la página después de 2 segundos
                         setTimeout(() => {
                             location.reload();
                         }, 2000);
                     } else {
                         // Mostrar notificación de error
+
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
+                            title: 'Error! ❌',
                             text: 'Hubo un problema al guardar la información: ' + response,
-                            toast: true,
-
-                            position: 'center',
-
-                            position: 'top-end',
-
+                            icon: 'error',
                             showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
+                            timer: 4000,
                         });
                     }
                 } else {
@@ -707,20 +704,13 @@ if ($result && $result->num_rows > 0) {
         };
 
         xhr.onerror = function() {
+
             Swal.fire({
-                icon: 'error',
-                title: 'Error de conexión',
+                title: 'Error! ❌',
                 text: 'No se pudo conectar con el servidor.',
-                toast: true,
-
-                position: 'center',
-
-
-                position: 'top-end',
-
+                icon: 'error',
                 showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
+                timer: 4000,
             });
         };
 
@@ -734,7 +724,7 @@ if ($result && $result->num_rows > 0) {
         icon: 'info',
         title: 'Actualizando información...',
         text: 'Por favor, espere un momento.',
-        position: 'top-end',
+        position: 'center',
         showConfirmButton: false,
         timer: 2000,
         timerProgressBar: true,
