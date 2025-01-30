@@ -1,8 +1,6 @@
 <?php
 include_once '../../controller/conexion.php';
 
-var_dump($_POST);
-
 // Habilitar reporte de errores para depuración
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -45,41 +43,32 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
         exit;
     }
 
-    // Consulta SQL para actualizar la información de llamadas
-    $updateSql = "UPDATE contact_log 
-                  SET idAdvisor = ?, 
-                      details = ?, 
-                      contact_established = ?, 
-                      continues_interested = ?, 
-                      observation = ? 
-                  WHERE number_id = ?";
-    $stmt = $conn->prepare($updateSql);
+    // Insertar un nuevo registro en contact_log (sin verificar si ya existe)
+    $insertSql = "INSERT INTO contact_log 
+                  (number_id, idAdvisor, details, contact_established, continues_interested, observation) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($insertSql);
 
     if ($stmt) {
-        // Vincular los parámetros para la consulta preparada
-        // Cambiar el orden de los parámetros para que coincida con la consulta
-        $stmt->bind_param('ssiisi', 
+        $stmt->bind_param('issiis', 
+            $number_id, 
             $idAdvisor, 
             $details, 
             $contact_established, 
             $continues_interested, 
-            $observation, 
-            $number_id
+            $observation
         );
 
-        // Ejecutar la consulta
         if ($stmt->execute()) {
-            echo "success"; // Devolver éxito si la actualización fue exitosa
+            echo "success"; // Éxito en la inserción
         } else {
-            // Mostrar el error específico para depuración
-            echo "error: {$stmt->error}";
+            echo "error: {$stmt->error}"; // Error en la ejecución
+            error_log("Error al ejecutar la consulta: " . $stmt->error);
         }
 
-        // Cerrar la consulta preparada
         $stmt->close();
     } else {
-        // Mostrar el error de preparación de la consulta
-        echo "prepare_error: {$conn->error}";
+        echo "prepare_error: {$conn->error}"; // Error en la preparación
     }
 } else {
     // Mostrar qué datos específicos faltan
