@@ -77,6 +77,4 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
 }
 
 
-}
-
 
