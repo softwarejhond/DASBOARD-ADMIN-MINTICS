@@ -601,15 +601,21 @@ if ($result && $result->num_rows > 0) {
                 if (xhr.status == 200) {
                     const response = xhr.responseText;
                     if (response.trim() === "success") {
+
+                        location.reload();
+                    } else {
+                        console.error("Error: " + response);
+
                         // Close the modal
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
 
                         // Update the call information in real-time
                         updateCallInfo(id, formData);
-                    } else if (response.trim() === "success") {
+                    }  if (response.trim() === "success") {
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
+
                     }
                 } else {
                     console.error("Error en la conexión con el servidor");

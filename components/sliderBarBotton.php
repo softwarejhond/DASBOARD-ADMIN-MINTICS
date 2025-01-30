@@ -20,7 +20,7 @@
                   </a>
               </div>
               <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Aceptar propiedad">
-              <a href="propiedadesAceptacion.php">
+              <a href="#">
                   <label class="checkbox-wrapper">
                       <span class="checkbox-tile">
                           <span class="checkbox-icon icono text-indigo-dark">
@@ -32,7 +32,7 @@
                   </a>
               </div>
               <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inmuebles disponibles">
-              <a href="propiedadesDisponibles.php">
+              <a href="#">
                  <label class="checkbox-wrapper">
                       <span class="checkbox-tile">
                           <span class="checkbox-icon">
@@ -56,7 +56,7 @@
               </a>
               </div>
               <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inmuebles en venta">
-                  <a href="propiedadesVenta.php">
+                  <a href="#">
                       <label class="checkbox-wrapper">
                           <span class="checkbox-tile">
                               <span class="checkbox-icon">
