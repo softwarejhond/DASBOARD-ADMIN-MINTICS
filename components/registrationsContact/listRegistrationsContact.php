@@ -189,16 +189,18 @@ if ($result && $result->num_rows > 0) {
                     <h5 class="modal-title">Imágenes de Identificación</h5>
                     <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body position-relative" style="overflow: visible;">
                     <div class="row">
+                        <!-- Frente del documento -->
                         <div class="col-12 mb-4 text-center">
                             <h6>Frente del documento</h6>
-                            <div class="position-relative">
+                            <div class="position-relative overflow-visible">
                                 <img id="idImageFront_<?php echo $row['number_id']; ?>" 
-                                     src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
-                                     class="img-fluid w-100"
-                                     style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease;"
-                                     alt="Frente ID">
+                                    src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
+                                    class="img-fluid w-100 zoomable"
+                                    style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
+                                    alt="Frente ID"
+                                    onclick="toggleZoom('idImageFront_<?php echo $row['number_id']; ?>')">
                             </div>
                             <div class="mt-2">
                                 <button class="btn btn-primary" onclick="rotateImage('idImageFront_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
@@ -206,14 +208,16 @@ if ($result && $result->num_rows > 0) {
                             </div>
                         </div>
 
+                        <!-- Reverso del documento -->
                         <div class="col-12 text-center">
                             <h6>Reverso del documento</h6>
-                            <div class="position-relative">
+                            <div class="position-relative overflow-visible">
                                 <img id="idImageBack_<?php echo $row['number_id']; ?>" 
-                                     src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
-                                     class="img-fluid w-100"
-                                     style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease;"
-                                     alt="Reverso ID">
+                                    src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
+                                    class="img-fluid w-100 zoomable"
+                                    style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
+                                    alt="Reverso ID"
+                                    onclick="toggleZoom('idImageBack_<?php echo $row['number_id']; ?>')">
                             </div>
                             <div class="mt-2">
                                 <button class="btn btn-primary" onclick="rotateImage('idImageBack_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
@@ -227,14 +231,28 @@ if ($result && $result->num_rows > 0) {
     </div>
 
     <script>
-        let rotations = {};
+        let imageTransforms = {};
 
         function rotateImage(imageId, degrees) {
-            if (!rotations[imageId]) {
-                rotations[imageId] = 0; // Inicializar rotación si aún no existe
+            if (!imageTransforms[imageId]) {
+                imageTransforms[imageId] = { rotation: 0, scale: 1 };
             }
-            rotations[imageId] += degrees; // Acumular la rotación por imagen
-            document.getElementById(imageId).style.transform = `rotate(${rotations[imageId]}deg)`;
+            imageTransforms[imageId].rotation += degrees;
+            applyTransform(imageId);
+        }
+
+        function toggleZoom(imageId) {
+            if (!imageTransforms[imageId]) {
+                imageTransforms[imageId] = { rotation: 0, scale: 1 };
+            }
+            imageTransforms[imageId].scale = imageTransforms[imageId].scale === 1 ? 2 : 1;
+            applyTransform(imageId);
+        }
+
+        function applyTransform(imageId) {
+            let imgElement = document.getElementById(imageId);
+            let { rotation, scale } = imageTransforms[imageId];
+            imgElement.style.transform = `rotate(${rotation}deg) scale(${scale})`;
         }
     </script>
 </td>
