@@ -356,65 +356,73 @@ if ($result && $result->num_rows > 0) {
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header bg-indigo-dark">
-                                <h5 class="modal-title" id="modalLlamadaLabel_<?php echo $row['number_id']; ?>"><i class="bi bi-telephone"></i> Información de Llamada</h5>
+                                <h5 class="modal-title" id="modalLlamadaLabel_<?php echo $row['number_id']; ?>">
+                                    <i class="bi bi-telephone"></i> Información de Llamada
+                                </h5>
                                 <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form id="formActualizarLlamada_<?php echo $row['number_id']; ?>" method="POST" onsubmit="return actualizarLlamada(<?php echo $row['number_id']; ?>)">
                                 <div class="modal-body">
+                                    <!-- Contenedor para asesor actual y anterior -->
+                                    <div class="row">
+                                        <!-- Columna para el asesor actual -->
+                                        <div class="col-md-6">
+                                            <div class="mb-3"><u><strong>Asesor actual:</strong></u></div>
+                                            <hr class="hr" />
+                                            <div class="mb-3">
+                                                <label class="form-label"><strong>ID de asesor:</strong></label>
+                                                <input type="text" class="form-control" name="idAdvisor" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label"><strong>Nombre:</strong></label>
+                                                <input type="text" class="form-control" readonly value="<?php
+                                                                                                        // Consulta para obtener todos los asesores
+                                                                                                        $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                                                                        $resultAsesores = $conn->query($sqlAsesores);
 
-                                    <div class="mb-3"><u><strong>Asesor actual:</strong></u></div>
-                                    <hr class="hr" />
-                                    <div class="mb-3">
-
-                                        <label class="form-label"><strong>ID de asesor:</strong></label>
-                                        <input type="text" class="form-control" name="idAdvisor" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
-
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>Nombre:</strong></label>
-                                            <input type="text" class="form-control" readonly value="<?php
-                                                                                                    // Consulta para obtener todos los asesores
-                                                                                                    $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
-                                                                                                    $resultAsesores = $conn->query($sqlAsesores);
-
-                                                                                                    // Buscar y mostrar el nombre del asesor correspondiente
-                                                                                                    if ($resultAsesores && $resultAsesores->num_rows > 0) {
-                                                                                                        while ($asesor = $resultAsesores->fetch_assoc()) {
-                                                                                                            if ($asesor['idAdvisor'] == $_SESSION['username']) {
-                                                                                                                echo htmlspecialchars($asesor['name']);
-                                                                                                                break;
+                                                                                                        // Buscar y mostrar el nombre del asesor correspondiente
+                                                                                                        if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                                                                            while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                                                                                if ($asesor['idAdvisor'] == $_SESSION['username']) {
+                                                                                                                    echo htmlspecialchars($asesor['name']);
+                                                                                                                    break;
+                                                                                                                }
                                                                                                             }
                                                                                                         }
-                                                                                                    }
-                                                                                                    ?>">
+                                                                                                        ?>">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <hr class="hr" />
 
-                                    <div class="mb-3"><strong>Asesor de anterior llamada:</strong></div>
-                                    <div class="mb-3">
+                                        <!-- Columna para el asesor anterior -->
+                                        <div class="col-md-6">
+                                            <div class="mb-3"><u><strong>Asesor anterior:</strong></u></div>
+                                            <hr class="hr" />
+                                            <div class="mb-3">
+                                                <label class="form-label"><strong>ID de asesor:</strong></label>
+                                                <input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($row['idAdvisor']); ?>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label"><strong>Nombre:</strong></label>
+                                                <input type="text" class="form-control" readonly value="<?php
+                                                                                                        // Consulta para obtener todos los asesores
+                                                                                                        $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                                                                        $resultAsesores = $conn->query($sqlAsesores);
 
-                                        <label class="form-label"><strong>ID de asesor:</strong></label>
-                                        <input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($row['idAdvisor']); ?>">
-
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>Nombre:</strong></label>
-                                            <input type="text" class="form-control" readonly value="<?php
-                                                                                                    // Consulta para obtener todos los asesores
-                                                                                                    $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
-                                                                                                    $resultAsesores = $conn->query($sqlAsesores);
-
-                                                                                                    // Buscar y mostrar el nombre del asesor correspondiente
-                                                                                                    if ($resultAsesores && $resultAsesores->num_rows > 0) {
-                                                                                                        while ($asesor = $resultAsesores->fetch_assoc()) {
-                                                                                                            if ($asesor['idAdvisor'] == $row['idAdvisor']) {
-                                                                                                                echo htmlspecialchars($asesor['name']);
-                                                                                                                break;
+                                                                                                        // Buscar y mostrar el nombre del asesor correspondiente
+                                                                                                        if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                                                                            while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                                                                                if ($asesor['idAdvisor'] == $row['idAdvisor']) {
+                                                                                                                    echo htmlspecialchars($asesor['name']);
+                                                                                                                    break;
+                                                                                                                }
                                                                                                             }
                                                                                                         }
-                                                                                                    }
-                                                                                                    ?>">
+                                                                                                        ?>">
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- Resto del formulario -->
                                     <hr class="hr" />
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Detalle:</strong></label>
@@ -447,7 +455,21 @@ if ($result && $result->num_rows > 0) {
                                     </div>
                                 </div>
                                 <div class="modal-footer position-relative d-flex justify-content-center">
-                                    <button type="submit" class="btn bg-indigo-dark text-white" onclick="setTimeout(() => { location.reload(); }, 500);">Actualizar Información</button>
+                                    <button type="submit" class="btn bg-indigo-dark text-white" onclick="Swal.fire({
+                                        icon: 'success', 
+                                        title: 'Actualizado correctamente',
+                                        text: 'La información ha sido actualizada',
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        timerProgressBar: true,
+                                        width: '300px', // Set smaller width
+                                        customClass: {
+                                            popup: 'small-alert' // Add custom class for styling
+                                        }
+                                    }).then(() => {
+                                        location.reload();
+                                    });">Actualizar Información</button>
                                 </div>
                             </form>
                         </div>
@@ -617,9 +639,6 @@ if ($result && $result->num_rows > 0) {
         const observation = formData.get('observation');
         const idAdvisor = formData.get('idAdvisor');
 
-        // Get current date and time
-        const now = new Date().toLocaleString();
-
         // Update the modal content
         const modalBody = document.querySelector(`#modalLlamada_${id} .modal-body`);
         if (modalBody) {
@@ -635,11 +654,18 @@ if ($result && $result->num_rows > 0) {
             if (observationTextarea) observationTextarea.value = observation;
         }
 
-        // Show updating notification
-        toastr.info('Actualizando información...');
     }
 
+    // Muestra una notificación de actualización con SweetAlert2
+Swal.fire({
+    icon: 'info',
+    title: 'Actualizando información...',
+    text: 'Por favor, espere un momento.', 
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+})
 </script>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
