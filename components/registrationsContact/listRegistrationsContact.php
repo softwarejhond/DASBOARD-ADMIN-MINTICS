@@ -91,20 +91,37 @@ if ($result && $result->num_rows > 0) {
 
         // Si hay registros, asignar los valores
         if (!empty($contactLogs)) {
-            $row['idAdvisor'] = $contactLogs[0]['idAdvisor'];
-            $row['advisor_name'] = $contactLogs[0]['advisor_name']; // Nombre del asesor
-            $row['detail'] = $contactLogs[0]['details'];
-            $row['contact_established'] = $contactLogs[0]['contact_established'];
-            $row['still_interested'] = $contactLogs[0]['continues_interested'];
-            $row['observation'] = $contactLogs[0]['observation'];
+            // Crear un array para almacenar todos los registros de contact_log
+            $row['contact_logs'] = [];
+
+            foreach ($contactLogs as $log) {
+                $row['contact_logs'][] = [
+                    'idAdvisor' => $log['idAdvisor'],
+                    'advisor_name' => $log['advisor_name'],
+                    'details' => $log['details'],
+                    'contact_established' => $log['contact_established'],
+                    'continues_interested' => $log['continues_interested'],
+                    'observation' => $log['observation']
+                ];
+            }
+
+            // Asignar el último registro como valores por defecto
+            $lastLog = end($contactLogs);
+            $row['idAdvisor'] = $lastLog['idAdvisor'];
+            $row['advisor_name'] = $lastLog['advisor_name'];
+            $row['details'] = $lastLog['details']; 
+            $row['contact_established'] = $lastLog['contact_established'];
+            $row['continues_interested'] = $lastLog['continues_interested']; 
+            $row['observation'] = $lastLog['observation'];
         } else {
             // Si no hay registros, asignar valores por defecto
             $row['idAdvisor'] = 'No registrado';
             $row['advisor_name'] = 'Sin asignar';
-            $row['detail'] = 'Sin detalles';
+            $row['details'] = 'Sin detalles';
             $row['contact_established'] = 0; // Cambiado a 0
-            $row['still_interested'] = 0; // Cambiado a 0
+            $row['continues_interested'] = 0; // Cambiado a 0
             $row['observation'] = 'Sin observaciones';
+            $row['contact_logs'] = []; // Array vacío para contact_logs
         }
 
         // Calcular edad
@@ -375,21 +392,22 @@ if ($result && $result->num_rows > 0) {
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label"><strong>Nombre:</strong></label>
-                                                <input type="text" class="form-control" readonly value="<?php
-                                                                                                        // Consulta para obtener todos los asesores
-                                                                                                        $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
-                                                                                                        $resultAsesores = $conn->query($sqlAsesores);
+                                                <input type="text" class="form-control" readonly
+                                                    value="<?php
+                                                            // Consulta para obtener todos los asesores
+                                                            $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                            $resultAsesores = $conn->query($sqlAsesores);
 
-                                                                                                        // Buscar y mostrar el nombre del asesor correspondiente
-                                                                                                        if ($resultAsesores && $resultAsesores->num_rows > 0) {
-                                                                                                            while ($asesor = $resultAsesores->fetch_assoc()) {
-                                                                                                                if ($asesor['idAdvisor'] == $_SESSION['username']) {
-                                                                                                                    echo htmlspecialchars($asesor['name']);
-                                                                                                                    break;
-                                                                                                                }
-                                                                                                            }
-                                                                                                        }
-                                                                                                        ?>">
+                                                            // Buscar y mostrar el nombre del asesor correspondiente
+                                                            if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                                while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                                    if ($asesor['idAdvisor'] == $_SESSION['username']) {
+                                                                        echo htmlspecialchars($asesor['name']);
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                            ?>">
                                             </div>
                                         </div>
 
@@ -403,21 +421,22 @@ if ($result && $result->num_rows > 0) {
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label"><strong>Nombre:</strong></label>
-                                                <input type="text" class="form-control" readonly value="<?php
-                                                                                                        // Consulta para obtener todos los asesores
-                                                                                                        $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
-                                                                                                        $resultAsesores = $conn->query($sqlAsesores);
+                                                <input type="text" class="form-control" readonly
+                                                    value="<?php
+                                                            // Consulta para obtener todos los asesores
+                                                            $sqlAsesores = "SELECT idAdvisor, name FROM advisors ORDER BY name ASC";
+                                                            $resultAsesores = $conn->query($sqlAsesores);
 
-                                                                                                        // Buscar y mostrar el nombre del asesor correspondiente
-                                                                                                        if ($resultAsesores && $resultAsesores->num_rows > 0) {
-                                                                                                            while ($asesor = $resultAsesores->fetch_assoc()) {
-                                                                                                                if ($asesor['idAdvisor'] == $row['idAdvisor']) {
-                                                                                                                    echo htmlspecialchars($asesor['name']);
-                                                                                                                    break;
-                                                                                                                }
-                                                                                                            }
-                                                                                                        }
-                                                                                                        ?>">
+                                                            // Buscar y mostrar el nombre del asesor correspondiente
+                                                            if ($resultAsesores && $resultAsesores->num_rows > 0) {
+                                                                while ($asesor = $resultAsesores->fetch_assoc()) {
+                                                                    if ($asesor['idAdvisor'] == $row['idAdvisor']) {
+                                                                        echo htmlspecialchars($asesor['name']);
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                            ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -427,12 +446,12 @@ if ($result && $result->num_rows > 0) {
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Detalle:</strong></label>
                                         <select class="form-control" name="details">
-                                            <option value="Sin detalles" <?php if ($row['detail'] == 'Sin detalles') echo 'selected'; ?>>Sin detalles</option>
-                                            <option value="Número equivocado" <?php if ($row['detail'] == 'Número equivocado') echo 'selected'; ?>>Número equivocado</option>
-                                            <option value="Teléfono apagado" <?php if ($row['detail'] == 'Teléfono apagado') echo 'selected'; ?>>Teléfono apagado</option>
-                                            <option value="Teléfono desconectado" <?php if ($row['detail'] == 'Teléfono desconectado') echo 'selected'; ?>>Teléfono desconectado</option>
-                                            <option value="Sin señal" <?php if ($row['detail'] == 'Sin señal') echo 'selected'; ?>>Sin señal</option>
-                                            <option value="No contestan" <?php if ($row['detail'] == 'No contestan') echo 'selected'; ?>>No contestan</option>
+                                            <option value="Sin detalles" <?php if ($row['details'] == 'Sin detalles') echo 'selected'; ?>>Sin detalles</option>
+                                            <option value="Número equivocado" <?php if ($row['details'] == 'Número equivocado') echo 'selected'; ?>>Número equivocado</option>
+                                            <option value="Teléfono apagado" <?php if ($row['details'] == 'Teléfono apagado') echo 'selected'; ?>>Teléfono apagado</option>
+                                            <option value="Teléfono desconectado" <?php if ($row['details'] == 'Teléfono desconectado') echo 'selected'; ?>>Teléfono desconectado</option>
+                                            <option value="Sin señal" <?php if ($row['details'] == 'Sin señal') echo 'selected'; ?>>Sin señal</option>
+                                            <option value="No contestan" <?php if ($row['details'] == 'No contestan') echo 'selected'; ?>>No contestan</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -445,8 +464,8 @@ if ($result && $result->num_rows > 0) {
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Aún Interesado:</strong></label>
                                         <select class="form-control" name="continues_interested">
-                                            <option value="0" <?php if ($row['still_interested'] == 0) echo 'selected'; ?>>No</option>
-                                            <option value="1" <?php if ($row['still_interested'] == 1) echo 'selected'; ?>>Sí</option>
+                                            <option value="0" <?php if ($row['continues_interested'] == 0) echo 'selected'; ?>>No</option>
+                                            <option value="1" <?php if ($row['continues_interested'] == 1) echo 'selected'; ?>>Sí</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -455,21 +474,7 @@ if ($result && $result->num_rows > 0) {
                                     </div>
                                 </div>
                                 <div class="modal-footer position-relative d-flex justify-content-center">
-                                    <button type="submit" class="btn bg-indigo-dark text-white" onclick="Swal.fire({
-                                        icon: 'success', 
-                                        title: 'Actualizado correctamente',
-                                        text: 'La información ha sido actualizada',
-                                        position: 'top-end',
-                                        showConfirmButton: false,
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        width: '300px', // Set smaller width
-                                        customClass: {
-                                            popup: 'small-alert' // Add custom class for styling
-                                        }
-                                    }).then(() => {
-                                        location.reload();
-                                    });">Actualizar Información</button>
+                                    <button type="submit" class="btn bg-indigo-dark text-white">Actualizar Información</button>
                                 </div>
                             </form>
                         </div>
@@ -601,21 +606,15 @@ if ($result && $result->num_rows > 0) {
                 if (xhr.status == 200) {
                     const response = xhr.responseText;
                     if (response.trim() === "success") {
-
-                        location.reload();
-                    } else {
-                        console.error("Error: " + response);
-
                         // Close the modal
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
 
                         // Update the call information in real-time
                         updateCallInfo(id, formData);
-                    }  if (response.trim() === "success") {
+                    } else if (response.trim() === "success") {
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
-
                     }
                 } else {
                     console.error("Error en la conexión con el servidor");
@@ -624,48 +623,33 @@ if ($result && $result->num_rows > 0) {
         };
 
         xhr.onerror = function() {
-            toastr.error("Error de conexión");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
         };
 
         xhr.send(formData);
         return false;
     }
 
-    function updateCallInfo(id, formData) {
-        // Get values from form data
-        const details = formData.get('details');
-        const contactEstablished = formData.get('contact_established') === '1' ? 'Sí' : 'No';
-        const stillInterested = formData.get('continues_interested') === '1' ? 'Sí' : 'No';
-        const observation = formData.get('observation');
-        const idAdvisor = formData.get('idAdvisor');
-
-        // Update the modal content
-        const modalBody = document.querySelector(`#modalLlamada_${id} .modal-body`);
-        if (modalBody) {
-            // Update form fields
-            const detailsSelect = modalBody.querySelector('select[name="details"]');
-            const contactSelect = modalBody.querySelector('select[name="contact_established"]');
-            const interestedSelect = modalBody.querySelector('select[name="continues_interested"]');
-            const observationTextarea = modalBody.querySelector('textarea[name="observation"]');
-
-            if (detailsSelect) detailsSelect.value = details;
-            if (contactSelect) contactSelect.value = formData.get('contact_established');
-            if (interestedSelect) interestedSelect.value = formData.get('continues_interested');
-            if (observationTextarea) observationTextarea.value = observation;
-        }
-
-    }
 
     // Muestra una notificación de actualización con SweetAlert2
-Swal.fire({
-    icon: 'info',
-    title: 'Actualizando información...',
-    text: 'Por favor, espere un momento.', 
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-})
+    Swal.fire({
+        icon: 'info',
+        title: 'Actualizando información...',
+        text: 'Por favor, espere un momento.',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+    })
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

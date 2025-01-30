@@ -43,7 +43,7 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
         exit;
     }
 
-    // Insertar un nuevo registro en contact_log (sin verificar si ya existe)
+    // Insertar un nuevo registro en contact_log
     $insertSql = "INSERT INTO contact_log 
                   (number_id, idAdvisor, details, contact_established, continues_interested, observation) 
                   VALUES (?, ?, ?, ?, ?, ?)";
@@ -63,7 +63,7 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
             echo "success"; // Éxito en la inserción
         } else {
             echo "error: {$stmt->error}"; // Error en la ejecución
-            error_log("Error al ejecutar la consulta: " . $stmt->error);
+            
         }
 
         $stmt->close();
