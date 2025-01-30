@@ -80,6 +80,27 @@ $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
 $result = $conn->query($sql);
 $data = [];
 
+// Función para obtener los niveles de los usuarios 
+function obtenerNivelesUsuarios($conn)
+{
+    $sql = "SELECT cedula, nivel FROM usuarios";
+    $result = $conn->query($sql);
+
+    $niveles = array();
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $niveles[$row['cedula']] = $row['nivel'];
+        }
+    }
+
+    return $niveles;
+}
+
+
+
+// Obtener los niveles de usuarios
+$nivelesUsuarios = obtenerNivelesUsuarios($conn);
+
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         // Obtener los datos de contact_log para el número de ID actual
@@ -168,6 +189,8 @@ if ($result && $result->num_rows > 0) {
                 <th>Internet</th>
                 <th>Estado</th>
                 <th>Medio de contacto</th>
+                <th>Puntaje de prueba</th>
+                <th>Estado de prueba</th>
                 <th>Información de llamada</th>
             </tr>
         </thead>
@@ -422,11 +445,36 @@ if ($result && $result->num_rows > 0) {
                             data-bs-title="Cambiar medio de contacto">
                             <i class="bi bi-arrow-left-right"></i></button>
                     </td>
+                    <td><?php
+                        if (isset($nivelesUsuarios[$row['number_id']])) {
+                            echo htmlspecialchars($nivelesUsuarios[$row['number_id']]);
+                        } else {
+                            echo "No presento prueba";
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        if (isset($nivelesUsuarios[$row['number_id']])) {
+                            $puntaje = $nivelesUsuarios[$row['number_id']];
+                            if ($puntaje >= 1 && $puntaje <= 5) {
+                                echo '<button class="btn bg-orange-light w-100">Basico</button>';
+                            } elseif ($puntaje >= 6 && $puntaje <= 10) {
+                                echo '<button class="btn btn-info w-100">Intermedio</button>';
+                            } elseif ($puntaje >= 11 && $puntaje <= 15) {
+                                echo '<button class="btn bg-lime-light w-100">Avanzado</button>';
+                            }
+                        } else {
+                            echo '<button class="btn btn-secondary w-100">No presento prueba</button>';
+                        }
+                        ?>
+                    </td>
                     <td class="text-center">
                         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalLlamada_<?php echo $row['number_id']; ?>">
                             <i class="bi bi-telephone"></i>
                         </button>
                     </td>
+
                 </tr>
 
                 <!-- Modal -->
@@ -672,6 +720,13 @@ if ($result && $result->num_rows > 0) {
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
 
+
+                        Swal.fire({
+                            title: '¡Exitoso! 🎉',
+                            text: 'La información se ha guardado correctamente.',
+                            toast: true,
+                            position: 'center',
+
                         // Mostrar notificación de éxito
 
 
@@ -679,6 +734,7 @@ if ($result && $result->num_rows > 0) {
                             title: '¡Exitoso! 🎉',
                             text: 'La información se ha guardado correctamente.',
                             icon: 'success',
+
                             showConfirmButton: false,
                             timer: 4000,
                         });
@@ -692,7 +748,12 @@ if ($result && $result->num_rows > 0) {
                         Swal.fire({
                             title: 'Error! ❌',
                             text: 'Hubo un problema al guardar la información: ' + response,
+
+                            toast: true,
+                            position: 'center',
+
                             icon: 'error',
+
                             showConfirmButton: false,
                             timer: 4000,
                         });
@@ -708,7 +769,13 @@ if ($result && $result->num_rows > 0) {
             Swal.fire({
                 title: 'Error! ❌',
                 text: 'No se pudo conectar con el servidor.',
+
+                toast: true,
+                position: 'center',
+
+
                 icon: 'error',
+
                 showConfirmButton: false,
                 timer: 4000,
             });
@@ -717,7 +784,6 @@ if ($result && $result->num_rows > 0) {
         xhr.send(formData);
         return false;
     }
-
 
     // Muestra una notificación de actualización con SweetAlert2
     Swal.fire({
@@ -732,3 +798,5 @@ if ($result && $result->num_rows > 0) {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+//cambio minimo para probar git
