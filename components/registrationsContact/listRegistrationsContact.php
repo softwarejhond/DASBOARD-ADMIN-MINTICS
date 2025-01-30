@@ -805,4 +805,3 @@ if ($result && $result->num_rows > 0) {
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-//cambio minimo para probar git
