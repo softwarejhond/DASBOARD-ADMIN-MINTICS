@@ -1,3 +1,16 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    let timerInterval;
+    Swal.fire({
+        title: "Cargando información...",
+        html: "Por favor espera mientras obtenemos los datos.",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+</script>
 <?php
 
 $mensajeToast = ''; // Mensaje para el toast
@@ -95,7 +108,6 @@ function obtenerNivelesUsuarios($conn)
 
     return $niveles;
 }
-
 
 
 // Obtener los niveles de usuarios
