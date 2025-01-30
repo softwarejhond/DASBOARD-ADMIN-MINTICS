@@ -604,41 +604,17 @@ if ($result && $result->num_rows > 0) {
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
-                    const response = xhr.responseText.trim();
-
-                    if (response === "success") {
-                        // Cerrar el modal
+                    const response = xhr.responseText;
+                    if (response.trim() === "success") {
+                        // Close the modal
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
 
-                        // Mostrar notificación de éxito
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: 'La información se ha guardado correctamente.',
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
-                        });
-
-                        // Recargar la página después de 2 segundos
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        // Mostrar notificación de error
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Hubo un problema al guardar la información: ' + response,
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                        });
+                        // Update the call information in real-time
+                        updateCallInfo(id, formData);
+                    } else if (response.trim() === "success") {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
+                        modal.hide();
                     }
                 } else {
                     console.error("Error en la conexión con el servidor");
