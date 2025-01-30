@@ -63,7 +63,7 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
             echo "success"; // Éxito en la inserción
         } else {
             echo "error: {$stmt->error}"; // Error en la ejecución
-            
+
         }
 
         $stmt->close();

@@ -669,7 +669,11 @@ if ($result && $result->num_rows > 0) {
                             title: '¡Éxito!',
                             text: 'La información se ha guardado correctamente.',
                             toast: true,
+
+                            position: 'center',
+
                             position: 'top-end',
+
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true,
@@ -686,7 +690,11 @@ if ($result && $result->num_rows > 0) {
                             title: 'Error',
                             text: 'Hubo un problema al guardar la información: ' + response,
                             toast: true,
+
+                            position: 'center',
+
                             position: 'top-end',
+
                             showConfirmButton: false,
                             timer: 3000,
                             timerProgressBar: true,
@@ -704,7 +712,12 @@ if ($result && $result->num_rows > 0) {
                 title: 'Error de conexión',
                 text: 'No se pudo conectar con el servidor.',
                 toast: true,
+
+                position: 'center',
+
+
                 position: 'top-end',
+
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true,
