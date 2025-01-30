@@ -231,30 +231,36 @@ if ($result && $result->num_rows > 0) {
     </div>
 
     <script>
-        let imageTransforms = {};
+    // Verificar si la variable ya existe en el ámbito global
+    if (typeof window.imageTransforms === 'undefined') {
+        window.imageTransforms = {};
+    }
 
-        function rotateImage(imageId, degrees) {
-            if (!imageTransforms[imageId]) {
-                imageTransforms[imageId] = { rotation: 0, scale: 1 };
-            }
-            imageTransforms[imageId].rotation += degrees;
-            applyTransform(imageId);
+    function rotateImage(imageId, degrees) {
+        if (!window.imageTransforms[imageId]) {
+            window.imageTransforms[imageId] = { rotation: 0, scale: 1 };
         }
+        window.imageTransforms[imageId].rotation += degrees;
+        applyTransform(imageId);
+    }
 
-        function toggleZoom(imageId) {
-            if (!imageTransforms[imageId]) {
-                imageTransforms[imageId] = { rotation: 0, scale: 1 };
-            }
-            imageTransforms[imageId].scale = imageTransforms[imageId].scale === 1 ? 2 : 1;
-            applyTransform(imageId);
+    function toggleZoom(imageId) {
+        if (!window.imageTransforms[imageId]) {
+            window.imageTransforms[imageId] = { rotation: 0, scale: 1 };
         }
+        window.imageTransforms[imageId].scale = window.imageTransforms[imageId].scale === 1 ? 2 : 1;
+        applyTransform(imageId);
+    }
 
-        function applyTransform(imageId) {
-            let imgElement = document.getElementById(imageId);
-            let { rotation, scale } = imageTransforms[imageId];
+    function applyTransform(imageId) {
+        let imgElement = document.getElementById(imageId);
+        if (imgElement) {
+            let { rotation, scale } = window.imageTransforms[imageId];
             imgElement.style.transform = `rotate(${rotation}deg) scale(${scale})`;
         }
-    </script>
+    }
+</script>
+
 </td>
 
                     <td><?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['second_name']) . ' ' . htmlspecialchars($row['first_last']) . ' ' . htmlspecialchars($row['second_last']); ?></td>
