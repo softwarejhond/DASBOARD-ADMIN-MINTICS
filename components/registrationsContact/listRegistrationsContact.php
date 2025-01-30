@@ -200,40 +200,92 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                     <td><?php echo htmlspecialchars($row['number_id']); ?></td>
                     <td>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalID_<?php echo $row['number_id']; ?>">
-                            <i class="bi bi-card-image"></i>
-                        </button>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalID_<?php echo $row['number_id']; ?>">
+        <i class="bi bi-card-image"></i>
+    </button>
 
-                        <!-- Modal para mostrar las imágenes -->
-                        <div class="modal fade" id="modalID_<?php echo $row['number_id']; ?>" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-indigo-dark">
-                                        <h5 class="modal-title">Imágenes de Identificación</h5>
-                                        <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col-12 mb-4">
-                                                <h6>Frente del documento</h6>
-                                                <img src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
-                                                    class="img-fluid w-100"
-                                                    style="max-height: 400px; object-fit: contain;"
-                                                    alt="Frente ID">
-                                            </div>
-                                            <div class="col-12">
-                                                <h6>Reverso del documento</h6>
-                                                <img src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
-                                                    class="img-fluid w-100"
-                                                    style="max-height: 400px; object-fit: contain;"
-                                                    alt="Reverso ID">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+    <!-- Modal para mostrar las imágenes -->
+    <div class="modal fade" id="modalID_<?php echo $row['number_id']; ?>" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-indigo-dark">
+                    <h5 class="modal-title">Imágenes de Identificación</h5>
+                    <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body position-relative" style="overflow: visible;">
+                    <div class="row">
+                        <!-- Frente del documento -->
+                        <div class="col-12 mb-4 text-center">
+                            <h6>Frente del documento</h6>
+                            <div class="position-relative overflow-visible">
+                                <img id="idImageFront_<?php echo $row['number_id']; ?>" 
+                                    src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
+                                    class="img-fluid w-100 zoomable"
+                                    style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
+                                    alt="Frente ID"
+                                    onclick="toggleZoom('idImageFront_<?php echo $row['number_id']; ?>')">
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-primary" onclick="rotateImage('idImageFront_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
+                                <button class="btn btn-primary" onclick="rotateImage('idImageFront_<?php echo $row['number_id']; ?>', 90)">↻ Rotar Derecha</button>
                             </div>
                         </div>
-                    </td>
+
+                        <!-- Reverso del documento -->
+                        <div class="col-12 text-center">
+                            <h6>Reverso del documento</h6>
+                            <div class="position-relative overflow-visible">
+                                <img id="idImageBack_<?php echo $row['number_id']; ?>" 
+                                    src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
+                                    class="img-fluid w-100 zoomable"
+                                    style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
+                                    alt="Reverso ID"
+                                    onclick="toggleZoom('idImageBack_<?php echo $row['number_id']; ?>')">
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-primary" onclick="rotateImage('idImageBack_<?php echo $row['number_id']; ?>', -90)">↺ Rotar Izquierda</button>
+                                <button class="btn btn-primary" onclick="rotateImage('idImageBack_<?php echo $row['number_id']; ?>', 90)">↻ Rotar Derecha</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Verificar si la variable ya existe en el ámbito global
+    if (typeof window.imageTransforms === 'undefined') {
+        window.imageTransforms = {};
+    }
+
+    function rotateImage(imageId, degrees) {
+        if (!window.imageTransforms[imageId]) {
+            window.imageTransforms[imageId] = { rotation: 0, scale: 1 };
+        }
+        window.imageTransforms[imageId].rotation += degrees;
+        applyTransform(imageId);
+    }
+
+    function toggleZoom(imageId) {
+        if (!window.imageTransforms[imageId]) {
+            window.imageTransforms[imageId] = { rotation: 0, scale: 1 };
+        }
+        window.imageTransforms[imageId].scale = window.imageTransforms[imageId].scale === 1 ? 2 : 1;
+        applyTransform(imageId);
+    }
+
+    function applyTransform(imageId) {
+        let imgElement = document.getElementById(imageId);
+        if (imgElement) {
+            let { rotation, scale } = window.imageTransforms[imageId];
+            imgElement.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+        }
+    }
+</script>
+
+</td>
+
                     <td><?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['second_name']) . ' ' . htmlspecialchars($row['first_last']) . ' ' . htmlspecialchars($row['second_last']); ?></td>
                     <td><?php echo $row['age']; ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
@@ -662,7 +714,8 @@ if ($result && $result->num_rows > 0) {
                         Swal.fire({
                             title: '¡Exitoso! 🎉',
                             text: 'La información se ha guardado correctamente.',
-                            icon: 'success',
+                            toast: true,
+                            position: 'center',
                             showConfirmButton: false,
                             timer: 4000,
                         });
@@ -676,7 +729,8 @@ if ($result && $result->num_rows > 0) {
                         Swal.fire({
                             title: 'Error! ❌',
                             text: 'Hubo un problema al guardar la información: ' + response,
-                            icon: 'error',
+                            toast: true,
+                            position: 'center',
                             showConfirmButton: false,
                             timer: 4000,
                         });
@@ -692,7 +746,9 @@ if ($result && $result->num_rows > 0) {
             Swal.fire({
                 title: 'Error! ❌',
                 text: 'No se pudo conectar con el servidor.',
-                icon: 'error',
+                toast: true,
+                position: 'center',
+
                 showConfirmButton: false,
                 timer: 4000,
             });

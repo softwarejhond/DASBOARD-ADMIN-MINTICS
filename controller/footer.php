@@ -3,11 +3,11 @@
     <div class="text-center p-2">
 
         <?php
-        // include("../controller/conexion.php");
-        // $queryCompany = mysqli_query($conn, "SELECT nombre,nit FROM company");
-        // while ($empresaLog = mysqli_fetch_array($queryCompany)) {
-        //     $empresa = $empresaLog['nombre'] . '</label>';
-        // }
+         include("../controller/conexion.php");
+         $queryCompany = mysqli_query($conn, "SELECT nombre,nit FROM company");
+         while ($empresaLog = mysqli_fetch_array($queryCompany)) {
+           $empresa = $empresaLog['nombre'] . '</label>';
+         }
          ?>
         <br>
         <b>SICA</b> &copy; Copyright <?php echo date("Y"); ?> Todos los derechos de uso para <label class="text-lime-dark"><b><?php echo $empresa ?> </b></label>|
@@ -18,4 +18,5 @@
 
     </div>
     <!-- Copyright -->
+
 </footer>
