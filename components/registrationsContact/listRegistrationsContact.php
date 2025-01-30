@@ -653,7 +653,6 @@ if ($result && $result->num_rows > 0) {
                 text: 'No se pudo conectar con el servidor.',
                 toast: true,
                 position: 'center',
-
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true,
