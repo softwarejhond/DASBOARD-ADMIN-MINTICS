@@ -80,6 +80,27 @@ $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
 $result = $conn->query($sql);
 $data = [];
 
+// Función para obtener los niveles de los usuarios 
+function obtenerNivelesUsuarios($conn)
+{
+    $sql = "SELECT cedula, nivel FROM usuarios";
+    $result = $conn->query($sql);
+
+    $niveles = array();
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $niveles[$row['cedula']] = $row['nivel'];
+        }
+    }
+
+    return $niveles;
+}
+
+
+
+// Obtener los niveles de usuarios
+$nivelesUsuarios = obtenerNivelesUsuarios($conn);
+
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         // Obtener los datos de contact_log para el número de ID actual
@@ -109,9 +130,9 @@ if ($result && $result->num_rows > 0) {
             $lastLog = end($contactLogs);
             $row['idAdvisor'] = $lastLog['idAdvisor'];
             $row['advisor_name'] = $lastLog['advisor_name'];
-            $row['details'] = $lastLog['details']; 
+            $row['details'] = $lastLog['details'];
             $row['contact_established'] = $lastLog['contact_established'];
-            $row['continues_interested'] = $lastLog['continues_interested']; 
+            $row['continues_interested'] = $lastLog['continues_interested'];
             $row['observation'] = $lastLog['observation'];
         } else {
             // Si no hay registros, asignar valores por defecto
@@ -168,6 +189,8 @@ if ($result && $result->num_rows > 0) {
                 <th>Internet</th>
                 <th>Estado</th>
                 <th>Medio de contacto</th>
+                <th>Puntaje de prueba</th>
+                <th>Estado de prueba</th>
                 <th>Información de llamada</th>
             </tr>
         </thead>
@@ -361,11 +384,36 @@ if ($result && $result->num_rows > 0) {
                             data-bs-title="Cambiar medio de contacto">
                             <i class="bi bi-arrow-left-right"></i></button>
                     </td>
+                    <td><?php
+                        if (isset($nivelesUsuarios[$row['number_id']])) {
+                            echo htmlspecialchars($nivelesUsuarios[$row['number_id']]);
+                        } else {
+                            echo "No presento prueba";
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        if (isset($nivelesUsuarios[$row['number_id']])) {
+                            $puntaje = $nivelesUsuarios[$row['number_id']];
+                            if ($puntaje >= 1 && $puntaje <= 5) {
+                                echo '<button class="btn bg-orange-light w-100">Basico</button>';
+                            } elseif ($puntaje >= 6 && $puntaje <= 10) {
+                                echo '<button class="btn btn-info w-100">Intermedio</button>';
+                            } elseif ($puntaje >= 11 && $puntaje <= 15) {
+                                echo '<button class="btn bg-lime-light w-100">Avanzado</button>';
+                            }
+                        } else {
+                            echo '<button class="btn btn-secondary w-100">No presento prueba</button>';
+                        }
+                        ?>
+                    </td>
                     <td class="text-center">
                         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalLlamada_<?php echo $row['number_id']; ?>">
                             <i class="bi bi-telephone"></i>
                         </button>
                     </td>
+
                 </tr>
 
                 <!-- Modal -->
@@ -611,33 +659,26 @@ if ($result && $result->num_rows > 0) {
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
 
-                        // Mostrar notificación de éxito
                         Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
+                            title: '¡Exitoso! 🎉',
                             text: 'La información se ha guardado correctamente.',
-                            toast: true,
-                            position: 'center',
+                            icon: 'success',
                             showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
+                            timer: 4000,
                         });
-
                         // Recargar la página después de 2 segundos
                         setTimeout(() => {
                             location.reload();
                         }, 2000);
                     } else {
                         // Mostrar notificación de error
+
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
+                            title: 'Error! ❌',
                             text: 'Hubo un problema al guardar la información: ' + response,
-                            toast: true,
-                            position: 'center',
+                            icon: 'error',
                             showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
+                            timer: 4000,
                         });
                     }
                 } else {
@@ -647,22 +688,19 @@ if ($result && $result->num_rows > 0) {
         };
 
         xhr.onerror = function() {
+
             Swal.fire({
-                icon: 'error',
-                title: 'Error de conexión',
+                title: 'Error! ❌',
                 text: 'No se pudo conectar con el servidor.',
-                toast: true,
-                position: 'center',
+                icon: 'error',
                 showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
+                timer: 4000,
             });
         };
 
         xhr.send(formData);
         return false;
     }
-
 
     // Muestra una notificación de actualización con SweetAlert2
     Swal.fire({
