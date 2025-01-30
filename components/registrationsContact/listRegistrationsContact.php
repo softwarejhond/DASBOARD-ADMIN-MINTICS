@@ -231,6 +231,7 @@ if ($result && $result->num_rows > 0) {
     </div>
 
     <script>
+        //FUNCION PARA AGREGAR ROTACION Y ZOOM A LAS IMAGENES
         let imageTransforms = {};
 
         function rotateImage(imageId, degrees) {
