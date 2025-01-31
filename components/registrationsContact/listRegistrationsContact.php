@@ -196,6 +196,7 @@ if ($result && $result->num_rows > 0) {
                 <th>Ocupación</th>
                 <th>Tiempo de obligaciones</th>
                 <th>Sede de elección</th>
+                <th>Modalidad</th>
                 <th>Programa de interés</th>
                 <th>Horario</th>
                 <th>Dispositivo</th>
@@ -308,12 +309,14 @@ if ($result && $result->num_rows > 0) {
 
                     </td>
 
-                    <td><?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['second_name']) . ' ' . htmlspecialchars($row['first_last']) . ' ' . htmlspecialchars($row['second_last']); ?></td>
+                    <td style="width: 300px; min-width: 300px; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['second_name']) . ' ' . htmlspecialchars($row['first_last']) . ' ' . htmlspecialchars($row['second_last']); ?>
+                    </td>
                     <td><?php echo $row['age']; ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
-                    <td><?php echo htmlspecialchars($row['first_phone']); ?></td>
-                    <td><?php echo htmlspecialchars($row['second_phone']); ?></td>
-                    <td id="medioContacto_<?php echo $row['number_id']; ?>">
+                    <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['first_phone']); ?></td>
+                    <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['second_phone']); ?></td>
+                    <td id="medioContacto_<?php echo $row['number_id']; ?>" >
                         <?php
                         // Asigna la clase y el ícono según el valor de 'contactMedium'
                         $btnClass = '';
@@ -342,8 +345,8 @@ if ($result && $result->num_rows > 0) {
                         ?>
                     </td>
 
-                    <td><?php echo htmlspecialchars($row['emergency_contact_name']); ?></td>
-                    <td><?php echo htmlspecialchars($row['emergency_contact_number']); ?></td>
+                    <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['emergency_contact_name']); ?></td>
+                    <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['emergency_contact_number']); ?></td>
                     <td><?php echo htmlspecialchars($row['nationality']); ?></td>
                     <td>
                         <?php
@@ -362,7 +365,8 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['occupation']); ?></td>
                     <td><?php echo htmlspecialchars($row['time_obligations']); ?></td>
                     <td><?php echo htmlspecialchars($row['headquarters']); ?></td>
-                    <td><?php echo htmlspecialchars($row['program']); ?></td>
+                    <td><?php echo htmlspecialchars($row['mode']); ?></td>
+                    <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['program']); ?></td>
                     <td class="text-center">
                         <button type="button" class="btn bg-indigo-light"
                             data-bs-toggle="tooltip" data-bs-placement="top"
@@ -446,9 +450,9 @@ if ($result && $result->num_rows > 0) {
                         }
 
                         if ($isAccepted) {
-                            echo '<button class="btn bg-teal-dark w-100">CUMPLE</button>';
+                            echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></button>';
                         } else {
-                            echo '<button class="btn bg-danger text-white w-100">NO CUMPLE</button>';
+                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></button>';
                         }
                         ?>
                     </td>
@@ -462,18 +466,18 @@ if ($result && $result->num_rows > 0) {
                         if (isset($nivelesUsuarios[$row['number_id']])) {
                             $puntaje = $nivelesUsuarios[$row['number_id']];
                             if ($puntaje >= 1 && $puntaje <= 5) {
-                                echo '<div class="alert alert-danger" role="alert">'. htmlspecialchars($nivelesUsuarios[$row['number_id']]).'</div>';
+                                echo '<button class="btn bg-magenta-dark w-100" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                             } elseif ($puntaje >= 6 && $puntaje <= 10) {
-                                echo '<div class="alert alert-info" role="alert">'. htmlspecialchars($nivelesUsuarios[$row['number_id']]).'</div>';
+                                echo '<button class="btn bg-orange-dark w-100" role="alert"role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                             } elseif ($puntaje >= 11 && $puntaje <= 15) {
-                                echo '<div class="alert alert-success" role="alert">'. htmlspecialchars($nivelesUsuarios[$row['number_id']]).'</div>';
+                                echo '<button class="btn bg-teal-dark w-100" role="alert" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                             }
                         } else {
-                            echo '<div class="alert alert-danger" role="alert" data-bs-toggle="tooltip" data-bs-placement="top"
+                            echo '<button class="btn bg-silver w-100" role="alert"role="alert data-bs-toggle="tooltip" data-bs-placement="top"
                             data-bs-custom-class="custom-tooltip"
                             data-bs-title="No ha presebtado la prueba" >
                          <i class="bi bi-ban"></i>
-                            </div>';
+                            </button>';
                         }
                         ?>
                     </td>
@@ -482,18 +486,18 @@ if ($result && $result->num_rows > 0) {
                         if (isset($nivelesUsuarios[$row['number_id']])) {
                             $puntaje = $nivelesUsuarios[$row['number_id']];
                             if ($puntaje >= 1 && $puntaje <= 5) {
-                                echo '<div class="alert alert-danger" role="alert">Básico</div>';
+                                echo '<button class="btn bg-magenta-dark w-100" role="alert">Básico</div>';
                             } elseif ($puntaje >= 6 && $puntaje <= 10) {
-                                echo '<div class="alert alert-info" role="alert">Intermedio</div>';
+                                echo '<button class="btn bg-orange-dark w-100" role="alert"role="alert">Intermedio</div>';
                             } elseif ($puntaje >= 11 && $puntaje <= 15) {
-                                echo '<div class="alert alert-success" role="alert">Avanzado</div>';
+                                echo '<button class="btn bg-teal-dark w-100" role="alert" role="alert">Avanzado</div>';
                             }
                         } else {
-                            echo '<div class="alert alert-danger" role="alert" data-bs-toggle="tooltip" data-bs-placement="top"
+                            echo '<button class="btn bg-silver w-100" role="alert"role="alert  data-bs-toggle="tooltip" data-bs-placement="top"
                             data-bs-custom-class="custom-tooltip"
                             data-bs-title="No ha presebtado la prueba" >
                          <i class="bi bi-ban"></i>
-                            </div>';
+                            </button>';
                         }
                         ?>
                     </td>
