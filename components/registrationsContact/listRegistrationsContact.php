@@ -721,11 +721,21 @@ if ($result && $result->num_rows > 0) {
                         const modal = bootstrap.Modal.getInstance(document.getElementById('modalLlamada_' + id));
                         modal.hide();
 
+
                         Swal.fire({
                             title: '¡Exitoso! 🎉',
                             text: 'La información se ha guardado correctamente.',
                             toast: true,
                             position: 'center',
+
+                        // Mostrar notificación de éxito
+
+
+                        Swal.fire({
+                            title: '¡Exitoso! 🎉',
+                            text: 'La información se ha guardado correctamente.',
+                            icon: 'success',
+
                             showConfirmButton: false,
                             timer: 4000,
                         });
@@ -739,8 +749,12 @@ if ($result && $result->num_rows > 0) {
                         Swal.fire({
                             title: 'Error! ❌',
                             text: 'Hubo un problema al guardar la información: ' + response,
+
                             toast: true,
                             position: 'center',
+
+                            icon: 'error',
+
                             showConfirmButton: false,
                             timer: 4000,
                         });
@@ -756,8 +770,12 @@ if ($result && $result->num_rows > 0) {
             Swal.fire({
                 title: 'Error! ❌',
                 text: 'No se pudo conectar con el servidor.',
+
                 toast: true,
                 position: 'center',
+
+
+                icon: 'error',
 
                 showConfirmButton: false,
                 timer: 4000,
@@ -773,7 +791,7 @@ if ($result && $result->num_rows > 0) {
         icon: 'info',
         title: 'Actualizando información...',
         text: 'Por favor, espere un momento.',
-        position: 'top-end',
+        position: 'center',
         showConfirmButton: false,
         timer: 2000,
         timerProgressBar: true,
