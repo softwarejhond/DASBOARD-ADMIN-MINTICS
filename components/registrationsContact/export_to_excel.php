@@ -176,7 +176,7 @@ function exportDataToExcel($conn)
 
     // Lista de tablas a exportar
     $tablas = [
-        
+
         'user_register',
         'usuarios'
     ];
@@ -227,14 +227,16 @@ function exportDataToExcel($conn)
     }
 
 
-    // Configurar headers para descarga
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="inscritos.xlsx"');
-    header('Cache-Control: max-age=0');
+  // Configurar headers para evitar errores de salida
+ob_end_clean();
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment; filename="inscritos.xlsx"');
+header('Cache-Control: max-age=0');
 
-    $writer = new Xlsx($spreadsheet);
-    $writer->save('php://output');
-    exit;
+$writer = new Xlsx($spreadsheet);
+$writer->save('php://output');
+exit;
+
 }
 
 function obtenerNivelesUsuarios($conn)

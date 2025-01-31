@@ -1,3 +1,16 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    let timerInterval;
+    Swal.fire({
+        title: "Cargando información...",
+        html: "Por favor espera mientras obtenemos los datos.",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+</script>
 <?php
 
 $mensajeToast = ''; // Mensaje para el toast
@@ -97,7 +110,6 @@ function obtenerNivelesUsuarios($conn)
 }
 
 
-
 // Obtener los niveles de usuarios
 $nivelesUsuarios = obtenerNivelesUsuarios($conn);
 
@@ -165,16 +177,16 @@ if ($result && $result->num_rows > 0) {
         <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
     </button>
     <table id="listaInscritos" class="table table-hover table-bordered">
-        <thead class="thead-dark">
+        <thead class="thead-dark text-center">
             <tr class="text-center">
                 <th>Tipo ID</th>
                 <th>Número</th>
-                <th>Foto de ID</th>
-                <th>Nombre Completo</th>
+                <th>Foto de CC</th>
+                <th>Nombre </th>
                 <th>Edad</th>
                 <th>Correo</th>
-                <th>Teléfono principal</th>
-                <th>Teléfono secundario</th>
+                <th>Teléfono 1</th>
+                <th>Teléfono 2</th>
                 <th>Medio de contacto</th>
                 <th>Contacto de emergencia</th>
                 <th>Teléfono del contacto</th>
@@ -190,13 +202,13 @@ if ($result && $result->num_rows > 0) {
                 <th>Dispositivo</th>
                 <th>Internet</th>
                 <th>Estado</th>
-                <th>Medio de contacto</th>
+                <th>Actualizar medio de contacto</th>
                 <th>Puntaje de prueba</th>
-                <th>Estado de prueba</th>
-                <th>Información de llamada</th>
+                <th>Nivel obtenido</th>
+                <th>Actualizar contacto</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="text-center">
             <?php foreach ($data as $row): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
@@ -450,9 +462,20 @@ if ($result && $result->num_rows > 0) {
                     </td>
                     <td><?php
                         if (isset($nivelesUsuarios[$row['number_id']])) {
-                            echo htmlspecialchars($nivelesUsuarios[$row['number_id']]);
+                            $puntaje = $nivelesUsuarios[$row['number_id']];
+                            if ($puntaje >= 1 && $puntaje <= 5) {
+                                echo '<div class="alert alert-danger" role="alert">'. htmlspecialchars($nivelesUsuarios[$row['number_id']]).'</div>';
+                            } elseif ($puntaje >= 6 && $puntaje <= 10) {
+                                echo '<div class="alert alert-info" role="alert">'. htmlspecialchars($nivelesUsuarios[$row['number_id']]).'</div>';
+                            } elseif ($puntaje >= 11 && $puntaje <= 15) {
+                                echo '<div class="alert alert-success" role="alert">'. htmlspecialchars($nivelesUsuarios[$row['number_id']]).'</div>';
+                            }
                         } else {
-                            echo "No presento prueba";
+                            echo '<div class="alert alert-danger" role="alert" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="No ha presebtado la prueba" >
+                         <i class="bi bi-ban"></i>
+                            </div>';
                         }
                         ?>
                     </td>
@@ -461,14 +484,22 @@ if ($result && $result->num_rows > 0) {
                         if (isset($nivelesUsuarios[$row['number_id']])) {
                             $puntaje = $nivelesUsuarios[$row['number_id']];
                             if ($puntaje >= 1 && $puntaje <= 5) {
-                                echo '<button class="btn bg-orange-light w-100">Basico</button>';
+                                echo '<div class="alert alert-danger" role="alert">Básico</div>';
                             } elseif ($puntaje >= 6 && $puntaje <= 10) {
-                                echo '<button class="btn btn-info w-100">Intermedio</button>';
+                                echo '<div class="alert alert-info" role="alert">Intermedio</div>';
                             } elseif ($puntaje >= 11 && $puntaje <= 15) {
-                                echo '<button class="btn bg-lime-light w-100">Avanzado</button>';
+                                echo '<div class="alert alert-success" role="alert">Avanzado</div>';
                             }
                         } else {
+
                             echo '<button class="btn btn-secondary w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="NO PRESENTO PRUEBA"><i class="bi bi-question-circle"></i></button>';
+
+                            echo '<div class="alert alert-danger" role="alert" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="No ha presebtado la prueba" >
+                         <i class="bi bi-ban"></i>
+                            </div>';
+
                         }
                         ?>
                     </td>
@@ -730,6 +761,7 @@ if ($result && $result->num_rows > 0) {
                             icon: 'success',
                             toast: true,
                             position: 'center',
+
                             showConfirmButton: false,
                             timer: 4000
                         });
@@ -738,6 +770,14 @@ if ($result && $result->num_rows > 0) {
                         setTimeout(function() {
                             location.reload();
                         }, 2000);
+
+                        }).then(() => {
+                            // Recargar la página después de 2 segundos
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        });
+
                     } else {
                         // Mostrar notificación de error
 
@@ -795,4 +835,3 @@ if ($result && $result->num_rows > 0) {
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-//cambio minimo para probar git
