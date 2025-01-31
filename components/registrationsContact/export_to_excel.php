@@ -175,17 +175,7 @@ function exportDataToExcel($conn)
 
     // Lista de tablas a exportar
     $tablas = [
-        'advisors',
-        'company',
-        'contact_log',
-        'departamentos',
-        'formularios',
-        'municipios',
-        'opciones',
-        'preguntas',
-        'respuestas',
-        'smtpconfig',
-        'users',
+      
         'user_register',
         'usuarios'
     ];
@@ -227,7 +217,7 @@ function exportDataToExcel($conn)
                 $headerStyleTabla->getFont()->setBold(true);
 
                 // Autoajuste
-                $hoja->getStyle('A1:' . $lastColumnTabla . $filaIndex)->getAlignment()->setWrapText(true);
+                $hoja->getStyle('A1:' . $lastColumnTabla . $filaIndex)->getAlignment();
                 foreach (range('A', $lastColumnTabla) as $col) {
                     $hoja->getColumnDimension($col)->setAutoSize(true);
                 }
@@ -236,14 +226,16 @@ function exportDataToExcel($conn)
     }
 
 
-    // Configurar headers para descarga
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="inscritos.xlsx"');
-    header('Cache-Control: max-age=0');
+  // Configurar headers para evitar errores de salida
+ob_end_clean();
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment; filename="inscritos.xlsx"');
+header('Cache-Control: max-age=0');
 
-    $writer = new Xlsx($spreadsheet);
-    $writer->save('php://output');
-    exit;
+$writer = new Xlsx($spreadsheet);
+$writer->save('php://output');
+exit;
+
 }
 
 function obtenerNivelesUsuarios($conn)
