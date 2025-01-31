@@ -225,8 +225,6 @@ function exportDataToExcel($conn)
             }
         }
     }
-
-
     // Configurar headers para descarga
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="inscritos.xlsx"');
@@ -249,3 +247,5 @@ function obtenerNivelesUsuarios($conn)
     }
     return $niveles;
 }
+
+//omentario de prueba
