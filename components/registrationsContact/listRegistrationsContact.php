@@ -172,7 +172,8 @@ if ($result && $result->num_rows > 0) {
 ?>
 
 <div class="table-responsive">
-    <button id="exportarExcel" class="btn btn-success mb-3">
+    <button id="exportarExcel" class="btn btn-success mb-3"
+        onclick="window.location.href='components/registrationsContact/export_to_excel.php?action=export'">
         <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
     </button>
     <table id="listaInscritos" class="table table-hover table-bordered">
