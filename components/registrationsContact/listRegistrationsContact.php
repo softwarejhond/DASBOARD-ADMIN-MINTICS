@@ -351,7 +351,17 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['occupation']); ?></td>
                     <td><?php echo htmlspecialchars($row['time_obligations']); ?></td>
                     <td><?php echo htmlspecialchars($row['headquarters']); ?></td>
-                    <td><?php echo htmlspecialchars($row['mode']); ?></td>
+                    <td>
+                        <?php 
+                        if ($row['mode'] === 'Virtual') {
+                            echo '<button class="btn bg-indigo-light w-100">' . htmlspecialchars($row['mode']) . '</button>';
+                        } else if ($row['mode'] === 'Presencial') {
+                            echo '<button class="btn bg-lime-light w-100">' . htmlspecialchars($row['mode']) . '</button>';
+                        } else {
+                            echo htmlspecialchars($row['mode']);
+                        }
+                        ?>
+                    </td>
                     <td><?php echo htmlspecialchars($row['program']); ?></td>
                     <td class="text-center">
                         <button type="button" class="btn bg-indigo-light"
