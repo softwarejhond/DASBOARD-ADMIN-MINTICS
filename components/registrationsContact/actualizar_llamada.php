@@ -75,6 +75,3 @@ if (isset($_POST['number_id']) && isset($_POST['idAdvisor']) && isset($_POST['de
     echo "invalid_data. Datos recibidos: " . json_encode($_POST);
 
 }
-
-
-

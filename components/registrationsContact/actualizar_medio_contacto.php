@@ -54,4 +54,3 @@ if (isset($_POST['id']) && isset($_POST['nuevoMedio'])) {
     error_log("Datos no enviados correctamente: " . json_encode($_POST));
     echo "invalid_data"; // Si no se enviaron los datos requeridos
 }
-?>
