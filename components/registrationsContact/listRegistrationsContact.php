@@ -184,6 +184,7 @@ if ($result && $result->num_rows > 0) {
                 <th>Ocupación</th>
                 <th>Tiempo de obligaciones</th>
                 <th>Sede de elección</th>
+                <th>Modalidad</th>
                 <th>Programa de interés</th>
                 <th>Horario</th>
                 <th>Dispositivo</th>
@@ -350,6 +351,7 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['occupation']); ?></td>
                     <td><?php echo htmlspecialchars($row['time_obligations']); ?></td>
                     <td><?php echo htmlspecialchars($row['headquarters']); ?></td>
+                    <td><?php echo htmlspecialchars($row['mode']); ?></td>
                     <td><?php echo htmlspecialchars($row['program']); ?></td>
                     <td class="text-center">
                         <button type="button" class="btn bg-indigo-light"
@@ -434,9 +436,9 @@ if ($result && $result->num_rows > 0) {
                         }
 
                         if ($isAccepted) {
-                            echo '<button class="btn bg-teal-dark w-100">CUMPLE</button>';
+                            echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></button>';
                         } else {
-                            echo '<button class="btn bg-danger text-white w-100">NO CUMPLE</button>';
+                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></button>';
                         }
                         ?>
                     </td>
@@ -466,7 +468,7 @@ if ($result && $result->num_rows > 0) {
                                 echo '<button class="btn bg-lime-light w-100">Avanzado</button>';
                             }
                         } else {
-                            echo '<button class="btn btn-secondary w-100">No presento prueba</button>';
+                            echo '<button class="btn btn-secondary w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="NO PRESENTO PRUEBA"><i class="bi bi-question-circle"></i></button>';
                         }
                         ?>
                     </td>
@@ -725,22 +727,15 @@ if ($result && $result->num_rows > 0) {
                         Swal.fire({
                             title: '¡Exitoso! 🎉',
                             text: 'La información se ha guardado correctamente.',
+                            icon: 'success',
                             toast: true,
                             position: 'center',
-
-                        // Mostrar notificación de éxito
-
-
-                        Swal.fire({
-                            title: '¡Exitoso! 🎉',
-                            text: 'La información se ha guardado correctamente.',
-                            icon: 'success',
-
                             showConfirmButton: false,
-                            timer: 4000,
+                            timer: 4000
                         });
+
                         // Recargar la página después de 2 segundos
-                        setTimeout(() => {
+                        setTimeout(function() {
                             location.reload();
                         }, 2000);
                     } else {

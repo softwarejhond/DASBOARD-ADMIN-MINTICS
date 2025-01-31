@@ -175,17 +175,7 @@ function exportDataToExcel($conn)
 
     // Lista de tablas a exportar
     $tablas = [
-        'advisors',
-        'company',
-        'contact_log',
-        'departamentos',
-        'formularios',
-        'municipios',
-        'opciones',
-        'preguntas',
-        'respuestas',
-        'smtpconfig',
-        'users',
+        
         'user_register',
         'usuarios'
     ];
@@ -227,7 +217,7 @@ function exportDataToExcel($conn)
                 $headerStyleTabla->getFont()->setBold(true);
 
                 // Autoajuste
-                $hoja->getStyle('A1:' . $lastColumnTabla . $filaIndex)->getAlignment()->setWrapText(true);
+                $hoja->getStyle('A1:' . $lastColumnTabla . $filaIndex)->getAlignment();
                 foreach (range('A', $lastColumnTabla) as $col) {
                     $hoja->getColumnDimension($col)->setAutoSize(true);
                 }
