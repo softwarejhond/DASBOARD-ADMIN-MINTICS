@@ -771,19 +771,11 @@ if ($result && $result->num_rows > 0) {
                             icon: 'success',
                             toast: true,
                             position: 'center',
-
                             showConfirmButton: false,
                             timer: 4000
-                        });
-
-                        // Recargar la página después de 2 segundos
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
-
                         }).then(() => {
                             // Recargar la página después de 2 segundos
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 location.reload();
                             }, 2000);
                         });
