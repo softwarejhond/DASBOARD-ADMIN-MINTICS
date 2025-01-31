@@ -128,6 +128,7 @@ function exportDataToExcel($conn)
                 'Ocupación' => $row['occupation'],
                 'Tiempo de obligaciones' => $row['time_obligations'],
                 'Sede de elección' => $row['headquarters'],
+                'Modalidad' => $row['mode'],
                 'Programa de interés' => $row['program'],
                 'Horario' => $row['schedules'],
                 'Dispositivo' => $row['technologies'],
@@ -175,7 +176,7 @@ function exportDataToExcel($conn)
 
     // Lista de tablas a exportar
     $tablas = [
-      
+
         'user_register',
         'usuarios'
     ];
