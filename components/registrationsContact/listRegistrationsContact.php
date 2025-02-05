@@ -15,74 +15,13 @@
 
 $mensajeToast = ''; // Mensaje para el toast
 
-// Procesamiento de la actualización de estado
-if (isset($_POST['btnActualizarEstado'])) {
-    $codigo = $_POST['codigo'];
-    $nuevoEstado = $_POST['nuevoEstado'];
-
-    // Obtener los datos del usuario para verificar las condiciones
-    $userSql = "SELECT * FROM user_register WHERE number_id = ?";
-    $stmtUser   = $conn->prepare($userSql);
-    $stmtUser->bind_param('i', $codigo);
-    $stmtUser->execute();
-    $resultUser  = $stmtUser->get_result();
-
-    if ($resultUser  && $resultUser->num_rows > 0) {
-        $userData = $resultUser->fetch_assoc();
-
-        // Calcular edad
-        $birthday = new DateTime($userData['birthdate']);
-        $now = new DateTime();
-        $age = $now->diff($birthday)->y;
-
-        // Verificar condiciones
-        $isAccepted = false;
-        if ($userData['mode'] === 'Presencial') {
-            if (
-                $userData['typeID'] === 'C.C' && $age > 17 &&
-                (strtoupper($userData['departament']) === 25 || strtoupper($userData['departament']) === 15) &&
-                $userData['internet'] === 'Sí'
-            ) {
-                $isAccepted = true;
-            }
-        } elseif ($userData['mode'] === 'Virtual') {
-            if (
-                $userData['typeID'] === 'C.C' && $age > 17 &&
-                (strtoupper($userData['departament']) === 25 || strtoupper($userData['departament']) === 15) &&
-                $userData['internet'] === 'Sí' &&
-                $userData['technologies'] === 'computador'
-            ) {
-                $isAccepted = true;
-            }
-        }
-
-        // Si se cumplen las condiciones, actualizar el estado a "ACEPTADO"
-        if ($isAccepted) {
-            $nuevoEstado = 'ACEPTADO'; // Cambiar el estado a "ACEPTADO"
-        }
-
-        // Actualización en la base de datos
-        $updateSql = "UPDATE user_register SET status = ? WHERE number_id = ?";
-        $stmt = $conn->prepare($updateSql);
-        $stmt->bind_param('si', $nuevoEstado, $codigo);
-
-        if ($stmt->execute()) {
-            $mensajeToast = 'Estado actualizado correctamente.';
-        } else {
-            $mensajeToast = "Error al actualizar el estado: {$stmt->error}"; // Muestra el error
-        }
-    } else {
-        $mensajeToast = 'Usuario no encontrado.';
-    }
-}
-
 // Obtener los datos
 $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
     FROM user_register
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
     INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
     WHERE departamentos.id_departamento IN (15, 25)
-    AND user_register.status = '1' 
+    AND user_register.status = '1' AND user_register.statusAdmin = ''
     ORDER BY user_register.first_name ASC";
 
 $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
@@ -202,10 +141,12 @@ if ($result && $result->num_rows > 0) {
                 <th>Dispositivo</th>
                 <th>Internet</th>
                 <th>Estado</th>
+                <th>Estado de admision</th>
                 <th>Actualizar medio de contacto</th>
                 <th>Puntaje de prueba</th>
                 <th>Nivel obtenido</th>
                 <th>Actualizar contacto</th>
+                <th>Actualizar admision</th>
             </tr>
         </thead>
         <tbody class="text-center">
@@ -316,7 +257,7 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                     <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['first_phone']); ?></td>
                     <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['second_phone']); ?></td>
-                    <td id="medioContacto_<?php echo $row['number_id']; ?>" >
+                    <td id="medioContacto_<?php echo $row['number_id']; ?>">
                         <?php
                         // Asigna la clase y el ícono según el valor de 'contactMedium'
                         $btnClass = '';
@@ -411,11 +352,11 @@ if ($result && $result->num_rows > 0) {
 
                     // Mostrar el estado internet
                     if ($row['internet'] === 'Sí') {
-                        $btnClass = 'bg-indigo-dark text-white'; // Clase para computador
-                        $icon = '<i class="bi bi-router-fill"></i>'; // Ícono de computador
+                        $btnClass = 'bg-indigo-dark text-white'; // Clase para internet
+                        $icon = '<i class="bi bi-router-fill"></i>'; // Ícono de internet
                     } elseif ($row['internet'] === 'No') {
-                        $btnClass = 'bg-teal-dark text-white'; // Clase para smartphone
-                        $icon = '<i class="bi bi-wifi-off"></i>'; // Ícono de smartphone
+                        $btnClass = 'bg-red-dark text-white'; // Clase para smartphone
+                        $icon = '<i class="bi bi-wifi-off"></i>'; // Ícono de wifi off
                     }
                     // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
@@ -453,6 +394,18 @@ if ($result && $result->num_rows > 0) {
                             echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></button>';
                         } else {
                             echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></button>';
+                        }
+                        ?>
+                    </td>
+
+                    <td>
+                        <?php
+                        if ($row['statusAdmin'] === '1') {
+                            echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
+                        } elseif ($row['statusAdmin'] === '0') {
+                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZADO"><i class="bi bi-x-circle"></i></button>';
+                        } else {
+                            echo '<button class="btn bg-warning text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="PENDIENTE"><i class="bi bi-clock"></i></button>';
                         }
                         ?>
                     </td>
@@ -507,7 +460,15 @@ if ($result && $result->num_rows > 0) {
                         </button>
                     </td>
 
+                    <td>
+                        <button class="btn bg-indigo-dark text-white" onclick="mostrarModalActualizarAdmision(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="Cambiar estado de admisión">
+                            <i class="bi bi-arrow-left-right"></i></button>
+                    </td>
                 </tr>
+
+
 
                 <!-- Modal -->
                 <div class="modal fade" id="modalLlamada_<?php echo $row['number_id']; ?>" tabindex="-1" aria-labelledby="modalLlamadaLabel_<?php echo $row['number_id']; ?>" aria-hidden="true">
@@ -806,6 +767,100 @@ if ($result && $result->num_rows > 0) {
 
         xhr.send(formData);
         return false;
+    }
+
+    function mostrarModalActualizarAdmision(id) {
+        // Remover cualquier modal previo del DOM
+        $('#modalActualizarAdmision_' + id).remove();
+
+        // Crear el modal dinámicamente con un identificador único
+        const modalHtml = `
+        <div id="modalActualizarAdmision_${id}" class="modal fade" aria-hidden="true" aria-labelledby="modalActualizarAdmisionLabel" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-indigo-dark">
+                        <h5 class="modal-title text-center"><i class="bi bi-arrow-left-right"></i> Actualizar Estado de Admisión</h5>
+                        <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formActualizarAdmision_${id}">
+                            <div class="form-group">
+                                <label for="nuevoEstado_${id}">Seleccionar nuevo estado:</label>
+                                <select class="form-control" id="nuevoEstado_${id}" name="nuevoEstado" required>
+                                    <option value="1">Aceptado</option>
+                                    <option value="0">Rechazado</option>
+                                </select>
+                            </div>
+                            <br>
+                            <input type="hidden" name="id" value="${id}">
+                            <button type="submit" class="btn bg-indigo-dark text-white">Actualizar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+
+        // Añadir el modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        // Mostrar el modal
+        $('#modalActualizarAdmision_' + id).modal('show');
+
+        // Manejar el envío del formulario
+        $('#formActualizarAdmision_' + id).on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar el estado de admisión?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const nuevoEstado = $('#nuevoEstado_' + id).val();
+                    actualizarEstadoAdmision(id, nuevoEstado);
+                    $('#modalActualizarAdmision_' + id).modal('hide');
+                }
+            });
+        });
+    }
+
+    function actualizarEstadoAdmision(id, nuevoEstado) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_admision.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'El estado de admisión se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar el estado de admisión.'
+                        });
+                    }
+                }
+            }
+        };
+
+        xhr.send("id=" + id + "&nuevoEstado=" + encodeURIComponent(nuevoEstado));
     }
 
     // Muestra una notificación de actualización con SweetAlert2
