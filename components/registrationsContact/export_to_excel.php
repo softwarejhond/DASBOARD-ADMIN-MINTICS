@@ -108,6 +108,15 @@ function exportDataToExcel($conn)
                 }
             }
 
+            //Asignacion a estado de admision
+            $estadoAdmision = 'PENDIENTE';
+            if ($row['admin_status'] === '1') {
+                $estadoAdmision = 'ACEPTADO';
+            } elseif ($row['admin_status'] === '0') {
+                $estadoAdmision = 'RECHAZADO';
+            }
+
+
             // Construir fila de datos
             $data[] = [
                 'Tipo ID' => $row['typeID'],
@@ -134,6 +143,7 @@ function exportDataToExcel($conn)
                 'Dispositivo' => $row['technologies'],
                 'Internet' => $row['internet'],
                 'Estado' => $isAccepted ? 'CUMPLE' : 'NO CUMPLE',
+                'Estado de admisión' => $estadoAdmision,
                 'Puntaje de prueba' => $puntaje,
                 'Estado de prueba' => $estadoPrueba,
                 'Asesor' => $lastLog['advisor_name'],
