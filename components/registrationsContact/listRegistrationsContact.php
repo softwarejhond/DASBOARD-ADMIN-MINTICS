@@ -402,10 +402,8 @@ if ($result && $result->num_rows > 0) {
                         <?php
                         if ($row['statusAdmin'] === '1') {
                             echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
-                        } elseif ($row['statusAdmin'] === '0') {
-                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZADO"><i class="bi bi-x-circle"></i></button>';
-                        } else {
-                            echo '<button class="btn bg-warning text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="PENDIENTE"><i class="bi bi-clock"></i></button>';
+                        }elseif ($row['statusAdmin'] === '0') {
+                            echo '<button class="btn bg-cyan-dark text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></button>';
                         }
                         ?>
                     </td>
@@ -789,7 +787,7 @@ if ($result && $result->num_rows > 0) {
                                 <select class="form-control" id="nuevoEstado_${id}" name="nuevoEstado" required>
                                    <option value="">Seleccionar</option>
                                     <option value="1">Aceptado</option>
-                                    <option value="0">Rechazado</option>
+                                    <option value="2">Rechazado</option>
                                 </select>
                             </div>
                             <br>

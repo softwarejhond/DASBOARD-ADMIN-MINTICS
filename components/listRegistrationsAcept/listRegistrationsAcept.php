@@ -789,8 +789,8 @@ if ($result && $result->num_rows > 0) {
                                 <select class="form-control" id="nuevoEstado_${id}" name="nuevoEstado" required>
                                   <option value="">Seleccionar</option>
                                     <option value="1">Aceptado</option>
-                                    <option value="0">Rechazado</option>
-                                    <option value="2">Regresar a validación</option>
+                                    <option value="2">Rechazado</option>
+                                    <option value="0">Regresar a validación</option>
                                 </select>
                             </div>
                             <br>
