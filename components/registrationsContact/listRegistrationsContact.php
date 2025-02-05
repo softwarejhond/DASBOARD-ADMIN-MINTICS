@@ -400,9 +400,9 @@ if ($result && $result->num_rows > 0) {
 
                     <td>
                         <?php
-                        if ($row['admin_status'] === '1') {
+                        if ($row['adminStatus'] === '1') {
                             echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
-                        } elseif ($row['admin_status'] === '0') {
+                        } elseif ($row['adminStatus'] === '0') {
                             echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZADO"><i class="bi bi-x-circle"></i></button>';
                         } else {
                             echo '<button class="btn bg-warning text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="PENDIENTE"><i class="bi bi-clock"></i></button>';
