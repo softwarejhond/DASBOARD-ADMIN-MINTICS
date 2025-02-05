@@ -787,6 +787,7 @@ if ($result && $result->num_rows > 0) {
                             <div class="form-group">
                                 <label for="nuevoEstado_${id}">Seleccionar nuevo estado:</label>
                                 <select class="form-control" id="nuevoEstado_${id}" name="nuevoEstado" required>
+                                   <option value="">Seleccionar</option>
                                     <option value="1">Aceptado</option>
                                     <option value="0">Rechazado</option>
                                 </select>
