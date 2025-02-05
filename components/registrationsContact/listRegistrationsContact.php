@@ -21,7 +21,7 @@ $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
     INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
     WHERE departamentos.id_departamento IN (15, 25)
-    AND user_register.status = '1' AND user_register.statusAdmin = '' AND user_register.statusAdmin = '2'
+    AND user_register.status = '1' AND user_register.statusAdmin = '' 
     ORDER BY user_register.first_name ASC";
 
 $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
