@@ -42,14 +42,14 @@
                         </span>
                     </label>
                 </div>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Agenda">
-                    <a href="agenda.php">
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Usuarios berificados">
+                    <a href="verifiedUsers.php">
                         <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
-                                    <i class="bi bi-journal-bookmark-fill icono"></i>
+                                <i class="bi bi-mortarboard-fill icono"></i>
                                 </span>
-                                <span class="checkbox-label">Registrar</span>
+                                <span class="checkbox-label">Ingresar</span>
                             </span>
                         </label>
                     </a>
