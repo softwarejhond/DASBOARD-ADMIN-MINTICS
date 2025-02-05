@@ -403,7 +403,7 @@ if ($result && $result->num_rows > 0) {
                         if ($row['statusAdmin'] === '1') {
                             echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
                         }elseif ($row['statusAdmin'] === '0') {
-                            echo '<button class="btn bg-cyan-dark text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></button>';
+                            echo '<button class="btn bg-silver text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></button>';
                         }
                         ?>
                     </td>
