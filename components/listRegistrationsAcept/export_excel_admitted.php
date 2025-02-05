@@ -27,7 +27,7 @@ function exportDataToExcel($conn)
             INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
             INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
             WHERE departamentos.id_departamento IN (15, 25)
-            AND user_register.status = '1' 
+            AND user_register.status = '1' AND user_register.statusAdmin = '1'
             ORDER BY user_register.first_name ASC";
 
     $result = $conn->query($sql);
@@ -158,6 +158,7 @@ function exportDataToExcel($conn)
     // Crear archivo Excel
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Admitidos');
 
     // Encabezados
     $headers = array_keys($data[0] ?? []);
@@ -184,62 +185,10 @@ function exportDataToExcel($conn)
         $sheet->getColumnDimension($col)->setAutoSize(true);
     }
 
-    // Lista de tablas a exportar
-    $tablas = [
-        
-        'user_register',
-        'usuarios'
-    ];
-
-    // Agregar una hoja por cada tabla
-    foreach ($tablas as $tabla) {
-        $resultado = $conn->query("SELECT * FROM $tabla");
-
-        if ($resultado && $resultado->num_rows > 0) {
-            $hoja = $spreadsheet->createSheet();
-            $hoja->setTitle(substr($tabla, 0, 31)); // Limitar a 31 caracteres
-
-            // Obtener datos
-            $datosTabla = [];
-            while ($fila = $resultado->fetch_assoc()) {
-                $datosTabla[] = $fila;
-            }
-
-            // Escribir encabezados
-            $encabezados = array_keys($datosTabla[0]);
-            $hoja->fromArray($encabezados, NULL, 'A1');
-
-            // Escribir datos
-            $filaIndex = 2;
-            foreach ($datosTabla as $filaDatos) {
-                $hoja->fromArray(array_values($filaDatos), NULL, "A{$filaIndex}");
-                $filaIndex++;
-            }
-
-            if (!empty($encabezados)) {
-                $lastColumnTabla = Coordinate::stringFromColumnIndex(count($encabezados));
-
-                // Estilo encabezados
-                $headerRangeTabla = 'A1:' . $lastColumnTabla . '1';
-                $headerStyleTabla = $hoja->getStyle($headerRangeTabla);
-                $headerStyleTabla->getFill()
-                    ->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFD3D3D3');
-                $headerStyleTabla->getFont()->setBold(true);
-
-                // Autoajuste
-                $hoja->getStyle('A1:' . $lastColumnTabla . $filaIndex)->getAlignment();
-                foreach (range('A', $lastColumnTabla) as $col) {
-                    $hoja->getColumnDimension($col)->setAutoSize(true);
-                }
-            }
-        }
-    }
-
     ob_clean(); // Limpia cualquier salida previa
     // Configurar headers para descarga
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="inscritos.xlsx"');
+    header('Content-Disposition: attachment;filename="inscritos_admitidos.xlsx"');
     header('Cache-Control: max-age=0');
 
     $writer = new Xlsx($spreadsheet);

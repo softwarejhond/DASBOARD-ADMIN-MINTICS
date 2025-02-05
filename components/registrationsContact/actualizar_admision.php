@@ -26,7 +26,7 @@ if (isset($_POST['id']) && isset($_POST['nuevoEstado'])) {
     }
 
     // Consulta SQL para actualizar el medio de contacto
-    $updateSql = "UPDATE user_register SET adminStatus = ? WHERE number_id = ?";
+    $updateSql = "UPDATE user_register SET statusAdmin = ? WHERE number_id = ?";
     $stmt = $conn->prepare($updateSql);
 
     if ($stmt) {

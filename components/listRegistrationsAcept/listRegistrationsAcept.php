@@ -21,7 +21,7 @@ $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
     INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
     WHERE departamentos.id_departamento IN (15, 25)
-    AND user_register.status = '1' AND user_register.statusAdmin = '0' 
+    AND user_register.status = '1' AND user_register.statusAdmin = '1'
     ORDER BY user_register.first_name ASC";
 
 $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
@@ -112,7 +112,7 @@ if ($result && $result->num_rows > 0) {
 
 <div class="table-responsive">
     <button id="exportarExcel" class="btn btn-success mb-3"
-        onclick="window.location.href='components/registrationsContact/export_to_excel.php?action=export'">
+        onclick="window.location.href='components/listRegistrationsAcept/export_excel_admitted.php?action=export'">
         <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
     </button>
     <table id="listaInscritos" class="table table-hover table-bordered">
@@ -402,8 +402,10 @@ if ($result && $result->num_rows > 0) {
                         <?php
                         if ($row['statusAdmin'] === '1') {
                             echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
-                        }elseif ($row['statusAdmin'] === '0') {
-                            echo '<button class="btn bg-silver text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></button>';
+                        } elseif ($row['statusAdmin'] === '0') {
+                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZADO"><i class="bi bi-x-circle"></i></button>';
+                        } else {
+                            echo '<button class="btn bg-warning text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="PENDIENTE"><i class="bi bi-clock"></i></button>';
                         }
                         ?>
                     </td>
@@ -785,9 +787,10 @@ if ($result && $result->num_rows > 0) {
                             <div class="form-group">
                                 <label for="nuevoEstado_${id}">Seleccionar nuevo estado:</label>
                                 <select class="form-control" id="nuevoEstado_${id}" name="nuevoEstado" required>
-                                   <option value="">Seleccionar</option>
+                                  <option value="">Seleccionar</option>
                                     <option value="1">Aceptado</option>
                                     <option value="2">Rechazado</option>
+                                    <option value="0">Regresar a validación</option>
                                 </select>
                             </div>
                             <br>
