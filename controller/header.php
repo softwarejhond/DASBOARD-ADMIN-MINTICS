@@ -13,36 +13,7 @@
                     <a class="nav-link active" aria-current="page" href="main.php">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="empresa.php">Institución</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="profile.php">Perfil</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Filtros
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="listaReparaciones.php">#</a></li>
-                        <li><a class="dropdown-item" href="#">#</a></li>
-                        <li><a class="dropdown-item" href="#">#</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Lista de administradores</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        IPC
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#actualizarIPC">#</a></li>
-                        <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#actualizarIPCLocales">#</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">#</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">#</a>
@@ -61,7 +32,7 @@
                     </button>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="perfil.php">Perfil</a></li>
+                    <li><a class="dropdown-item" href="profile.php">Perfil</a></li>
                     <li><a class="dropdown-item" href="close.php">Cerrar sesión</a></li>
                 </ul>
             </div>

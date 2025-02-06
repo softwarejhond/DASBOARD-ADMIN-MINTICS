@@ -80,7 +80,7 @@
                     </a>
                 </div>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Perfil">
-                    <a href="perfil.php"> <label class="checkbox-wrapper">
+                    <a href="profile.php"> <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
                                     <i class="bi bi-person-circle icono"></i>

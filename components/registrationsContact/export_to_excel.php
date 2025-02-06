@@ -110,9 +110,9 @@ function exportDataToExcel($conn)
 
             //Asignacion a estado de admision
             $estadoAdmision = 'PENDIENTE';
-            if ($row['admin_status'] === '1') {
+            if ($row['statusAdmin'] === '1') {
                 $estadoAdmision = 'ACEPTADO';
-            } elseif ($row['admin_status'] === '0') {
+            } elseif ($row['statusAdmin'] === '0') {
                 $estadoAdmision = 'RECHAZADO';
             }
 
