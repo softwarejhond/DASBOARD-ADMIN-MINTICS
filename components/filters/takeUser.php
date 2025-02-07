@@ -34,11 +34,13 @@ function rolUsuario($rol)
         case 1:
             return "Administrador";
         case 2:
-            return "Operario";
-        case 3:
-            return "Aprobador";
-        case 4:
             return "Editor";
+        case 3:
+            return "Asesor";
+        case 4:
+            return "Visualizador";
+        case 5:
+            return "Docente";
         default:
             return "Rol desconocido";
     }

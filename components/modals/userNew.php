@@ -101,9 +101,10 @@ if (isset($_POST['crearUsuario'])) {
                             <div class="mb-3">
                                 <select class="form-select" name="rol" required>
                                     <option value="1">Administrador</option>
-                                    <option value="2">Operario</option>
-                                    <option value="3">Aprobador</option>
-                                    <option value="4">Editor</option>
+                                    <option value="2">Editor</option>
+                                    <option value="3">Asesor</option>
+                                    <option value="4">Visualizador</option>
+                                    <option value="5">Docente</option>
                                 </select>
                             </div>
                             <div class="mb-3">
