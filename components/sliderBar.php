@@ -53,7 +53,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 </div>
                 <?php endif; ?>
                 <?php if ($rol === 'Administrador' || $rol === 'Asesor'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Usuarios berificados">
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Usuarios verificados">
                     <a href="verifiedUsers.php">
                         <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
