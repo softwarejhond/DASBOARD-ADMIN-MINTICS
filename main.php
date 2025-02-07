@@ -51,6 +51,7 @@ $rol = $infoUsuario['rol'];
     <?php include("components/sliderBar.php"); ?>
     <?php include("components/modals/userNew.php"); ?>
     <?php include("components/modals/newAdvisor.php"); ?>
+    <?php include("components/cardContadores/queryContadores.php"); ?>
     <br><br>
     </body>
     <div style="margin-top: 50px;">
@@ -62,7 +63,7 @@ $rol = $infoUsuario['rol'];
                 </div>
                 <br><br>
                 <hr>
-                <?php include("components/contadoresCards.php"); ?>
+                <?php include("components/cardContadores/contadoresCards.php"); ?>
 
                 <?php //include("components/aceptUsers/updateStatus.php");  ?>
                 <div class="row">
