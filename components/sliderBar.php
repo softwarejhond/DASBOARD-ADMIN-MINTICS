@@ -54,15 +54,15 @@
                         </label>
                     </a>
                 </div>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Carousel de imagenes">
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Actualizar identificación">
 
-                    <a href="carusel.php">
+                    <a href="updateDocument.php">
                         <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
-                                    <i class="bi bi-images icono"></i>
+                                <i class="bi bi-person-vcard-fill icono"></i>
                                 </span>
-                                <span class="checkbox-label ">Carusel</span>
+                                <span class="checkbox-label ">Actualizar ID</span>
                             </span>
                         </label>
                     </a>
