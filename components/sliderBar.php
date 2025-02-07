@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <fieldset class="checkbox-group">
                 <legend class="checkbox-group-legend">
-               
+
                 </legend>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir usuario">
                     <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoAdmin" data-bs-toggle="modal">
@@ -21,22 +21,22 @@
                     </label>
                 </div>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Contacto de registros">
-                <a href="registrarionsContact.php">
-                    <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReporte" data-bs-toggle="modal">
-                        <span class="checkbox-tile">
-                            <span class="checkbox-icon">
-                            <i class="bi bi-people-fill icono"></i>
+                    <a href="registrarionsContact.php">
+                        <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReporte" data-bs-toggle="modal">
+                            <span class="checkbox-tile">
+                                <span class="checkbox-icon">
+                                    <i class="bi bi-people-fill icono"></i>
+                                </span>
+                                <span class="checkbox-label ">Ingresar</span>
                             </span>
-                            <span class="checkbox-label ">Ingresar</span>
-                        </span>
-                    </label>
+                        </label>
                     </a>
                 </div>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir asesor">
                     <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoAsesor" data-bs-toggle="modal">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
-                            <i class="bi bi-people-fill icono"></i>
+                                <i class="bi bi-people-fill icono"></i>
                             </span>
                             <span class="checkbox-label">Añadir</span>
                         </span>
@@ -47,7 +47,7 @@
                         <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
-                                <i class="bi bi-mortarboard-fill icono"></i>
+                                    <i class="bi bi-mortarboard-fill icono"></i>
                                 </span>
                                 <span class="checkbox-label">Ingresar</span>
                             </span>
@@ -56,7 +56,7 @@
                 </div>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Carousel de imagenes">
 
-                    <a href="carusel.php">
+                    <a href="updateDocument.php">
                         <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
