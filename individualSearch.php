@@ -52,11 +52,11 @@ $rol = $infoUsuario['rol'];
           
             <div id="dashboard">
                 <div class="position-relative bg-transparent">
-                    <h2 class="position-absolute top-4 start-0"><i class="bi bi-arrows-fullscreen"></i> Matriz general de inscripciones</h2>
+                    <h2 class="position-absolute top-4 start-0"><i class="bi bi-person"></i> Busqueda individual de estudiante</h2>
                 </div>
                 <br><br>
                 <hr>
-                <?php include("components/registrationsContact/listRegistrationsContact.php"); ?>
+                <?php include("components/individualSearch/individualSearch.php"); ?>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12">
                         <?php //include("components/aceptUsers/updateStatus.php"); 

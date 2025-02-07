@@ -174,7 +174,7 @@ if ($result && $result->num_rows > 0) {
                                                 <h6>Frente del documento</h6>
                                                 <div class="position-relative overflow-visible">
                                                     <img id="idImageFront_<?php echo $row['number_id']; ?>"
-                                                        src="https://dashboard.uttalento.co/files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
+                                                        src="../files/idFilesFront/<?php echo htmlspecialchars($row['file_front_id']); ?>"
                                                         class="img-fluid w-100 zoomable"
                                                         style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
                                                         alt="Frente ID"
@@ -191,7 +191,7 @@ if ($result && $result->num_rows > 0) {
                                                 <h6>Reverso del documento</h6>
                                                 <div class="position-relative overflow-visible">
                                                     <img id="idImageBack_<?php echo $row['number_id']; ?>"
-                                                        src="https://dashboard.uttalento.co/files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
+                                                        src="../files/idFilesBack/<?php echo htmlspecialchars($row['file_back_id']); ?>"
                                                         class="img-fluid w-100 zoomable"
                                                         style="max-height: 400px; object-fit: contain; transition: transform 0.3s ease; position: relative; z-index: 1055;"
                                                         alt="Reverso ID"
@@ -338,11 +338,11 @@ if ($result && $result->num_rows > 0) {
 
                     // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
-        <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
-        data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
-            ' . $icon . '
-        </button>
-      </td>';
+                    <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
+                    data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
+                        ' . $icon . '
+                    </button>
+                    </td>';
                     ?>
 
                     <?php
@@ -402,7 +402,7 @@ if ($result && $result->num_rows > 0) {
                         <?php
                         if ($row['statusAdmin'] === '1') {
                             echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
-                        }elseif ($row['statusAdmin'] === '0') {
+                        } elseif ($row['statusAdmin'] === '0') {
                             echo '<button class="btn bg-silver text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></button>';
                         }
                         ?>
@@ -462,7 +462,7 @@ if ($result && $result->num_rows > 0) {
                         <button class="btn bg-indigo-dark text-white" onclick="mostrarModalActualizarAdmision(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
                             data-bs-custom-class="custom-tooltip"
                             data-bs-title="Cambiar estado de admisión">
-                            <i class="bi bi-arrow-left-right"></i></button>
+                        <i class="bi bi-arrow-left-right"></i></button>
                     </td>
                 </tr>
 
@@ -833,7 +833,7 @@ if ($result && $result->num_rows > 0) {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_admision.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        
+
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
