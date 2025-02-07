@@ -80,7 +80,15 @@ if ($result && $result->num_rows > 0) {
                 <tr>
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                     <td><?php echo htmlspecialchars($row['number_id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['first_name']) . ' ' . htmlspecialchars($row['first_last']); ?></td>
+                    <td>
+    <?php 
+        echo htmlspecialchars($row['first_name']) . ' ' . 
+             htmlspecialchars($row['second_name']) . ' ' . 
+             htmlspecialchars($row['first_last']) . ' ' . 
+             htmlspecialchars($row['second_last']); 
+    ?>
+</td>
+
                     <td><?php echo $row['age']; ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                     <td>
