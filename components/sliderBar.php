@@ -81,14 +81,14 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 </div>
                 <?php endif; ?>
                 <?php if ($rol === 'Administrador'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Programar retiro">
-                    <a href="registrarRetiro.php">
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Consulta individual">
+                    <a href="individualSearch.php">
                         <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
-                                    <i class="bi bi-door-open icono"></i>
+                                <i class="bi bi-person-bounding-box icono"></i>
                                 </span>
-                                <span class="checkbox-label">Retiros</span>
+                                <span class="checkbox-label">Ingresar</span>
                             </span>
                         </label>
                     </a>
