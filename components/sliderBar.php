@@ -80,7 +80,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
                 <?php endif; ?>
-                <?php if ($rol === 'Administrador'): ?>
+                <?php if ($rol === 'Administrador' || $rol === 'Asesor'): ?>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Consulta individual">
                     <a href="individualSearch.php">
                         <label class="checkbox-wrapper">

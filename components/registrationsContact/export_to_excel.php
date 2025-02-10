@@ -158,6 +158,8 @@ function exportDataToExcel($conn)
     // Crear archivo Excel
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Matriz general de inscritos'); 
+
 
     // Encabezados
     $headers = array_keys($data[0] ?? []);
@@ -179,15 +181,97 @@ function exportDataToExcel($conn)
         ->getStartColor()->setARGB('FFD3D3D3');
     $headerStyle->getFont()->setBold(true);
 
-    // Autoajuste para la primera hoja
-    foreach (range('A', $lastColumn) as $col) {
-        $sheet->getColumnDimension($col)->setAutoSize(true);
+    // Ajustar ancho de columnas según el texto del encabezado
+    foreach ($headers as $colIndex => $headerText) {
+        $column = Coordinate::stringFromColumnIndex($colIndex + 1);
+        $width = mb_strlen($headerText) + 2; // +2 para un poco de padding
+        $sheet->getColumnDimension($column)->setWidth($width);
+    }
+
+    // Crear segunda hoja con todos los datos de user_register
+    $sheet2 = $spreadsheet->createSheet();
+    $sheet2->setTitle('Usuarios Registrados'); 
+
+    // Consulta para obtener todos los datos
+    $sql2 = "SELECT ur.*, m.municipio, d.departamento 
+             FROM user_register ur
+             INNER JOIN municipios m ON ur.municipality = m.id_municipio
+             INNER JOIN departamentos d ON ur.department = d.id_departamento
+             WHERE d.id_departamento IN (15, 25)
+             AND ur.status = '1'";
+
+    $result2 = $conn->query($sql2);
+    $data2 = [];
+
+    if ($result2 && $result2->num_rows > 0) {
+        // Definir encabezados en español
+        $headers2 = [
+            'Tipo de Documento', 'Número de Identificación', 'Primer Nombre', 'Segundo Nombre',
+            'Primer Apellido', 'Segundo Apellido', 'Fecha de Nacimiento', 'Fecha de Expedición',
+            'Género', 'Estado Civil', 'Correo Electrónico', 'Teléfono Principal',
+            'Teléfono Secundario', 'Contraseña', 'Nombre Contacto Emergencia',
+            'Teléfono Contacto Emergencia', 'Nacionalidad', 'Departamento', 'Municipio',
+            'Dirección', 'Latitud', 'Longitud', 'Personas a Cargo', 'Población Vulnerable',
+            'Tipo Vulnerabilidad', 'Grupo Étnico', 'Estrato', 'Área de Residencia',
+            'Nivel de Formación', 'Ocupación', 'Tiempo Obligaciones', 'Motivación',
+            'Situación Actual', 'Impedimento para Completar', 'Disponibilidad', 'Modalidad',
+            'Sede', 'Programa', 'Horarios', 'Conocimientos Previos', 'Nivel',
+            'Idiomas', 'Nivel de Idiomas', 'Condición Médica', 'Discapacidad',
+            'Tipo de Discapacidad', 'Embarazo', 'Dispositivos', 'Internet',
+            'Conocimiento del Programa', 'Acepta Requisitos', 'Acepta Tech Talent',
+            'Acepta Políticas', 'Foto Frontal ID', 'Foto Reverso ID', 'Estado',
+            'Estado Administrativo', 'ID Curso', 'Medio de Contacto', 'Institución',
+            'Fecha Creación', 'Fecha Actualización'
+        ];
+
+        $sheet2->fromArray($headers2, NULL, 'A1');
+
+        // Escribir datos
+        $rowIndex2 = 2;
+        while ($row = $result2->fetch_assoc()) {
+            $sheet2->fromArray([
+                $row['typeID'], $row['number_id'], $row['first_name'], $row['second_name'],
+                $row['first_last'], $row['second_last'], $row['birthdate'], $row['expedition_date'],
+                $row['gender'], $row['marital_status'], $row['email'], $row['first_phone'],
+                $row['second_phone'], $row['password'], $row['emergency_contact_name'],
+                $row['emergency_contact_number'], $row['nationality'], $row['departamento'],
+                $row['municipio'], $row['address'], $row['latitud'], $row['longitud'],
+                $row['people_charge'], $row['vulnerable_population'], $row['vulnerable_type'],
+                $row['ethnic_group'], $row['stratum'], $row['residence_area'],
+                $row['training_level'], $row['occupation'], $row['time_obligations'],
+                $row['motivations_belong_program'], $row['current_situation'],
+                $row['impediment_complete_course'], $row['availability'], $row['mode'],
+                $row['headquarters'], $row['program'], $row['schedules'], $row['prior_knowledge'],
+                $row['level'], $row['languages'], $row['languages_level'],
+                $row['medical_condition'], $row['disability'], $row['type_disability'],
+                $row['pregnancy'], $row['technologies'], $row['internet'],
+                $row['knowledge_program'], $row['accept_requirements'],
+                $row['accepts_tech_talent'], $row['accept_data_policies'],
+                $row['file_front_id'], $row['file_back_id'], $row['status'],
+                $row['statusAdmin'], $row['idCourse'], $row['contactMedium'],
+                $row['institution'], $row['creationDate'], $row['dayUpdate']
+            ], NULL, "A{$rowIndex2}");
+            $rowIndex2++;
+        }
+
+        // Aplicar estilos
+        $lastColumn2 = Coordinate::stringFromColumnIndex(count($headers2));
+        $headerRange2 = 'A1:' . $lastColumn2 . '1';
+        $sheet2->getStyle($headerRange2)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('FFD3D3D3');
+        $sheet2->getStyle($headerRange2)->getFont()->setBold(true);
+
+        // Ajustar ancho de columnas según el texto del encabezado
+        foreach ($headers2 as $colIndex => $headerText) {
+            $column = Coordinate::stringFromColumnIndex($colIndex + 1);
+            $width = mb_strlen($headerText) + 2; // +2 para un poco de padding
+            $sheet2->getColumnDimension($column)->setWidth($width);
+        }
     }
 
     // Lista de tablas a exportar
     $tablas = [
-        
-        'user_register',
         'usuarios'
     ];
 

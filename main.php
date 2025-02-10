@@ -67,10 +67,10 @@ $rol = $infoUsuario['rol'];
                 <?php //include("components/aceptUsers/updateStatus.php");  ?>
                 <div class="row">
                     <div class="col-sm-12 col-md-3 col-lg-3">
-                        <?php include("components/graphics/gender.php");  ?>
+                        <?php //include("components/graphics/gender.php");  ?>
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3">
-                        <?php include("components/graphics/stratum.php");  ?>
+                        <?php //include("components/graphics/stratum.php");  ?>
                     </div>
                 </div>
             </div>

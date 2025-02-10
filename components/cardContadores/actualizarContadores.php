@@ -21,19 +21,27 @@ $sql_sin_verificar = "SELECT COUNT(*) AS total_sinVerificar FROM user_register W
 $result_sinVerificar= mysqli_query($conn, $sql_sin_verificar);
 $total_sinVerificar= mysqli_fetch_assoc($result_sinVerificar)['total_sinVerificar'];
 
+// Obtener total de Gobernacion de boyaca
+$sql_GoberanacionBoyaca = "SELECT COUNT(*) AS total_GobernacionBoyaca FROM user_register WHERE status = '1' AND statusAdmin = '0' AND institution = 'Gobernación de Boyacá";
+$result_GobernacionBoyaca= mysqli_query($conn, $sql_GoberanacionBoyaca);
+$total_GobernacioBoyaca= mysqli_fetch_assoc($result_GobernacionBoyaca)['total_GobernacionBoyaca'];
+
+
 // Calcular porcentajes
 $porc_boyaca = ($total_usuarios > 0) ? round(($total_boyaca / $total_usuarios) * 100, 2) : 0;
 $porc_cundinamarca = ($total_usuarios > 0) ? round(($total_cundinamarca / $total_usuarios) * 100, 2) : 0;
 $porc_sinVerificar = ($total_usuarios > 0) ? round(($total_sinVerificar / $total_usuarios) * 100, 2) : 0;
-
+$porc_GobernacionBoyaca = ($total_usuarios > 0) ? round(($total_GobernacioBoyaca / $total_usuarios) * 100, 2) : 0;
 // Devolver los datos en formato JSON
 echo json_encode([
     'total_usuarios' => $total_usuarios,
     'total_boyaca' => $total_boyaca,
     'total_cundinamarca' => $total_cundinamarca,
     'total_sinVerificar' => $total_sinVerificar,
+    'total_GobernacionBoyaca' => $total_GobernacioBoyaca,
     'porc_boyaca' => $porc_boyaca,
     'porc_cundinamarca' => $porc_cundinamarca,
-    'porc_sinVerificar' => $porc_sinVerificar
+    'porc_sinVerificar' => $porc_sinVerificar,
+    'porc_GobernacionBoyaca' => $porc_GobernacionBoyaca
 ]);
 ?>

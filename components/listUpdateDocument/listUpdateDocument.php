@@ -1,14 +1,14 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Swal.fire({
-    //     title: "Cargando información...",
-    //     html: "Por favor espera mientras obtenemos los datos.",
-    //     allowOutsideClick: false,
-    //     didOpen: () => {
-    //         Swal.showLoading();
-    //     },
-    // });
+    Swal.fire({
+       title: "Cargando información...",
+      html: "Por favor espera mientras obtenemos los datos.",
+    allowOutsideClick: false,
+      didOpen: () => {
+    Swal.showLoading();
+       },
+     });
 </script>
 
 <?php
