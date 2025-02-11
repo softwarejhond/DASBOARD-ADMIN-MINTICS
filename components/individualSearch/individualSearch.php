@@ -193,10 +193,17 @@
                                 <strong>Modalidad:</strong><br>
                                 <?= htmlspecialchars($row['mode']) ?>
                                 <hr>
+                                <strong>Actualizar modalidad:</strong><br>
+                                <button class="btn bg-indigo-dark text-white" onclick="modalActualizarModalidad(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
+                                    data-bs-custom-class="custom-tooltip"
+                                    data-bs-title="Cambiar modalidad">
+                                    <i class="bi bi-arrow-left-right"></i>
+                                </button>
+                                <hr>
                                 <strong>Programa:</strong><br>
                                 <?= htmlspecialchars($row['program']) ?>
                                 <hr>
-                             
+
                                 <strong>Actualizar registro de contacto:</strong><br>
                                 <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalLlamada_<?php echo $row['number_id']; ?>">
                                     <i class="bi bi-telephone"></i>
@@ -211,7 +218,7 @@
                             <!--Columana cuatro-->
                             <div class="col-md-3 col-lg-3 col-sm-12 p-3">
 
-                            <strong>Horarios:</strong><br>
+                                <strong>Horarios:</strong><br>
                                 <button type="button" class="btn bg-indigo-light"
                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                     data-bs-custom-class="custom-tooltip"
@@ -767,6 +774,97 @@
         };
 
         xhr.send("id=" + id + "&nuevoEstado=" + encodeURIComponent(nuevoEstado));
+    }
+
+    function actualizarModalidad(id, nuevaModalidad) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_modalidad.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'La modalidad se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar la modalidad.'
+                        });
+                    }
+                }
+            }
+        };
+
+        xhr.send("id=" + id + "&nuevaModalidad=" + encodeURIComponent(nuevaModalidad));
+    }
+
+    function modalActualizarModalidad(id) {
+        $('#modalActualizarModalidad_' + id).remove();
+
+        const modalHtml = `
+            <div id="modalActualizarModalidad_${id}" class="modal fade" aria-hidden="true" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-indigo-dark">
+                            <h5 class="modal-title text-center">
+                                <i class="bi bi-arrow-left-right"></i> Actualizar Modalidad
+                            </h5>
+                            <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formActualizarModalidad_${id}">
+                                <div class="form-group">
+                                    <label for="nuevaModalidad_${id}">Seleccionar nueva modalidad:</label>
+                                    <select class="form-control" id="nuevaModalidad_${id}" name="nuevaModalidad" required>
+                                        <option value="">Seleccionar</option>
+                                        <option value="Presencial">Presencial</option>
+                                        <option value="Virtual">Virtual</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <input type="hidden" name="id" value="${id}">
+                                <button type="submit" class="btn bg-indigo-dark text-white">Actualizar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        $('#modalActualizarModalidad_' + id).modal('show');
+
+        $('#formActualizarModalidad_' + id).on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar la modalidad?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const nuevaModalidad = $('#nuevaModalidad_' + id).val();
+                    actualizarModalidad(id, nuevaModalidad);
+                    $('#modalActualizarModalidad_' + id).modal('hide');
+                }
+            });
+        });
     }
 
     // Muestra una notificación de actualización con SweetAlert2
