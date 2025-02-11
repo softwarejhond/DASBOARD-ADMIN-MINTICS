@@ -1,5 +1,6 @@
 <?php
 // Conexión a la base de datos ya establecida desde el main
+require_once 'conexion.php'; // Asegúrate de incluir la conexión a la BD
 
 // Definir las variables globales para Moodle
 $api_url = "https://talento-tech.uttalento.co/webservice/rest/server.php";
@@ -42,7 +43,8 @@ $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
         INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
         WHERE departamentos.id_departamento IN (15, 25)
           AND user_register.status = '1' 
-          AND user_register.statusAdmin = '2'
+          AND user_register.statusAdmin = '1'
+          AND user_register.statusMoodle = '0'
         ORDER BY user_register.first_name ASC";
 
 $result = $conn->query($sql);
@@ -50,7 +52,6 @@ $data = [];
 
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        // Procesar datos del usuario según sea necesario
         $data[] = $row;
     }
 } else {
@@ -58,56 +59,52 @@ if ($result && $result->num_rows > 0) {
 }
 ?>
 
-<div class="table-responsive">
-    <button id="exportarExcel" class="btn btn-success mb-3"
-        onclick="window.location.href='components/listRegistrationsAcept/export_excel_admitted.php?action=export'">
-        <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-    </button>
-    <table id="listaInscritos" class="table table-hover table-bordered">
-        <thead class="thead-dark text-center">
-            <tr class="text-center">
-                <th>Tipo ID</th>
-                <th>Número</th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Nuevo Email</th>
-                <th>BootCamp</th>
-                <th>Inglés Nivelatorio</th>
-                <th>English Code</th>
-                <th>Habilidades</th>
-                <th>Registrar</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-            <?php foreach ($data as $row): ?>
-                <tr>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid px-2 mt-5">
+    <div class="table-responsive">
+        <button id="exportarExcel" class="btn btn-success mb-3"
+            onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
+            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+        </button>
+        <table id="listaInscritos" class="table table-hover table-bordered">
+            <thead class="thead-dark text-center">
+                <tr class="text-center">
+                    <th>Tipo ID</th>
+                    <th>Número</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Nuevo Email</th>
+                    <th>BootCamp</th>
+                    <th>Inglés Nivelatorio</th>
+                    <th>English Code</th>
+                    <th>Habilidades</th>
+                    <th>Registrar</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                <?php foreach ($data as $row): 
+                    // Procesar datos del usuario
+                    $firstName   = ucwords(strtolower(trim($row['first_name'])));
+                    $secondName  = ucwords(strtolower(trim($row['second_name'])));
+                    $firstLast   = ucwords(strtolower(trim($row['first_last'])));
+                    $secondLast  = ucwords(strtolower(trim($row['second_last'])));
+                    $fullName = $firstName . " " . $secondName . " " . $firstLast . " " . $secondLast;
+                    $nuevoCorreo = strtolower(trim($row['first_name'])) . '.' . strtolower(trim($row['first_last'])) . '.' . substr(trim($row['number_id']), -4) . '.ut@poliandino.edu.co';
+                ?>
+                <tr data-type-id="<?php echo htmlspecialchars($row['typeID']); ?>"
+                    data-number-id="<?php echo htmlspecialchars($row['number_id']); ?>"
+                    data-full-name="<?php echo htmlspecialchars($fullName); ?>"
+                    data-email="<?php echo htmlspecialchars($row['email']); ?>"
+                    data-institutional-email="<?php echo htmlspecialchars($nuevoCorreo); ?>">
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                     <td><?php echo htmlspecialchars($row['number_id']); ?></td>
-                    <td>
-                        <?php
-                        // Convertir cada parte del nombre a minúsculas, quitar espacios y luego poner en mayúscula la primera letra de cada palabra
-                        $firstName   = ucwords(strtolower(trim($row['first_name'])));
-                        $secondName  = ucwords(strtolower(trim($row['second_name'])));
-                        $firstLast   = ucwords(strtolower(trim($row['first_last'])));
-                        $secondLast  = ucwords(strtolower(trim($row['second_last'])));
-                        echo htmlspecialchars($firstName . " " . $secondName . " " . $firstLast . " " . $secondLast);
-                        ?>
-                    </td>
+                    <td><?php echo htmlspecialchars($fullName); ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
-                    
-                    <!-- Nuevo campo de correo generado automáticamente -->
-                    <td>
-                        <?php
-                        $nombre  = strtolower(trim($row['first_name']));
-                        $apellido = strtolower(trim($row['first_last']));
-                        $idNumber = trim($row['number_id']);
-                        $ultimosDigitos = substr($idNumber, -4);
-                        $nuevoCorreo = $nombre . '.' . $apellido . '.' . $ultimosDigitos . '.ut@poliandino.edu.co';
-                        echo htmlspecialchars($nuevoCorreo);
-                        ?>
-                    </td>
-
-                    <!-- Columna BootCamp -->
+                    <td><?php echo htmlspecialchars($nuevoCorreo); ?></td>
                     <td>
                         <select name="bootcamp_<?php echo $row['number_id']; ?>" class="form-select">
                             <?php if (!empty($courses_data)): ?>
@@ -121,8 +118,6 @@ if ($result && $result->num_rows > 0) {
                             <?php endif; ?>
                         </select>
                     </td>
-
-                    <!-- Columna Inglés Nivelatorio (mismos datos que BootCamp) -->
                     <td>
                         <select name="ingles_<?php echo $row['number_id']; ?>" class="form-select">
                             <?php if (!empty($courses_data)): ?>
@@ -136,8 +131,6 @@ if ($result && $result->num_rows > 0) {
                             <?php endif; ?>
                         </select>
                     </td>
-
-                    <!-- Columna English Code (mismos datos que BootCamp) -->
                     <td>
                         <select name="english_code_<?php echo $row['number_id']; ?>" class="form-select">
                             <?php if (!empty($courses_data)): ?>
@@ -151,8 +144,6 @@ if ($result && $result->num_rows > 0) {
                             <?php endif; ?>
                         </select>
                     </td>
-
-                    <!-- Columna Habilidades (mismos datos que BootCamp) -->
                     <td>
                         <select name="skills_<?php echo $row['number_id']; ?>" class="form-select">
                             <?php if (!empty($courses_data)): ?>
@@ -166,56 +157,104 @@ if ($result && $result->num_rows > 0) {
                             <?php endif; ?>
                         </select>
                     </td>
-
-                    <!-- Columna Registrar: botón para confirmar la matrícula -->
                     <td>
-                        <button class="btn btn-primary" onclick="confirmEnrollment('<?php echo $row['number_id']; ?>')">
+                        <button class="btn btn-primary" onclick="confirmEnrollment(event, '<?php echo $row['number_id']; ?>')">
                             Matricular
                         </button>
                     </td>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- Cargar SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-// Función que muestra la confirmación de matrícula usando SweetAlert2
-function confirmEnrollment(studentId) {
+function confirmEnrollment(event, studentId) {
+    event.preventDefault();
+    const button = event.target;
+    const row = button.closest('tr');
+    
+    // Obtener datos del usuario
+    const typeId = row.dataset.typeId;
+    const numberId = row.dataset.numberId;
+    const fullName = row.dataset.fullName;
+    const email = row.dataset.email;
+    const institutionalEmail = row.dataset.institutionalEmail;
+    
+    // Obtener cursos seleccionados
+    const getCourseData = (select) => {
+    const option = select.options[select.selectedIndex];
+    const fullText = option.text;
+    const id = option.value;
+    // Obtener todo el texto después del primer guion
+    const name = fullText.split(' - ').slice(1).join(' - ').trim();
+    return { id: id, name: name };
+};
+    
+    const bootcamp = getCourseData(row.querySelector(`select[name="bootcamp_${studentId}"]`));
+    const ingles = getCourseData(row.querySelector(`select[name="ingles_${studentId}"]`));
+    const englishCode = getCourseData(row.querySelector(`select[name="english_code_${studentId}"]`));
+    const skills = getCourseData(row.querySelector(`select[name="skills_${studentId}"]`));
+    
+    // Generar contraseña (número de ID)
+    const password = 'UTt@2025!';
+
+    // Preparar datos para enviar
+    const formData = {
+        type_id: typeId,
+        number_id: numberId,
+        full_name: fullName,
+        email: email,
+        institutional_email: institutionalEmail,
+        password: password,
+        id_bootcamp: bootcamp.id,
+        bootcamp_name: bootcamp.name,
+        id_leveling_english: ingles.id,
+        leveling_english_name: ingles.name,
+        id_english_code: englishCode.id,
+        english_code_name: englishCode.name,
+        id_skills: skills.id,
+        skills_name: skills.name
+    };
+
     Swal.fire({
         title: 'Confirmar matrícula',
-        text: "¿Está seguro que desea matricular este estudiante en los cursos seleccionados?",
+        text: "¿Está seguro que desea matricular este estudiante?",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, matricular',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Aquí puedes agregar la lógica para matricular al estudiante, por ejemplo, mediante una llamada AJAX.
-            Swal.fire(
-                'Matriculado',
-                'El estudiante ha sido matriculado en los cursos seleccionados.',
-                'success'
-            );
+            fetch('components/registerMoodle/enroll_user.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: data.message,
+                        showConfirmButton: true
+                    }).then(() => {
+                        // Recargar la página para actualizar la lista
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Error de conexión', 'error');
+            });
         }
     });
 }
 </script>
-
-<!-- Notificación de actualización con SweetAlert2 (opcional) -->
-<script>
-    Swal.fire({
-        icon: 'info',
-        title: 'Actualizando información...',
-        text: 'Por favor, espere un momento.',
-        position: 'center',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-    });
-</script>
+</body>
+</html>
