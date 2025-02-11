@@ -94,6 +94,20 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
                 <?php endif; ?>
+                <?php if ($rol === 'Administrador'): ?>
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Regisrar usuarios en Moodle">
+                <a href="registerMoodle.php">
+                    <label class="checkbox-wrapper">
+                        <span class="checkbox-tile">
+                            <span class="checkbox-icon">
+                            <i class="bi bi-robot icono"></i>
+                            </span>
+                            <span class="checkbox-label">Ingresar</span>
+                        </span>
+                    </label>
+                    </a>
+                </div>
+                <?php endif; ?>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Perfil">
                     <a href="profile.php"> <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
@@ -118,18 +132,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
                 <?php endif; ?>
-                <?php if ($rol === 'Administrador'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir tipo de propiedad">
-                    <label class="checkbox-wrapper" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
-                        <span class="checkbox-tile">
-                            <span class="checkbox-icon">
-                                <i class="bi bi-database-fill-add icono"></i>
-                            </span>
-                            <span class="checkbox-label">Añadir</span>
-                        </span>
-                    </label>
-                </div>
-                <?php endif; ?>
+             
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Visítanos">
                     <a href="https://agenciaeaglesoftware.com/" target="_blank">
                         <label class="checkbox-wrapper">
