@@ -44,7 +44,6 @@ $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
         WHERE departamentos.id_departamento IN (15, 25)
           AND user_register.status = '1' 
           AND user_register.statusAdmin = '1'
-          AND user_register.statusMoodle = '0'
         ORDER BY user_register.first_name ASC";
 
 $result = $conn->query($sql);
@@ -66,10 +65,13 @@ if ($result && $result->num_rows > 0) {
 
 <div class="container-fluid px-2 mt-5">
     <div class="table-responsive">
+
+
         <button id="exportarExcel" class="btn btn-success mb-3"
             onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
             <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
         </button>
+        
         <table id="listaInscritos" class="table table-hover table-bordered">
             <thead class="thead-dark text-center">
                 <tr class="text-center">

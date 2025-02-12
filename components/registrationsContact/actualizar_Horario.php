@@ -25,8 +25,8 @@ if (isset($_POST['id']) && isset($_POST['nuevoHorario'])) {
         exit;
     }
 
-    // Consulta SQL para actualizar horario
-    $updateSql = "UPDATE user_register SET schedules = ? WHERE number_id = ?";
+    // Consulta SQL para actualizar horario y fecha de actualización
+    $updateSql = "UPDATE user_register SET schedules = ?, dayUpdate = NOW() WHERE number_id = ?";
     $stmt = $conn->prepare($updateSql);
 
     if ($stmt) {
