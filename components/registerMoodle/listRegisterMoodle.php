@@ -102,7 +102,7 @@ if ($result && $result->num_rows > 0) {
                     data-institutional-email="<?php echo htmlspecialchars($nuevoCorreo); ?>">
                     <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                     <td><?php echo htmlspecialchars($row['number_id']); ?></td>
-                    <td><?php echo htmlspecialchars($fullName); ?></td>
+                    <td style="width: 300px; min-width: 300px; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($fullName); ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                     <td><?php echo htmlspecialchars($nuevoCorreo); ?></td>
                     <td>

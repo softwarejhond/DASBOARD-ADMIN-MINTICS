@@ -62,7 +62,7 @@ $stmt->bind_param(
 
 if ($stmt->execute()) {
     // Después de la inserción exitosa, actualizar statusMoodle
-    $updateSql = "UPDATE user_register SET statusMoodle = '1' WHERE number_id = ?";
+    $updateSql = "UPDATE user_register SET statusAdmin = '3' WHERE number_id = ?";
     $updateStmt = $conn->prepare($updateSql);
     if (!$updateStmt) {
         throw new Exception("Error al preparar la actualización: " . $conn->error);

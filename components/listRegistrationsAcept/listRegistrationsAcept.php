@@ -139,6 +139,7 @@ if ($result && $result->num_rows > 0) {
                 <th>Actualizar modalidad</th>
                 <th>Programa de interés</th>
                 <th>Horario</th>
+                <th>Actualizar Horario</th>
                 <th>Dispositivo</th>
                 <th>Internet</th>
                 <th>Estado</th>
@@ -309,7 +310,7 @@ if ($result && $result->num_rows > 0) {
                     <td><?php echo htmlspecialchars($row['headquarters']); ?></td>
                     <td><?php echo htmlspecialchars($row['mode']); ?></td>
                     <td>
-                        <button class="btn bg-indigo-dark text-white" onclick="modalActualizarModalidad(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
+                        <button class="btn text-white" style="background-color: #fc4b08;" onclick="modalActualizarModalidad(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
                             data-bs-custom-class="custom-tooltip"
                             data-bs-title="Cambiar modalidad">
                             <i class="bi bi-arrow-left-right"></i>
@@ -324,6 +325,14 @@ if ($result && $result->num_rows > 0) {
                             <i class="bi bi-clock-history"></i>
                         </button>
                     </td>
+                    <td>
+                        <button class="btn text-white" style="background-color: #b624d5;" onclick="mostrarModalActualizarHorario(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="Cambiar horario">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </button>
+                    </td>
+
                     <?php
                     // Asigna la clase, ícono y texto del tooltip según el valor de 'technologies'
                     $btnClass = '';
@@ -591,6 +600,56 @@ if ($result && $result->num_rows > 0) {
                     </div>
                 </div>
 
+                <!-- Modal para actualizar horario -->
+                <div id="modalActualizarHorario_<?php echo $row['number_id']; ?>" class="modal fade" aria-hidden="true" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-indigo-dark">
+                                <h5 class="modal-title text-center">
+                                    <i class="bi bi-clock"></i> Actualizar Horario
+                                </h5>
+                                <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="formActualizarHorario_<?php echo $row['number_id']; ?>">
+                                    <div class="form-group">
+                                        <label>Horario actual:</label>
+                                        <input type="text" class="form-control" value="<?php echo !empty($row['schedules']) ? htmlspecialchars($row['schedules']) : 'Sin horario asignado'; ?>" readonly>
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                        <label for="nuevoHorario_<?php echo $row['number_id']; ?>">Seleccionar nuevo horario:</label>
+                                        <select class="form-control" id="nuevoHorario_<?php echo $row['number_id']; ?>" name="nuevoHorario" required>
+                                            <option value="">Seleccionar</option>
+                                            <?php if ($row['mode'] == 'Virtual'): ?>
+                                                <option value="Lunes a Viernes - 8:00 am a 12:00 am">Lunes a Viernes - 8:00 am a 12:00 am</option>
+                                                <option value="Lunes a Viernes - 1:00 pm a 5:00 pm">Lunes a Viernes - 1:00 pm a 5:00 pm</option>
+                                                <option value="Lunes a Viernes - 6:00 pm a 10:00 pm">Lunes a Viernes - 6:00 pm a 10:00 pm</option>
+                                                <option value="Lunes, Miércoles y Viernes - 7:00 am a 12:00 am">Lunes, Miércoles y Viernes - 7:00 am a 12:00 am</option>
+                                                <option value="Lunes, Miércoles y Viernes - 1:00 pm a 6:00 pm">Lunes, Miércoles y Viernes - 1:00 pm a 6:00 pm</option>
+                                                <option value="Lunes, Miércoles, Viernes y Sábado - 7:00 pm a 10:00 pm y Sábado de 7:00 am a 12:00 pm">Lunes, Miércoles, Viernes y Sábado - 7:00 pm a 10:00 pm y Sábado de 7:00 am a 12:00 pm</option>
+
+                                            <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Cota'): ?>
+                                                <option value="Viernes 2:00 pm a 6pm y Sábados 7:00 am a 5:00 pm">Viernes 2:00 pm a 6pm y Sabado 7:00 am a 5:00 pm</option>
+                                            <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Tunja'): ?>
+                                                <option value="Martes y Jueves 8:00 am a 1:00 pm - Sábados 7:00 am a 11:00 am">Martes y Jueves 8:00 am a 1:00 pm - Sábados 7:00 am a 11:00 am</option>
+                                                <option value="Martes y Jueves 2:00 pm a 6:00 pm - Sábados 11:00 am a 5:00 pm">Martes y Jueves 2:00 pm a 6:00 pm - Sábados 11:00 am a 5:00 pm</option>
+                                            <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Sogamoso'): ?>
+                                                <option value="Martes y Jueves 6:00pm a 9:00pm - Sábados 7:00 am a 4:30 pm">Martes y Jueves 6:00pm a 9:00pm - Sábados 7:00 am a 4:30 pm</option>
+                                            <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Soacha'): ?>
+                                                <option value="Martes y Jueves 7:00 am a 12:00 pm - Sábados 7:00 am a 12:00 pm">Martes y Jueves 7:00 am a 12:00 pm - Sábados 7:00 am a 12:00 pm</option>
+                                                <option value="Martes y Jueves 1:00 pm a 5:00 pm - Sábados 12:00 pm a 6:00 pm">Martes y Jueves 1:00 pm a 5:00 pm - Sábados 12:00 pm a 6:00 pm</option>
+                                            <?php endif; ?>
+                                        </select>
+                                    </div>
+                                    <br>
+                                    <button type="submit" class="btn bg-indigo-dark text-white w-100">Actualizar Horario</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             <?php endforeach; ?>
         </tbody>
     </table>
@@ -796,8 +855,6 @@ if ($result && $result->num_rows > 0) {
                                 <label for="nuevoEstado_${id}">Seleccionar nuevo estado:</label>
                                 <select class="form-control" id="nuevoEstado_${id}" name="nuevoEstado" required>
                                   <option value="">Seleccionar</option>
-                                    <option value="1">Aceptado</option>
-                                    <option value="2">Rechazado</option>
                                     <option value="0">Regresar a validación</option>
                                 </select>
                             </div>
@@ -844,7 +901,7 @@ if ($result && $result->num_rows > 0) {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_admision.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        
+
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
@@ -877,7 +934,7 @@ if ($result && $result->num_rows > 0) {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_modalidad.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        
+
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
@@ -962,6 +1019,64 @@ if ($result && $result->num_rows > 0) {
                 }
             });
         });
+    }
+
+    function mostrarModalActualizarHorario(id) {
+        $('#modalActualizarHorario_' + id).modal('show');
+
+        $('#formActualizarHorario_' + id).on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar el horario?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const nuevoHorario = $('#nuevoHorario_' + id).val();
+                    actualizarHorario(id, nuevoHorario);
+                    $('#modalActualizarHorario_' + id).modal('hide');
+                }
+            });
+        });
+    }
+
+    function actualizarHorario(id, nuevoHorario) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_horario.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'El horario se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar el horario.'
+                        });
+                    }
+                }
+            }
+        };
+
+        xhr.send("id=" + id + "&nuevoHorario=" + encodeURIComponent(nuevoHorario));
     }
 
     // Muestra una notificación de actualización con SweetAlert2
