@@ -318,8 +318,14 @@
                                 <?php
                                 if ($row['statusAdmin'] === 1) {
                                     echo '<button class="btn bg-teal-dark w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
+                                } elseif ($row['statusAdmin'] === 2) {
+                                    echo '<button class="btn bg-red-dark text-white w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZADO"><i class="bi bi-x-circle"></i></button>';
+                                } elseif ($row['statusAdmin'] === 3) {
+                                    echo '<button class="btn bg-green-dark text-white w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="MATRICULADO"><i class="bi bi-mortarboard-fill"></i></button>';
                                 } elseif ($row['statusAdmin'] === 0) {
-                                    echo '<button class="btn bg-silver text-white w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></button>';
+                                    echo '<button class="btn bg-silver text-white w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="ESTADO INICIAL"><i class="bi bi-question-circle"></i></button>';
+                                } else {
+                                    echo '<button class="btn bg-gray text-white w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN RESULTADO"><i class="bi bi-dash-circle"></i></button>';
                                 }
                                 ?>
                                 <hr>
@@ -757,8 +763,9 @@
                                 <label for="nuevoEstado_${id}">Seleccionar nuevo estado:</label>
                                 <select class="form-control" id="nuevoEstado_${id}" name="nuevoEstado" required>
                                    <option value="">Seleccionar</option>
-                                    <option value="1">Aceptado</option>
+                                    <option value="1">Beneficiario</option>
                                     <option value="2">Rechazado</option>
+                                    <option value="0">Regresar a estado inical</option>
                                 </select>
                             </div>
                             <br>
@@ -951,7 +958,7 @@
 
     function actualizarHorario(id, nuevoHorario) {
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "components/registrationsContact/actualizar_horario.php", true);
+        xhr.open("POST", "components/registrationsContact/actualizar_Horario.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
         xhr.onreadystatechange = function() {

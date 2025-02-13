@@ -24,7 +24,7 @@ $rol = $infoUsuario['rol'];
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-       <!-- Integración de jquery para lectura en tiempo real -->
+    <!-- Integración de jquery para lectura en tiempo real -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Integración de Bootstrap y DataTables -->
@@ -46,55 +46,88 @@ $rol = $infoUsuario['rol'];
     <?php include("components/modals/userNew.php"); ?>
     <?php include("components/modals/newAdvisor.php"); ?>
     <br><br>
-    </body>
-    <div style="margin-top: 50px;">
-        <div class="mt-3">
-          
-            <div id="dashboard">
-                <div class="position-relative bg-transparent">
-                    <h2 class="position-absolute top-4 start-0"><i class="bi bi-robot"></i> Registrar usuarios en Moodle</h2>
+</body>
+<div style="margin-top: 50px;">
+    <div class="mt-3">
+
+        <div id="dashboard">
+            <div class="position-relative bg-transparent">
+                <h2 class="position-absolute top-4 start-0"><i class="bi bi-robot"></i> Registrar usuarios en Moodle</h2>
+            </div>
+            <br><br>
+            <hr>
+            <?php include("components/registerMoodle/listRegisterMoodle.php"); ?>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <?php //include("components/aceptUsers/updateStatus.php"); 
+
+                    ?>
                 </div>
-                <br><br>
-                <hr>
-                <?php include("components/registerMoodle/listRegisterMoodle.php"); ?>
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-12">
-                        <?php //include("components/aceptUsers/updateStatus.php"); 
-                        
-                        ?>
-                    </div>
-                    <div class="col-sm-12 col-md-12 col-lg-6">
-                        <br>
-                    </div>
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <br>
                 </div>
             </div>
         </div>
     </div>
-    
-    
-    <?php include("controller/botonFlotanteDerecho.php"); ?>
-    <?php include("components/sliderBarBotton.php"); ?>
+</div>
 
-    <!-- Scripts de Bootstrap, DataTables y personalizaciones -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="js/dataTables.js?v=0.2"></script>
 
-    <script>
-        $(document).ready(function() {
-            $('#link-dashboard').addClass('pagina-activa');
-            
-            // Inicialización de DataTable
-            $('#listaInscritos').DataTable({
-                responsive: true,
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                pagingType: "simple"
-            });
+<?php include("controller/botonFlotanteDerecho.php"); ?>
+<?php include("components/sliderBarBotton.php"); ?>
+
+<!-- Scripts de Bootstrap, DataTables y personalizaciones -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="js/dataTables.js?v=0.2"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#link-dashboard').addClass('pagina-activa');
+
+        var table = $('#listaInscritos').DataTable({
+            responsive: true,
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            pagingType: "simple",
+            // Agrega esto si necesitas acceder a los datos originales
+            createdRow: function(row, data) {
+                $(row).attr({
+                    'data-department': data.departamento,
+                    'data-headuarters': data.sede,
+                    'data-program': data.program,
+                    'data-mode': data.mode
+                });
+            }
         });
-    </script>
+
+
+        $('#filterDepartment, #filterHeadquarters, #filterProgram, #filterMode').on('change', function() {
+            table.draw();
+        });
+
+        // Personalizar la función de filtrado
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            var selectedDepartment = $('#filterDepartment').val();
+            var selectedHeadquarters = $('#filterHeadquarters').val();
+            var selectedProgram = $('#filterProgram').val();
+            var selectedMode = $('#filterMode').val();
+
+            var rowDepartment = $(table.row(dataIndex).node()).data('department');
+            var rowHeadquarters = $(table.row(dataIndex).node()).data('headquarters');
+            var rowProgram = $(table.row(dataIndex).node()).data('program');
+            var rowMode = $(table.row(dataIndex).node()).data('mode');
+
+            var departmentMatch = !selectedDepartment || rowDepartment === selectedDepartment;
+            var headquartersMatch = !selectedHeadquarters || rowHeadquarters === selectedHeadquarters;
+            var programMatch = !selectedProgram || rowProgram === selectedProgram;
+            var modeMatch = !selectedMode || rowMode === selectedMode;
+
+            return departmentMatch && headquartersMatch && programMatch && modeMatch;
+        });
+    });
+</script>
 
 </body>
 

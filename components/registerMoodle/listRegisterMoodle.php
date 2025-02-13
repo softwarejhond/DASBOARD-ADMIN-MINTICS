@@ -37,9 +37,8 @@ function getCourses()
 $courses_data = getCourses();
 
 // Consulta para obtener usuarios
-$sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
+$sql = "SELECT user_register.*, departamentos.departamento
         FROM user_register
-        INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
         INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
         WHERE departamentos.id_departamento IN (15, 25)
           AND user_register.status = '1' 
@@ -56,23 +55,150 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo '<div class="alert alert-info">No hay datos disponibles.</div>';
 }
+
+// Obtener datos únicos para los filtros
+$departamentos = ['BOYACÁ', 'CUNDINAMARCA'];
+$programas = [];
+$modalidades = [];
+$sedes = []; // Agregar array para sedes
+
+foreach ($data as $row) {
+    $depto = $row['departamento'];
+    $sede = $row['headquarters'];
+
+    // Obtener sedes únicas
+    if (!in_array($sede, $sedes) && !empty($sede)) {
+        $sedes[] = $sede;
+    }
+
+    // Obtener programas únicos
+    if (!in_array($row['program'], $programas)) {
+        $programas[] = $row['program'];
+    }
+
+    // Obtener modalidades únicas
+    if (!in_array($row['mode'], $modalidades)) {
+        $modalidades[] = $row['mode'];
+    }
+}
+
 ?>
 
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container-fluid px-2 mt-5">
     <div class="table-responsive">
 
+        <div class="row mb-3 g-3">
+            <h3><i class="bi bi-card-checklist"></i> Seleccionar cursos</h3>
 
-        <button id="exportarExcel" class="btn btn-success mb-3"
-            onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
-            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-        </button>
-        
+            <div class="col-md-3">
+                <h5>Bootcamp:</h5>
+                <select id="bootcamp" class="form-select course-select">
+                    <?php if (!empty($courses_data)): ?>
+                        <?php foreach ($courses_data as $course): ?>
+                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <h5>Ingles nivelatorio:</h5>
+                <select id="ingles" class="form-select course-select">
+                    <?php if (!empty($courses_data)): ?>
+                        <?php foreach ($courses_data as $course): ?>
+                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <h5>English code:</h5>
+                <select id="english_code" class="form-select course-select">
+                    <?php if (!empty($courses_data)): ?>
+                        <?php foreach ($courses_data as $course): ?>
+                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <h5>Habilidades:</h5>
+                <select id="skills" class="form-select course-select">
+                    <?php if (!empty($courses_data)): ?>
+                        <?php foreach ($courses_data as $course): ?>
+                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row mb-3 g-3">
+            <h3><i class="bi bi-filter-circle"></i> Filtrar</h3>
+            <div class="col-md-3">
+                <select id="filterDepartment" class="form-select">
+                    <option value="">Todos los departamentos</option>
+                    <option value="BOYACÁ">BOYACÁ</option>
+                    <option value="CUNDINAMARCA">CUNDINAMARCA</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select id="filterHeadquarters" class="form-select">
+                    <option value="">Todas las sedes</option>
+                    <?php foreach ($sedes as $sede): ?>
+                        <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select id="filterProgram" class="form-select">
+                    <option value="">Todos los programas</option>
+                    <?php foreach ($programas as $programa): ?>
+                        <option value="<?= htmlspecialchars($programa) ?>"><?= htmlspecialchars($programa) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select id="filterMode" class="form-select">
+                    <option value="">Todas las modalidades</option>
+                    <option value="Virtual">Virtual</option>
+                    <option value="Presencial">Presencial</option>
+                </select>
+            </div>
+        </div>
+
         <table id="listaInscritos" class="table table-hover table-bordered">
+
+            <button id="matricularSeleccionados" class="btn btn-primary mb-3">
+                <i class="bi bi-people-fill"></i> Matricular Seleccionados
+            </button>
+            <br>
+            <button id="exportarExcel" class="btn btn-success mb-3"
+                onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
+                <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+            </button>
+
             <thead class="thead-dark text-center">
                 <tr class="text-center">
                     <th>Tipo ID</th>
@@ -80,91 +206,62 @@ if ($result && $result->num_rows > 0) {
                     <th>Nombre</th>
                     <th>Email</th>
                     <th>Nuevo Email</th>
-                    <th>BootCamp</th>
-                    <th>Inglés Nivelatorio</th>
-                    <th>English Code</th>
-                    <th>Habilidades</th>
-                    <th>Registrar</th>
+                    <th>Departamento</th>
+                    <th>Sede</th>
+                    <th>Programa</th>
+                    <th>Modalidad</th>
+                    <th>Seleccionar</th>
                 </tr>
             </thead>
             <tbody class="text-center">
-                <?php foreach ($data as $row): 
+                <?php foreach ($data as $row):
                     // Procesar datos del usuario
                     $firstName   = ucwords(strtolower(trim($row['first_name'])));
                     $secondName  = ucwords(strtolower(trim($row['second_name'])));
                     $firstLast   = ucwords(strtolower(trim($row['first_last'])));
                     $secondLast  = ucwords(strtolower(trim($row['second_last'])));
                     $fullName = $firstName . " " . $secondName . " " . $firstLast . " " . $secondLast;
-                    $nuevoCorreo = strtolower(trim($row['first_name'])) . '.' . strtolower(trim($row['first_last'])) . '.' . substr(trim($row['number_id']), -4) . '.ut@poliandino.edu.co';
+                    $nuevoCorreo = strtolower(substr(trim($row['first_name']), 0, 1))
+                        . strtolower(substr(trim($row['second_name']), 0, 1))
+                        . substr(trim($row['number_id']), -4)
+                        . strtolower(substr(trim($row['first_last']), 0, 1))
+                        . strtolower(substr(trim($row['second_last']), 0, 1))
+                        . '.ut@poliandino.edu.co';
                 ?>
-                <tr data-type-id="<?php echo htmlspecialchars($row['typeID']); ?>"
-                    data-number-id="<?php echo htmlspecialchars($row['number_id']); ?>"
-                    data-full-name="<?php echo htmlspecialchars($fullName); ?>"
-                    data-email="<?php echo htmlspecialchars($row['email']); ?>"
-                    data-institutional-email="<?php echo htmlspecialchars($nuevoCorreo); ?>">
-                    <td><?php echo htmlspecialchars($row['typeID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['number_id']); ?></td>
-                    <td style="width: 300px; min-width: 300px; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($fullName); ?></td>
-                    <td><?php echo htmlspecialchars($row['email']); ?></td>
-                    <td><?php echo htmlspecialchars($nuevoCorreo); ?></td>
-                    <td>
-                        <select name="bootcamp_<?php echo $row['number_id']; ?>" class="form-select">
-                            <?php if (!empty($courses_data)): ?>
-                                <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                        <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <option>No hay cursos</option>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="ingles_<?php echo $row['number_id']; ?>" class="form-select">
-                            <?php if (!empty($courses_data)): ?>
-                                <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                        <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <option>No hay cursos</option>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="english_code_<?php echo $row['number_id']; ?>" class="form-select">
-                            <?php if (!empty($courses_data)): ?>
-                                <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                        <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <option>No hay cursos</option>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="skills_<?php echo $row['number_id']; ?>" class="form-select">
-                            <?php if (!empty($courses_data)): ?>
-                                <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                        <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <option>No hay cursos</option>
-                            <?php endif; ?>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-primary" onclick="confirmEnrollment(event, '<?php echo $row['number_id']; ?>')">
-                            Matricular
-                        </button>
-                    </td>
-                </tr>
+                    <tr data-type-id="<?php echo htmlspecialchars($row['typeID']); ?>"
+                        data-number-id="<?php echo htmlspecialchars($row['number_id']); ?>"
+                        data-full-name="<?php echo htmlspecialchars($fullName); ?>"
+                        data-email="<?php echo htmlspecialchars($row['email']); ?>"
+                        data-institutional-email="<?php echo htmlspecialchars($nuevoCorreo); ?>"
+                        data-department="<?= htmlspecialchars($row['departamento']) ?>"
+                        data-headquarters="<?= htmlspecialchars($row['headquarters']) ?>"
+                        data-program="<?= htmlspecialchars($row['program']) ?>"
+                        data-mode="<?= htmlspecialchars($row['mode']) ?>">
+                        <td><?php echo htmlspecialchars($row['typeID']); ?></td>
+                        <td><?php echo htmlspecialchars($row['number_id']); ?></td>
+                        <td style="width: 300px; min-width: 300px; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($fullName); ?></td>
+                        <td><?php echo htmlspecialchars($row['email']); ?></td>
+                        <td><?php echo htmlspecialchars($nuevoCorreo); ?></td>
+
+                        <td>
+                            <?php
+                            $departamento = htmlspecialchars($row['departamento']);
+                            if ($departamento === 'CUNDINAMARCA') {
+                                echo "<button class='btn bg-lime-light w-100'><b>{$departamento}</b></button>"; // Botón verde para CUNDINAMARCA
+                            } elseif ($departamento === 'BOYACÁ') {
+                                echo "<button class='btn bg-indigo-light w-100'><b>{$departamento}</b></button>"; // Botón azul para BOYACÁ
+                            } else {
+                                echo "<span>{$departamento}</span>"; // Texto normal para otros valores
+                            }
+                            ?>
+                        </td>
+                        <td><b class="text-center"><?php echo htmlspecialchars($row['headquarters']); ?></b></td>
+                        <td><?php echo htmlspecialchars($row['program']); ?></td>
+                        <td><?php echo htmlspecialchars($row['mode']); ?></td>
+                        <td>
+                            <input type="checkbox" class="form-check-input" style="width: 25px; height: 25px;" name="" id="">
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -172,91 +269,133 @@ if ($result && $result->num_rows > 0) {
 </div>
 
 <script>
-function confirmEnrollment(event, studentId) {
-    event.preventDefault();
-    const button = event.target;
-    const row = button.closest('tr');
-    
-    // Obtener datos del usuario
-    const typeId = row.dataset.typeId;
-    const numberId = row.dataset.numberId;
-    const fullName = row.dataset.fullName;
-    const email = row.dataset.email;
-    const institutionalEmail = row.dataset.institutionalEmail;
-    
-    // Obtener cursos seleccionados
-    const getCourseData = (select) => {
-    const option = select.options[select.selectedIndex];
-    const fullText = option.text;
-    const id = option.value;
-    // Obtener todo el texto después del primer guion
-    const name = fullText.split(' - ').slice(1).join(' - ').trim();
-    return { id: id, name: name };
-};
-    
-    const bootcamp = getCourseData(row.querySelector(`select[name="bootcamp_${studentId}"]`));
-    const ingles = getCourseData(row.querySelector(`select[name="ingles_${studentId}"]`));
-    const englishCode = getCourseData(row.querySelector(`select[name="english_code_${studentId}"]`));
-    const skills = getCourseData(row.querySelector(`select[name="skills_${studentId}"]`));
-    
-    // Generar contraseña (número de ID)
-    const password = 'UTt@2025!';
+    document.getElementById('matricularSeleccionados').addEventListener('click', confirmBulkEnrollment);
 
-    // Preparar datos para enviar
-    const formData = {
-        type_id: typeId,
-        number_id: numberId,
-        full_name: fullName,
-        email: email,
-        institutional_email: institutionalEmail,
-        password: password,
-        id_bootcamp: bootcamp.id,
-        bootcamp_name: bootcamp.name,
-        id_leveling_english: ingles.id,
-        leveling_english_name: ingles.name,
-        id_english_code: englishCode.id,
-        english_code_name: englishCode.name,
-        id_skills: skills.id,
-        skills_name: skills.name
-    };
-
-    Swal.fire({
-        title: 'Confirmar matrícula',
-        text: "¿Está seguro que desea matricular este estudiante?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, matricular',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch('components/registerMoodle/enroll_user.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: data.message,
-                        showConfirmButton: true
-                    }).then(() => {
-                        // Recargar la página para actualizar la lista
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire('Error', data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Error de conexión', 'error');
-            });
+    function confirmBulkEnrollment(event) {
+        const selectedCheckboxes = document.querySelectorAll('#listaInscritos tbody input[type="checkbox"]:checked');
+        if (selectedCheckboxes.length === 0) {
+            Swal.fire('Error', 'Por favor seleccione al menos un estudiante', 'error');
+            return;
         }
-    });
-}
+
+        Swal.fire({
+            title: 'Confirmar matrícula',
+            text: `¿Está seguro que desea matricular a ${selectedCheckboxes.length} estudiantes seleccionados?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, matricular',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const promises = [];
+                const errors = [];
+                let successes = 0;
+
+                selectedCheckboxes.forEach(checkbox => {
+                    const row = checkbox.closest('tr');
+                    const formData = getFormDataFromRow(row);
+
+                    const promise = fetch('components/registerMoodle/enroll_user.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(formData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                successes++;
+                            } else {
+                                errors.push({
+                                    student: formData.number_id,
+                                    message: data.message || 'Error desconocido'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            errors.push({
+                                student: formData.number_id,
+                                message: 'Error de conexión o servidor'
+                            });
+                        });
+
+                    promises.push(promise);
+                });
+
+                Promise.all(promises).then(() => {
+                    let message = `Matrículas completadas: ${successes} exitosas.`;
+                    if (errors.length > 0) {
+                        message += `<br>Errores (${errors.length}):<br>`;
+                        message += errors.map(err => `• ${err.student}: ${err.message}`).join('<br>');
+                    }
+                    Swal.fire({
+                        title: 'Resultado',
+                        html: message,
+                        icon: errors.length ? 'warning' : 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        if (successes > 0) {
+                            location.reload();
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    function getFormDataFromRow(row) {
+        const studentId = row.dataset.numberId;
+
+        const getCourseData = (prefix) => {
+            const select = document.getElementById(prefix);
+            if (!select) {
+                console.error(`Select no encontrado: ${prefix}`);
+                return {
+                    id: '0',
+                    name: 'No seleccionado'
+                };
+            }
+            const option = select.options[select.selectedIndex];
+            const fullText = option.text;
+            const id = option.value;
+            const name = fullText.split(' - ').slice(1).join(' - ').trim();
+
+            console.log(`${prefix}:`, {
+                id,
+                name
+            }); // Debug
+            return {
+                id,
+                name
+            };
+        };
+
+        const formData = {
+            type_id: row.dataset.typeId,
+            number_id: studentId,
+            full_name: row.dataset.fullName,
+            email: row.dataset.email,
+            institutional_email: row.dataset.institutionalEmail,
+            department: row.dataset.department,
+            headquarters: row.dataset.headquarters,
+            program: row.dataset.program,
+            mode: row.dataset.mode,
+            password: 'UTt@2025!',
+            id_bootcamp: getCourseData('bootcamp').id,
+            bootcamp_name: getCourseData('bootcamp').name,
+            id_leveling_english: getCourseData('ingles').id,
+            leveling_english_name: getCourseData('ingles').name,
+            id_english_code: getCourseData('english_code').id,
+            english_code_name: getCourseData('english_code').name,
+            id_skills: getCourseData('skills').id,
+            skills_name: getCourseData('skills').name
+        };
+
+        console.log('FormData:', formData); // Debug
+        return formData;
+    }
 </script>
 </body>
+
 </html>
