@@ -13,24 +13,37 @@
 </script>-->
 <?php
 
-$mensajeToast = ''; // Mensaje para el toast
+// Parámetros de paginación
+$limit = 50; // Número de registros por página
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
 
-// Obtener los datos
+// Parámetro de búsqueda
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Obtener los datos con paginación y búsqueda
 $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
     FROM user_register
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
     INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
     WHERE departamentos.id_departamento IN (15, 25)
-    AND user_register.status = '1' AND user_register.statusAdmin = '' 
-    ORDER BY user_register.first_name ASC";
+    AND user_register.status = '1' AND user_register.statusAdmin = '0'
+    AND (user_register.first_name LIKE ? OR user_register.number_id LIKE ?)
+    ORDER BY user_register.first_name ASC
+    LIMIT ? OFFSET ?";
 
 $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
                   FROM contact_log cl
                   LEFT JOIN advisors a ON cl.idAdvisor = a.id
                   WHERE cl.number_id = ?";
 
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+$searchParam = "%$search%";
+$stmt->bind_param('ssii', $searchParam, $searchParam, $limit, $offset);
+$stmt->execute();
+$result = $stmt->get_result();
 $data = [];
+
 
 // Función para obtener los niveles de los usuarios 
 function obtenerNivelesUsuarios($conn)
@@ -107,7 +120,19 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo '<div class="alert alert-info">No hay datos disponibles.</div>';
 }
-
+// Obtener el total de registros para la paginación
+$totalSql = "SELECT COUNT(*) as total FROM user_register
+    INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
+    INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
+    WHERE departamentos.id_departamento IN (15, 25)
+    AND user_register.status = '1' AND user_register.statusAdmin = ''
+    AND (user_register.first_name LIKE ? OR user_register.number_id LIKE ?)";
+$stmtTotal = $conn->prepare($totalSql);
+$stmtTotal->bind_param('ss', $searchParam, $searchParam);
+$stmtTotal->execute();
+$totalResult = $stmtTotal->get_result();
+$totalRows = $totalResult->fetch_assoc()['total'];
+$totalPages = ceil($totalRows / $limit);
 ?>
 
 <div class="table-responsive">
@@ -115,6 +140,66 @@ if ($result && $result->num_rows > 0) {
         onclick="window.location.href='components/registrationsContact/export_to_excel.php?action=export'">
         <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
     </button>
+    <div class="container mt-3">
+    <div class="row justify-content-between align-items-center">
+        <!-- Formulario de búsqueda -->
+        <div class="col-md-6 col-sm-12 mb-3 text-center">
+        <p class="mb-2">Buscar usuarios</p>
+            <form method="GET" action="" class="d-flex">
+    
+                <input type="text" class="form-control me-2 text-center" name="search" placeholder="Buscar por nombre o ID" value="<?php echo htmlspecialchars($search); ?>">
+                <button type="submit" class="btn btn-sm bg-indigo-dark text-white w-100"><i class="bi bi-search"></i> Buscar</button>
+            </form>
+        </div>
+        
+        <!-- Indicador y paginación -->
+        <div class="col-md-6 col-sm-12 text-end">
+            <p class="mb-2">Navega entre páginas para ver más registros.</p>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-end">
+                    <!-- Botón Anterior -->
+                    <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link btn-sm" href="?page=<?php echo max(1, $page - 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
+                            &laquo; Anterior
+                        </a>
+                    </li>
+
+                    <!-- Primera página -->
+                    <?php if ($page > 2): ?>
+                        <li class="page-item"><a class="page-link btn-sm" href="?page=1&search=<?php echo htmlspecialchars($search); ?>">1</a></li>
+                        <?php if ($page > 3): ?>
+                            <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
+                    <!-- Páginas visibles -->
+                    <?php for ($i = max(1, $page - 1); $i <= min($totalPages, $page + 1); $i++): ?>
+                        <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                            <a class="page-link btn-sm" href="?page=<?php echo $i; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Última página -->
+                    <?php if ($page < $totalPages - 1): ?>
+                        <?php if ($page < $totalPages - 2): ?>
+                            <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
+                        <?php endif; ?>
+                        <li class="page-item"><a class="page-link btn-sm" href="?page=<?php echo $totalPages; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $totalPages; ?></a></li>
+                    <?php endif; ?>
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                        <a class="page-link btn-sm" href="?page=<?php echo min($totalPages, $page + 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
+                            Siguiente &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
     <table id="listaInscritos" class="table table-hover table-bordered">
         <thead class="thead-dark text-center">
             <tr class="text-center">
@@ -282,9 +367,9 @@ if ($result && $result->num_rows > 0) {
                         }
 
                         // Mostrar el botón con la clase, ícono y tooltip correspondientes
-                        echo '<button type="button" class="' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" title="' . $btnText . '">'
+                        echo '<a tabindex="0" role="button" class="' . $btnClass . '" data-toggle="popover" data-trigger="focus" data-placement="top" title="' . $btnText . '">'
                             . $icon .
-                            '</button>';
+                            '</a>';
                         ?>
                     </td>
 
@@ -318,12 +403,10 @@ if ($result && $result->num_rows > 0) {
                     </td>
                     <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['program']); ?></td>
                     <td class="text-center">
-                        <button type="button" class="btn bg-indigo-light"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip"
-                            data-bs-title="<?php echo htmlspecialchars($row['schedules']); ?>">
+                        <a class="btn bg-indigo-light"
+                            tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="<?php echo htmlspecialchars($row['schedules']); ?>">
                             <i class="bi bi-clock-history"></i>
-                        </button>
+                        </a>
                     </td>
                     <td>
                         <button class="btn text-white" style="background-color: #b624d5;" onclick="mostrarModalActualizarHorario(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -354,10 +437,10 @@ if ($result && $result->num_rows > 0) {
 
                     // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
-                                <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
+                                <a class="btn ' . $btnClass . '" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" 
+                                title="' . $btnText . '">
                                     ' . $icon . '
-                                </button>
+                                </a>
                             </td>';
                     ?>
 
@@ -376,10 +459,10 @@ if ($result && $result->num_rows > 0) {
                     }
                     // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
-                    <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
-                    data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
+                    <a class="btn ' . $btnClass . '" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" 
+                        title="' . $btnText . '">
                         ' . $icon . '
-                    </button>
+                    </a>
                   </td>'
                     ?>
 
@@ -407,19 +490,19 @@ if ($result && $result->num_rows > 0) {
                         }
 
                         if ($isAccepted) {
-                            echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></button>';
+                            echo '<a class="btn bg-teal-dark w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></a>';
                         } else {
-                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></button>';
+                            echo '<a class="btn bg-danger text-white w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></a>';
                         }
                         ?>
                     </td>
 
                     <td>
                         <?php
-                        if ($row['statusAdmin'] === '1') {
-                            echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
-                        } elseif ($row['statusAdmin'] === '0') {
-                            echo '<button class="btn bg-silver text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></button>';
+                        if ($row['statusAdmin'] == '1') {
+                            echo '<a class="btn bg-teal-dark w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="BENEFICIARIO"><i class="bi bi-check-circle"></i></a>';
+                        } elseif ($row['statusAdmin'] == '0') {
+                            echo '<a class="btn bg-silver text-white w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="SIN ESTADO"><i class="bi bi-question-circle"></i></a>';
                         }
                         ?>
                     </td>
@@ -440,11 +523,9 @@ if ($result && $result->num_rows > 0) {
                                 echo '<button class="btn bg-teal-dark w-100" role="alert" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                             }
                         } else {
-                            echo '<button class="btn bg-silver w-100" role="alert"role="alert data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip"
-                            data-bs-title="No ha presebtado la prueba" >
-                         <i class="bi bi-ban"></i>
-                            </button>';
+                            echo '<a class="btn bg-silver w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="No ha presentado la prueba" >
+                            <i class="bi bi-ban"></i>
+                            </a>';
                         }
                         ?>
                     </td>
@@ -460,11 +541,9 @@ if ($result && $result->num_rows > 0) {
                                 echo '<button class="btn bg-teal-dark w-100" role="alert" role="alert">Avanzado</div>';
                             }
                         } else {
-                            echo '<button class="btn bg-silver w-100" role="alert"role="alert  data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip"
-                            data-bs-title="No ha presebtado la prueba" >
-                         <i class="bi bi-ban"></i>
-                            </button>';
+                            echo '<a class="btn bg-silver w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="No ha presentado la prueba" >
+                            <i class="bi bi-ban"></i>
+                            </a>';
                         }
                         ?>
                     </td>
@@ -1086,6 +1165,14 @@ if ($result && $result->num_rows > 0) {
         timer: 2000,
         timerProgressBar: true,
     })
+
+    $(document).ready(function() {
+        $('[data-toggle="popover"]').popover({
+            placement: 'top',
+            trigger: 'focus',
+            html: true
+        });
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

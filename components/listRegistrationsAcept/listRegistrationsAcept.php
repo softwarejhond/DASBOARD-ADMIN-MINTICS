@@ -282,9 +282,14 @@ if ($result && $result->num_rows > 0) {
                         }
 
                         // Mostrar el botón con la clase, ícono y tooltip correspondientes
-                        echo '<button type="button" class="' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" title="' . $btnText . '">'
-                            . $icon .
-                            '</button>';
+                        echo '<a type="button" class="' . $btnClass . '" tabindex="0" 
+                                role="button" 
+                                data-toggle="popover" 
+                                data-trigger="focus" 
+                                data-placement="top" 
+                                title="' . $btnText . '">'
+                                . $icon .' 
+                              </a>';
                         ?>
                     </td>
 
@@ -318,12 +323,15 @@ if ($result && $result->num_rows > 0) {
                     </td>
                     <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['program']); ?></td>
                     <td class="text-center">
-                        <button type="button" class="btn bg-indigo-light"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip"
-                            data-bs-title="<?php echo htmlspecialchars($row['schedules']); ?>">
+                        <a  class="btn bg-indigo-light"
+                            tabindex="0" 
+                            role="button" 
+                            data-toggle="popover" 
+                            data-trigger="focus" 
+                            data-placement="top" 
+                            title="<?php echo htmlspecialchars($row['schedules']); ?>">
                             <i class="bi bi-clock-history"></i>
-                        </button>
+                        </a>
                     </td>
                     <td>
                         <button class="btn text-white" style="background-color: #b624d5;" onclick="mostrarModalActualizarHorario(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -355,11 +363,15 @@ if ($result && $result->num_rows > 0) {
 
                     // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
-        <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
-        data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
-            ' . $icon . '
-        </button>
-      </td>';
+                            <a class="btn ' . $btnClass . '" tabindex="0" 
+                            role="button" 
+                            data-toggle="popover" 
+                            data-trigger="focus" 
+                            data-placement="top" 
+                            title="' . $btnText . '">
+                                ' . $icon . '
+                            </a>
+                        </td>';
                     ?>
 
                     <?php
@@ -377,11 +389,15 @@ if ($result && $result->num_rows > 0) {
                     }
                     // Mostrar el botón con la clase, ícono y tooltip correspondientes
                     echo '<td class="text-center">
-                    <button class="btn ' . $btnClass . '" data-bs-toggle="tooltip" data-bs-placement="top" 
-                    data-bs-custom-class="custom-tooltip" data-bs-title="' . $btnText . '">
-                        ' . $icon . '
-                    </button>
-                  </td>'
+                            <a class="btn ' . $btnClass . '" tabindex="0" 
+                            role="button" 
+                            data-toggle="popover" 
+                            data-trigger="focus" 
+                            data-placement="top" 
+                            title="' . $btnText . '">
+                            ' . $icon . '
+                            </a>
+                        </td>';
                     ?>
 
                     <td>
@@ -408,9 +424,21 @@ if ($result && $result->num_rows > 0) {
                         }
 
                         if ($isAccepted) {
-                            echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></button>';
+                            echo '<a class="btn bg-teal-dark w-100" tabindex="0" 
+                                    role="button" 
+                                    data-toggle="popover" 
+                                    data-trigger="focus" 
+                                    data-placement="top" 
+                                    title="CUMPLE"><i class="bi bi-check-circle"></i>
+                                  </a>';
                         } else {
-                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></button>';
+                            echo '<a class="btn bg-danger text-white w-100" tabindex="0" 
+                                    role="button" 
+                                    data-toggle="popover" 
+                                    data-trigger="focus" 
+                                    data-placement="top" 
+                                    title="NO CUMPLE"><i class="bi bi-x-circle"></i>
+                                  </a>';
                         }
                         ?>
                     </td>
@@ -418,11 +446,29 @@ if ($result && $result->num_rows > 0) {
                     <td>
                         <?php
                         if ($row['statusAdmin'] === '1') {
-                            echo '<button class="btn bg-teal-dark w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="ACEPTADO"><i class="bi bi-check-circle"></i></button>';
+                            echo '<a class="btn bg-teal-dark w-100" tabindex="0" 
+                                    role="button" 
+                                    data-toggle="popover" 
+                                    data-trigger="focus" 
+                                    data-placement="top" 
+                                    title="ACEPTADO"><i class="bi bi-check-circle"></i>
+                                  </a>';
                         } elseif ($row['statusAdmin'] === '0') {
-                            echo '<button class="btn bg-danger text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="RECHAZADO"><i class="bi bi-x-circle"></i></button>';
+                            echo '<a class="btn bg-danger text-white w-100" tabindex="0" 
+                                    role="button" 
+                                    data-toggle="popover" 
+                                    data-trigger="focus" 
+                                    data-placement="top" 
+                                    title="RECHAZADO"><i class="bi bi-x-circle"></i>
+                                  </a>';
                         } else {
-                            echo '<button class="btn bg-warning text-white w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="PENDIENTE"><i class="bi bi-clock"></i></button>';
+                            echo '<a class="btn bg-warning text-white w-100" tabindex="0" 
+                                    role="button" 
+                                    data-toggle="popover" 
+                                    data-trigger="focus" 
+                                    data-placement="top" 
+                                    title="PENDIENTE"><i class="bi bi-clock"></i>
+                                  </a>';
                         }
                         ?>
                     </td>
@@ -438,16 +484,20 @@ if ($result && $result->num_rows > 0) {
                             if ($puntaje >= 1 && $puntaje <= 5) {
                                 echo '<button class="btn bg-magenta-dark w-100" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                             } elseif ($puntaje >= 6 && $puntaje <= 10) {
-                                echo '<button class="btn bg-orange-dark w-100" role="alert"role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
+                                echo '<button class="btn bg-orange-dark w-100" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                             } elseif ($puntaje >= 11 && $puntaje <= 15) {
-                                echo '<button class="btn bg-teal-dark w-100" role="alert" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
+                                echo '<button class="btn bg-teal-dark w-100" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                             }
                         } else {
-                            echo '<button class="btn bg-silver w-100" role="alert"role="alert data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip"
-                            data-bs-title="No ha presebtado la prueba" >
-                         <i class="bi bi-ban"></i>
-                            </button>';
+                            echo '<a class="btn bg-silver w-100" 
+                                    tabindex="0" 
+                                    role="button" 
+                                    data-toggle="popover" 
+                                    data-trigger="focus" 
+                                    data-placement="top" 
+                                    title="No ha presebtado la prueba">
+                                    <i class="bi bi-ban"></i>
+                                  </a>';
                         }
                         ?>
                     </td>
@@ -463,11 +513,15 @@ if ($result && $result->num_rows > 0) {
                                 echo '<button class="btn bg-teal-dark w-100" role="alert" role="alert">Avanzado</div>';
                             }
                         } else {
-                            echo '<button class="btn bg-silver w-100" role="alert"role="alert  data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-custom-class="custom-tooltip"
-                            data-bs-title="No ha presebtado la prueba" >
-                         <i class="bi bi-ban"></i>
-                            </button>';
+                            echo '<a class="btn bg-silver w-100" 
+                                    tabindex="0" 
+                                    role="button" 
+                                    data-toggle="popover" 
+                                    data-trigger="focus" 
+                                    data-placement="top" 
+                                    title="No ha presebtado la prueba">
+                                    <i class="bi bi-ban"></i>
+                                  </a>';
                         }
                         ?>
                     </td>
@@ -1089,6 +1143,14 @@ if ($result && $result->num_rows > 0) {
         timer: 2000,
         timerProgressBar: true,
     })
+
+    $(document).ready(function() {
+        $('[data-toggle="popover"]').popover({
+            placement: 'top',
+            trigger: 'focus',
+            html: true
+        });
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
