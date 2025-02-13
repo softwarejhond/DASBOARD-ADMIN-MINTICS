@@ -14,7 +14,7 @@
 <?php
 
 // Parámetros de paginación
-$limit = 50; // Número de registros por página
+$limit = 30; // Número de registros por página
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
