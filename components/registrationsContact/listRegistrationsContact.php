@@ -154,7 +154,7 @@ $totalPages = ceil($totalRows / $limit);
         
         <!-- Indicador y paginación -->
         <div class="col-md-6 col-sm-12 text-end">
-            <p class="mb-2">Navega entre páginas para ver más registros.</p>
+            <p class="h6 pb-2 mb-2 text-indigo-dark"><b>Navega entre páginas para ver más registros.</b></p>
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-end">
                     <!-- Botón Anterior -->
