@@ -52,10 +52,10 @@
     color: white;
 }
 
-.card-bootcamp { background: linear-gradient(135deg, #ff4e50, #ff8a00); }
-.card-ingles { background: linear-gradient(135deg, #6a11cb, #2575fc); }
-.card-english-code { background: linear-gradient(135deg, #ff6a00, #ee0979); }
-.card-skills { background: linear-gradient(135deg, #00b09b, #96c93d); }
+.card-bootcamp {background: linear-gradient(135deg,rgb(3, 99, 150),rgb(255, 255, 0)); }
+.card-ingles { background: linear-gradient(135deg,rgb(0, 242, 255), #ee0979); }
+.card-english-code { background: linear-gradient(135deg,rgb(240, 1, 109),rgb(142, 0, 243)); }
+.card-skills { background: linear-gradient(135deg,rgb(119, 0, 255), #ff8a00); }
 
 .filter-card {
     position: relative;
@@ -107,7 +107,7 @@
 }
 
 /* Colores de los filtros */
-.card-department { background: linear-gradient(135deg, #ff4e50, #ff8a00); }
-.card-headquarters { background: linear-gradient(135deg, #6a11cb, #2575fc); }
-.card-program { background: linear-gradient(135deg, #ff6a00, #ee0979); }
-.card-mode { background: linear-gradient(135deg, #00b09b, #96c93d); }
+.card-department { background: linear-gradient(135deg,rgb(119, 0, 255), #ff8a00); }
+.card-headquarters { background: linear-gradient(135deg,rgb(240, 1, 109),rgb(142, 0, 243)); }
+.card-program { background: linear-gradient(135deg,rgb(0, 242, 255), #ee0979); }
+.card-mode { background: linear-gradient(135deg,rgb(3, 99, 150),rgb(255, 255, 0)); }
