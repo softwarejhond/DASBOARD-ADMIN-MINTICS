@@ -223,6 +223,7 @@ $totalPages = ceil($totalRows / $limit);
                 <th>Modalidad</th>
                 <th>Actualizar modalidad</th>
                 <th>Programa de interés</th>
+                <th>Nivel de preferencia</th>
                 <th>Horario</th>
                 <th>Cambiar Horario</th>
                 <th>Dispositivo</th>
@@ -402,6 +403,8 @@ $totalPages = ceil($totalRows / $limit);
                         </button>
                     </td>
                     <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['program']); ?></td>
+                    <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['level']); ?></td>
+
                     <td class="text-center">
                         <a class="btn bg-indigo-light"
                             tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="<?php echo htmlspecialchars($row['schedules']); ?>">
@@ -467,14 +470,13 @@ $totalPages = ceil($totalRows / $limit);
                     ?>
 
                     <td>
-                        <?php
+                    <?php
                         // Verificar condiciones para cada registro
                         $isAccepted = false;
                         if ($row['mode'] === 'Presencial') {
                             if (
                                 $row['typeID'] === 'C.C' && $row['age'] > 17 &&
-                                (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
-                                $row['internet'] === 'Sí'
+                                (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ')
                             ) {
                                 $isAccepted = true;
                             }
@@ -482,8 +484,7 @@ $totalPages = ceil($totalRows / $limit);
                             if (
                                 $row['typeID'] === 'C.C' && $row['age'] > 17 &&
                                 (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
-                                $row['internet'] === 'Sí' &&
-                                $row['technologies'] === 'computador'
+                                $row['internet'] === 'Sí'
                             ) {
                                 $isAccepted = true;
                             }
