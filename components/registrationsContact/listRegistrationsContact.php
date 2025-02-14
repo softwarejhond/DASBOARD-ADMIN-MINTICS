@@ -141,63 +141,63 @@ $totalPages = ceil($totalRows / $limit);
         <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
     </button>
     <div class="container mt-3">
-    <div class="row justify-content-between align-items-center">
-        <!-- Formulario de búsqueda -->
-        <div class="col-md-6 col-sm-12 mb-3 text-center">
-        <p class="mb-2">Buscar usuarios</p>
-            <form method="GET" action="" class="d-flex">
-    
-                <input type="text" class="form-control me-2 text-center" name="search" placeholder="Buscar por nombre o ID" value="<?php echo htmlspecialchars($search); ?>">
-                <button type="submit" class="btn btn-sm bg-indigo-dark text-white w-100"><i class="bi bi-search"></i> Buscar</button>
-            </form>
-        </div>
-        
-        <!-- Indicador y paginación -->
-        <div class="col-md-6 col-sm-12 text-end">
-            <p class="h6 pb-2 mb-2 text-indigo-dark"><b>Navega entre páginas para ver más registros.</b></p>
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-end">
-                    <!-- Botón Anterior -->
-                    <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-                        <a class="page-link btn-sm" href="?page=<?php echo max(1, $page - 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
-                            &laquo; Anterior
-                        </a>
-                    </li>
+        <div class="row justify-content-between align-items-center">
+            <!-- Formulario de búsqueda -->
+            <div class="col-md-6 col-sm-12 mb-3 text-center">
+                <p class="mb-2">Buscar usuarios</p>
+                <form method="GET" action="" class="d-flex">
 
-                    <!-- Primera página -->
-                    <?php if ($page > 2): ?>
-                        <li class="page-item"><a class="page-link btn-sm" href="?page=1&search=<?php echo htmlspecialchars($search); ?>">1</a></li>
-                        <?php if ($page > 3): ?>
-                            <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
-                        <?php endif; ?>
-                    <?php endif; ?>
+                    <input type="text" class="form-control me-2 text-center" name="search" placeholder="Buscar por nombre o ID" value="<?php echo htmlspecialchars($search); ?>">
+                    <button type="submit" class="btn btn-sm bg-indigo-dark text-white w-100"><i class="bi bi-search"></i> Buscar</button>
+                </form>
+            </div>
 
-                    <!-- Páginas visibles -->
-                    <?php for ($i = max(1, $page - 1); $i <= min($totalPages, $page + 1); $i++): ?>
-                        <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                            <a class="page-link btn-sm" href="?page=<?php echo $i; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $i; ?></a>
+            <!-- Indicador y paginación -->
+            <div class="col-md-6 col-sm-12 text-end">
+                <p class="h6 pb-2 mb-2 text-indigo-dark"><b>Navega entre páginas para ver más registros.</b></p>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end">
+                        <!-- Botón Anterior -->
+                        <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link btn-sm" href="?page=<?php echo max(1, $page - 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
+                                &laquo; Anterior
+                            </a>
                         </li>
-                    <?php endfor; ?>
 
-                    <!-- Última página -->
-                    <?php if ($page < $totalPages - 1): ?>
-                        <?php if ($page < $totalPages - 2): ?>
-                            <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
+                        <!-- Primera página -->
+                        <?php if ($page > 2): ?>
+                            <li class="page-item"><a class="page-link btn-sm" href="?page=1&search=<?php echo htmlspecialchars($search); ?>">1</a></li>
+                            <?php if ($page > 3): ?>
+                                <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
+                            <?php endif; ?>
                         <?php endif; ?>
-                        <li class="page-item"><a class="page-link btn-sm" href="?page=<?php echo $totalPages; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $totalPages; ?></a></li>
-                    <?php endif; ?>
 
-                    <!-- Botón Siguiente -->
-                    <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
-                        <a class="page-link btn-sm" href="?page=<?php echo min($totalPages, $page + 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
-                            Siguiente &raquo;
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+                        <!-- Páginas visibles -->
+                        <?php for ($i = max(1, $page - 1); $i <= min($totalPages, $page + 1); $i++): ?>
+                            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                                <a class="page-link btn-sm" href="?page=<?php echo $i; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <!-- Última página -->
+                        <?php if ($page < $totalPages - 1): ?>
+                            <?php if ($page < $totalPages - 2): ?>
+                                <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
+                            <?php endif; ?>
+                            <li class="page-item"><a class="page-link btn-sm" href="?page=<?php echo $totalPages; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $totalPages; ?></a></li>
+                        <?php endif; ?>
+
+                        <!-- Botón Siguiente -->
+                        <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link btn-sm" href="?page=<?php echo min($totalPages, $page + 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
+                                Siguiente &raquo;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
-</div>
 
 
     <table id="listaInscritos" class="table table-hover table-bordered">
@@ -224,6 +224,7 @@ $totalPages = ceil($totalRows / $limit);
                 <th>Actualizar modalidad</th>
                 <th>Programa de interés</th>
                 <th>Nivel de preferencia</th>
+                <th>Actualizar programa</th>
                 <th>Horario</th>
                 <th>Cambiar Horario</th>
                 <th>Dispositivo</th>
@@ -404,6 +405,14 @@ $totalPages = ceil($totalRows / $limit);
                     </td>
                     <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['program']); ?></td>
                     <td style="width: 200px; min-width: 200px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($row['level']); ?></td>
+                    <td>
+                        <button class="btn btn-warning" onclick="mostrarModalActualizarPrograma(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-custom-class="custom-tooltip"
+                            data-bs-title="Cambiar programa y nivel">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </button>
+                    </td>
+
 
                     <td class="text-center">
                         <a class="btn bg-indigo-light"
@@ -470,7 +479,7 @@ $totalPages = ceil($totalRows / $limit);
                     ?>
 
                     <td>
-                    <?php
+                        <?php
                         // Verificar condiciones para cada registro
                         $isAccepted = false;
                         if ($row['mode'] === 'Presencial') {
@@ -1155,6 +1164,113 @@ $totalPages = ceil($totalRows / $limit);
         };
 
         xhr.send("id=" + id + "&nuevoHorario=" + encodeURIComponent(nuevoHorario));
+    }
+
+    function mostrarModalActualizarPrograma(id) {
+        // Remover cualquier modal previo del DOM
+        $('#modalActualizarPrograma_' + id).remove();
+
+        // Crear el modal dinámicamente con un identificador único
+        const modalHtml = `
+        <div id="modalActualizarPrograma_${id}" class="modal fade" aria-hidden="true" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-indigo-dark">
+                        <h5 class="modal-title text-center">
+                            <i class="bi bi-arrow-left-right"></i> Actualizar Programa y Nivel
+                        </h5>
+                        <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formActualizarPrograma_${id}">
+                            <div class="form-group mb-3">
+                                <label for="nuevoPrograma_${id}">Seleccionar nuevo programa:</label>
+                                <select class="form-control" id="nuevoPrograma_${id}" name="nuevoPrograma" required>
+                                    <option value="">Seleccionar programa</option>
+                                    <option value="Programación">Programación</option>
+                                    <option value="Ciberseguridad">Ciberseguridad</option>
+                                    <option value="Arquitectura en la Nube">Arquitectura en la Nube</option>
+                                    <option value="Análisis de datos">Análisis de datos</option>
+                                    <option value="Inteligencia Artificial">Inteligencia Artificial</option>
+                                    <option value="Blockchain">Blockchain</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="nuevoNivel_${id}">Seleccionar nuevo nivel:</label>
+                                <select class="form-control" id="nuevoNivel_${id}" name="nuevoNivel" required>
+                                    <option value="">Seleccionar nivel</option>
+                                    <option value="Explorador">Explorador</option>
+                                    <option value="Innovador">Innovador</option>
+                                    <option value="Integrador">Integrador</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="id" value="${id}">
+                            <button type="submit" class="btn bg-indigo-dark text-white w-100">Actualizar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        // Añadir el modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        $('#modalActualizarPrograma_' + id).modal('show');
+
+        // Manejar el envío del formulario
+        $('#formActualizarPrograma_' + id).on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar el programa y nivel?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const nuevoPrograma = $('#nuevoPrograma_' + id).val();
+                    const nuevoNivel = $('#nuevoNivel_' + id).val();
+                    actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel);
+                    $('#modalActualizarPrograma_' + id).modal('hide');
+                }
+            });
+        });
+    }
+
+    function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_programa.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'El programa y nivel se han actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar el programa y nivel.'
+                        });
+                    }
+                }
+            }
+        };
+
+        xhr.send("id=" + id + "&nuevoPrograma=" + encodeURIComponent(nuevoPrograma) + "&nuevoNivel=" + encodeURIComponent(nuevoNivel));
     }
     // Muestra una notificación de actualización con SweetAlert2
     Swal.fire({

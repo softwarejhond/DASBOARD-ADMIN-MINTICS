@@ -1,0 +1,113 @@
+.course-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.course-card {
+    position: relative;
+    border: none;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding-top: 50px;
+}
+
+.course-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Ícono de fondo */
+.course-card::before {
+    content: attr(data-icon);
+    position: absolute;
+    font-family: "Bootstrap Icons";
+    font-size: 5rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-20deg);
+    color: rgba(255, 255, 255, 0.2); /* Ícono semi transparente */
+    z-index: 0;
+}
+
+.course-card .card-body {
+    position: relative;
+    z-index: 1;
+}
+
+.course-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: -40px;
+    z-index: 2;
+    position: relative;
+    color: white;
+}
+
+.card-bootcamp { background: linear-gradient(135deg, #ff4e50, #ff8a00); }
+.card-ingles { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+.card-english-code { background: linear-gradient(135deg, #ff6a00, #ee0979); }
+.card-skills { background: linear-gradient(135deg, #00b09b, #96c93d); }
+
+.filter-card {
+    position: relative;
+    border: none;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding-top: 50px;
+}
+
+.filter-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Ícono de fondo */
+.filter-card::before {
+    content: attr(data-icon);
+    position: absolute;
+    font-family: "Bootstrap Icons";
+    font-size: 5rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-20deg);
+    color: rgba(255, 255, 255, 0.2); /* Ícono semi transparente */
+    z-index: 0;
+}
+
+.filter-card .card-body {
+    position: relative;
+    z-index: 1;
+}
+
+.filter-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: -40px;
+    z-index: 2;
+    position: relative;
+    color: white;
+}
+
+/* Colores de los filtros */
+.card-department { background: linear-gradient(135deg, #ff4e50, #ff8a00); }
+.card-headquarters { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+.card-program { background: linear-gradient(135deg, #ff6a00, #ee0979); }
+.card-mode { background: linear-gradient(135deg, #00b09b, #96c93d); }

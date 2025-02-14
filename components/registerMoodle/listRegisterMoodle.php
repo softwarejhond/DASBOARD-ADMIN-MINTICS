@@ -90,128 +90,171 @@ foreach ($data as $row) {
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<div class="container-fluid px-2 mt-5">
+<div class="container-fluid px-2">
     <div class="table-responsive">
 
-        <div class="row mb-3 g-3">
-            <h3><i class="bi bi-card-checklist"></i> Seleccionar cursos</h3>
+        <div class="row p-3">
+            <b class="text-left mb-1"><i class="bi bi-card-checklist"></i> Seleccionar cursos</b>
 
-            <div class="col-md-3">
-                <h5>Bootcamp:</h5>
-                <select id="bootcamp" class="form-select course-select">
-                    <?php if (!empty($courses_data)): ?>
-                        <?php foreach ($courses_data as $course): ?>
-                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="course-title"><i class="bi bi-laptop"></i> Bootcamp</div>
+                <div class="card course-card card-bootcamp" data-icon="💻">
+                    <div class="card-body">
+                        <select id="bootcamp" class="form-select course-select">
+                            <?php if (!empty($courses_data)): ?>
+                                <?php foreach ($courses_data as $course): ?>
+                                    <option value="<?= htmlspecialchars($course['id']) ?>">
+                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-3">
-                <h5>Ingles nivelatorio:</h5>
-                <select id="ingles" class="form-select course-select">
-                    <?php if (!empty($courses_data)): ?>
-                        <?php foreach ($courses_data as $course): ?>
-                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="course-title"><i class="bi bi-translate"></i> Inglés nivelatorio</div>
+                <div class="card course-card card-ingles" data-icon="🌍">
+                    <div class="card-body">
+                        <select id="ingles" class="form-select course-select">
+                            <?php if (!empty($courses_data)): ?>
+                                <?php foreach ($courses_data as $course): ?>
+                                    <option value="<?= htmlspecialchars($course['id']) ?>">
+                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-3">
-                <h5>English code:</h5>
-                <select id="english_code" class="form-select course-select">
-                    <?php if (!empty($courses_data)): ?>
-                        <?php foreach ($courses_data as $course): ?>
-                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="course-title"><i class="bi bi-code-slash"></i> English Code</div>
+                <div class="card course-card card-english-code" data-icon="👨‍💻">
+                    <div class="card-body">
+                        <select id="english_code" class="form-select course-select">
+                            <?php if (!empty($courses_data)): ?>
+                                <?php foreach ($courses_data as $course): ?>
+                                    <option value="<?= htmlspecialchars($course['id']) ?>">
+                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-3">
-                <h5>Habilidades:</h5>
-                <select id="skills" class="form-select course-select">
-                    <?php if (!empty($courses_data)): ?>
-                        <?php foreach ($courses_data as $course): ?>
-                            <option value="<?php echo htmlspecialchars($course['id']); ?>">
-                                <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
-            </div>
-        </div>
-
-        <hr>
-
-        <div class="row mb-3 g-3">
-            <h3><i class="bi bi-filter-circle"></i> Filtrar</h3>
-            <div class="col-md-3">
-                <select id="filterDepartment" class="form-select">
-                    <option value="">Todos los departamentos</option>
-                    <option value="BOYACÁ">BOYACÁ</option>
-                    <option value="CUNDINAMARCA">CUNDINAMARCA</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <select id="filterHeadquarters" class="form-select">
-                    <option value="">Todas las sedes</option>
-                    <?php foreach ($sedes as $sede): ?>
-                        <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <select id="filterProgram" class="form-select">
-                    <option value="">Todos los programas</option>
-                    <?php foreach ($programas as $programa): ?>
-                        <option value="<?= htmlspecialchars($programa) ?>"><?= htmlspecialchars($programa) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <select id="filterMode" class="form-select">
-                    <option value="">Todas las modalidades</option>
-                    <option value="Virtual">Virtual</option>
-                    <option value="Presencial">Presencial</option>
-                </select>
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="course-title"><i class="bi bi-lightbulb"></i> Habilidades</div>
+                <div class="card course-card card-skills" data-icon="💡">
+                    <div class="card-body">
+                        <select id="skills" class="form-select course-select">
+                            <?php if (!empty($courses_data)): ?>
+                                <?php foreach ($courses_data as $course): ?>
+                                    <option value="<?= htmlspecialchars($course['id']) ?>">
+                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <div class="row p-3 mb-1">
+            <b class="text-left mb-1"><i class="bi bi-filter-circle"></i> Filtrar beneficiario</b>
+
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="filter-title"><i class="bi bi-map"></i> Departamento</div>
+                <div class="card filter-card card-department" data-icon="📍">
+                    <div class="card-body">
+                        <select id="filterDepartment" class="form-select">
+                            <option value="">Todos los departamentos</option>
+                            <option value="BOYACÁ">BOYACÁ</option>
+                            <option value="CUNDINAMARCA">CUNDINAMARCA</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="filter-title"><i class="bi bi-building"></i> Sede</div>
+                <div class="card filter-card card-headquarters" data-icon="🏫">
+                    <div class="card-body">
+                        <select id="filterHeadquarters" class="form-select">
+                            <option value="">Todas las sedes</option>
+                            <?php foreach ($sedes as $sede): ?>
+                                <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="filter-title"><i class="bi bi-mortarboard"></i> Programa</div>
+                <div class="card filter-card card-program" data-icon="🎓">
+                    <div class="card-body">
+                        <select id="filterProgram" class="form-select">
+                            <option value="">Todos los programas</option>
+                            <?php foreach ($programas as $programa): ?>
+                                <option value="<?= htmlspecialchars($programa) ?>"><?= htmlspecialchars($programa) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 col-lg-3">
+                <div class="filter-title"><i class="bi bi-laptop"></i> Modalidad</div>
+                <div class="card filter-card card-mode" data-icon="💻">
+                    <div class="card-body">
+                        <select id="filterMode" class="form-select">
+                            <option value="">Todas las modalidades</option>
+                            <option value="Virtual">Virtual</option>
+                            <option value="Presencial">Presencial</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
         <table id="listaInscritos" class="table table-hover table-bordered">
+        <button id="matricularSeleccionados" class="btn bg-magenta-dark text-white btn-lg float-end ms-2">
+                    <i class="bi bi-card-checklist"></i> Matricular Seleccionados
+                </button>
+            <div class="d-flex justify-content mb-3">
+                <!-- Botón para exportar a Excel 
+                <button id="exportarExcel" class="btn btn-success btn-lg"
+                    onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
+                    <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+                </button>-->
+                <!-- Botón para mostrar usuarios seleccionados -->
+                <button class="btn bg-lime-dark text-vlack ms-2 btn-lg float-end">
+                    <i class="bi bi-card-checklist"></i> Usuarios seleccionados:
+                    <span id="contador">0</span>
+                </button>
+           
 
-            <button id="matricularSeleccionados" class="btn btn-primary mb-3">
-                <i class="bi bi-people-fill"></i> Matricular Seleccionados
-            </button>
-            <br>
-            <button id="exportarExcel" class="btn btn-success mb-3"
-                onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
-                <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-            </button>
-
+            </div>
+         
             <thead class="thead-dark text-center">
                 <tr class="text-center">
                     <th>Tipo ID</th>
                     <th>Número</th>
                     <th>Nombre</th>
+                    <th>Modalidad</th>
+                    <th>Seleccionar</th>
                     <th>Email</th>
                     <th>Nuevo Email</th>
                     <th>Departamento</th>
                     <th>Sede</th>
                     <th>Programa</th>
                     <th>Nivel de preferencia</th>
-                    <th>Modalidad</th>
-                    <th>Seleccionar</th>
+
                 </tr>
             </thead>
             <tbody class="text-center">
@@ -241,6 +284,10 @@ foreach ($data as $row) {
                         <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                         <td><?php echo htmlspecialchars($row['number_id']); ?></td>
                         <td style="width: 300px; min-width: 300px; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($fullName); ?></td>
+                        <td><?php echo htmlspecialchars($row['mode']); ?></td>
+                        <td>
+                            <input type="checkbox" class="form-check-input usuario-checkbox" style="width: 25px; height: 25px;" name="" id="">
+                        </td>
                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                         <td><?php echo htmlspecialchars($nuevoCorreo); ?></td>
 
@@ -259,10 +306,7 @@ foreach ($data as $row) {
                         <td><b class="text-center"><?php echo htmlspecialchars($row['headquarters']); ?></b></td>
                         <td><?php echo htmlspecialchars($row['program']); ?></td>
                         <td><?php echo htmlspecialchars($row['level']); ?></td>
-                        <td><?php echo htmlspecialchars($row['mode']); ?></td>
-                        <td>
-                            <input type="checkbox" class="form-check-input" style="width: 25px; height: 25px;" name="" id="">
-                        </td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -271,6 +315,22 @@ foreach ($data as $row) {
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Selecciona todos los checkboxes con la clase 'usuario-checkbox'
+        const checkboxes = document.querySelectorAll(".usuario-checkbox");
+        const contador = document.getElementById("contador");
+
+        function actualizarContador() {
+            // Cuenta los checkboxes que están marcados
+            const seleccionados = document.querySelectorAll(".usuario-checkbox:checked").length;
+            contador.textContent = seleccionados;
+        }
+
+        // Agrega un evento a cada checkbox para actualizar el contador
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", actualizarContador);
+        });
+    });
     document.getElementById('matricularSeleccionados').addEventListener('click', confirmBulkEnrollment);
 
     function confirmBulkEnrollment(event) {

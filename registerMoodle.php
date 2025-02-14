@@ -35,6 +35,7 @@ $rol = $infoUsuario['rol'];
     <link rel="stylesheet" href="css/slidebar.css?v=0.0.3">
     <link rel="stylesheet" href="css/contadores.css?v=0.7">
     <link rel="stylesheet" href="css/dataTables.css?v=0.3">
+    <link rel="stylesheet" href="css/cardsMoodleMatricula.css?v=0.0.1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Dashboard</title>
     <link rel="icon" href="https://css.mintic.gov.co/mt/mintic/new/img/logo_mintic_24_dark.svg" type="image/x-icon">
