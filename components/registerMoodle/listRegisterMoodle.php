@@ -223,9 +223,9 @@ foreach ($data as $row) {
             </div>
         </div>
         <table id="listaInscritos" class="table table-hover table-bordered">
-        <button id="matricularSeleccionados" class="btn bg-magenta-dark text-white btn-lg float-end ms-2">
-                    <i class="bi bi-card-checklist"></i> Matricular Seleccionados
-                </button>
+            <button id="matricularSeleccionados" class="btn bg-magenta-dark text-white btn-lg float-end ms-2">
+                <i class="bi bi-card-checklist"></i> Matricular Seleccionados
+            </button>
             <div class="d-flex justify-content mb-3">
                 <!-- Botón para exportar a Excel 
                 <button id="exportarExcel" class="btn btn-success btn-lg"
@@ -237,10 +237,10 @@ foreach ($data as $row) {
                     <i class="bi bi-card-checklist"></i> Usuarios seleccionados:
                     <span id="contador">0</span>
                 </button>
-           
+
 
             </div>
-         
+
             <thead class="thead-dark text-center">
                 <tr class="text-center">
                     <th>Tipo ID</th>
@@ -286,7 +286,9 @@ foreach ($data as $row) {
                         <td style="width: 300px; min-width: 300px; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($fullName); ?></td>
                         <td><?php echo htmlspecialchars($row['mode']); ?></td>
                         <td>
-                            <input type="checkbox" class="form-check-input usuario-checkbox" style="width: 25px; height: 25px;" name="" id="">
+                            <input type="checkbox" class="form-check-input usuario-checkbox"
+                                style="width: 25px; height: 25px; appearance: none; background-color: white; border: 2px solid #ec008c; cursor: pointer; position: relative;"
+                                onclick="this.style.backgroundColor = this.checked ? 'magenta' : 'white'">
                         </td>
                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                         <td><?php echo htmlspecialchars($nuevoCorreo); ?></td>
