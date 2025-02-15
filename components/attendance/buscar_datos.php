@@ -1,9 +1,19 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../controller/conexion.php'; // Asegúrate de que $conn esté definido
 
 // Verificar que se reciba una solicitud POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
+
+    // Verificar que el usuario esté en sesión
+    if (!isset($_SESSION['username'])) {
+        echo json_encode(['error' => 'Usuario no autorizado']);
+        exit;
+    }
+
+    $teacher_id = $_SESSION['username']; // Obtener el username de la sesión
+    
 
     // Recoger y validar datos
     $bootcamp   = isset($_POST['bootcamp']) ? (int)$_POST['bootcamp'] : 0;
@@ -22,14 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Preparar la consulta
-    $sql = "SELECT * FROM groups WHERE mode = ? AND id_bootcamp = ? AND headquarters = ?";
+    $sql = "SELECT * FROM groups WHERE mode = ? AND id_bootcamp = ? AND headquarters = ? AND teacher_id = ?";
     $stmt = mysqli_prepare($conn, $sql);
     if (!$stmt) {
         echo json_encode(['error' => 'Error en la preparación: ' . mysqli_error($conn)]);
         exit;
     }
 
-    mysqli_stmt_bind_param($stmt, "sis", $modalidad, $bootcamp, $sede);
+    mysqli_stmt_bind_param($stmt, "siss", $modalidad, $bootcamp, $sede, $teacher_id);
 
     if (!mysqli_stmt_execute($stmt)) {
         echo json_encode(['error' => 'Error en la ejecución: ' . mysqli_stmt_error($stmt)]);

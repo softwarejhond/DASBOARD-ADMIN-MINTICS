@@ -20,4 +20,4 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
 </style>
-<button class="btn btn-primary floating-button bg-indigo-dark " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"><i class="bi bi-house-add-fill"></i></button>
+<button class="btn btn-primary floating-button bg-indigo-dark " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"><i class="fa-solid fa-chalkboard-user"></i></button>

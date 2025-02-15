@@ -1232,32 +1232,32 @@ $totalPages = ceil($totalRows / $limit);
             e.preventDefault();
 
             Swal.fire({
-            title: '¿Está seguro?',
-            text: "¿Desea actualizar la información?",
-            icon: 'warning', 
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, actualizar',
-            cancelButtonText: 'Cancelar'
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar la información?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
-            if (result.isConfirmed) {
-                // Solo obtener valores si fueron seleccionados
-                const nuevoPrograma = $('#nuevoPrograma_' + id).val() || null;
-                const nuevoNivel = $('#nuevoNivel_' + id).val() || null;
-                const nuevoSede = $('#nuevoSede_' + id).val() || null;
-                
-                actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede);
-                $('#modalActualizarPrograma_' + id).modal('hide');
-            }
+                if (result.isConfirmed) {
+                    // Solo obtener valores si fueron seleccionados
+                    const nuevoPrograma = $('#nuevoPrograma_' + id).val() || null;
+                    const nuevoNivel = $('#nuevoNivel_' + id).val() || null;
+                    const nuevoSede = $('#nuevoSede_' + id).val() || null;
+
+                    actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede);
+                    $('#modalActualizarPrograma_' + id).modal('hide');
+                }
             });
         });
-        }
+    }
 
-        function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede) {
+    function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede) {
         const formData = new FormData();
         formData.append('id', id);
-        
+
         // Solo agregar los campos que tienen valor
         if (nuevoPrograma) formData.append('nuevoPrograma', nuevoPrograma);
         if (nuevoNivel) formData.append('nuevoNivel', nuevoNivel);
@@ -1265,34 +1265,34 @@ $totalPages = ceil($totalRows / $limit);
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_programa.php", true);
-        
+
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                const response = xhr.responseText.trim();
-                if (response === "success") {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Actualizado!',
-                    text: 'Se ha actualizado correctamente.',
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    location.reload();
-                });
-                } else {
-                Swal.fire({
-                    icon: 'error', 
-                    title: 'Error',
-                    text: 'Hubo un problema al actualizar la información.'
-                });
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'Se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar la información.'
+                        });
+                    }
                 }
-            }
             }
         };
 
         xhr.send(formData);
-        }
+    }
     // Muestra una notificación de actualización con SweetAlert2
     Swal.fire({
         icon: 'info',

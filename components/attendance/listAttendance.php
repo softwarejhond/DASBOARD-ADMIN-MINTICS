@@ -116,23 +116,29 @@ $courses_data = getCourses();
                             <label class="form-label">Fecha</label>
                             <input type="date" name="class_date" id="class_date" class="form-control" required max="<?= date('Y-m-d'); ?>">
                         </div>
+
+
+                        <!-- Título con nombre del usuario -->
+                        <div class="col-12 mb-3"><br>
+                            <h4>
+                                Docente: <?= isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Usuario' ?>
+                            </h4>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-3 d-flex gap-3">
             <button id="saveAttendance" class="btn btn-primary">
                 <i class="fa fa-save"></i> Guardar Asistencias
             </button>
-        </div> 
 
-        <br>
-
-        <!-- Botón para abrir el nuevo modal de Exportación -->
-        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#exportModal">
-            <i class="bi bi-file-earmark-excel"></i> Generar Informe Mensual
-        </button>
+            <!-- Botón para abrir el nuevo modal de Exportación -->
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exportModal">
+                <i class="bi bi-file-earmark-excel"></i> Generar Informe Mensual
+            </button>
+        </div>
 
         <!-- Modal para exportar informe mensual -->
         <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
@@ -294,9 +300,20 @@ $courses_data = getCourses();
                 data: JSON.stringify(postData),
                 success: function(response) {
                     if (response.success) {
-                        alert('Asistencias guardadas correctamente');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Asistencias guardadas correctamente'
+                        }).then((result) => {
+                            // Recargar la página después de cerrar el alert
+                            location.reload();
+                        });;
                     } else {
-                        alert('Error: ' + (response.error || 'Error desconocido'));
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.error || 'Error desconocido'
+                        });
                     }
                 },
                 error: function(xhr) {
@@ -305,6 +322,9 @@ $courses_data = getCourses();
             });
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 
 </html>
