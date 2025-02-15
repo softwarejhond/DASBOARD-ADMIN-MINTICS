@@ -224,7 +224,7 @@ $totalPages = ceil($totalRows / $limit);
                 <th>Actualizar modalidad</th>
                 <th>Programa de interés</th>
                 <th>Nivel de preferencia</th>
-                <th>Actualizar programa</th>
+                <th>Actualizar programa, nivel y sede</th>
                 <th>Horario</th>
                 <th>Cambiar Horario</th>
                 <th>Dispositivo</th>
@@ -416,7 +416,8 @@ $totalPages = ceil($totalRows / $limit);
 
                     <td class="text-center">
                         <a class="btn bg-indigo-light"
-                            tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="<?php echo htmlspecialchars($row['schedules']); ?>">
+                            tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top"
+                            title="<?php echo empty($row['schedules']) ? 'Sin horario asignado' : htmlspecialchars($row['schedules']); ?>">
                             <i class="bi bi-clock-history"></i>
                         </a>
                     </td>
@@ -1185,7 +1186,7 @@ $totalPages = ceil($totalRows / $limit);
                         <form id="formActualizarPrograma_${id}">
                             <div class="form-group mb-3">
                                 <label for="nuevoPrograma_${id}">Seleccionar nuevo programa:</label>
-                                <select class="form-control" id="nuevoPrograma_${id}" name="nuevoPrograma" required>
+                                <select class="form-control" id="nuevoPrograma_${id}" name="nuevoPrograma">
                                     <option value="">Seleccionar programa</option>
                                     <option value="Programación">Programación</option>
                                     <option value="Ciberseguridad">Ciberseguridad</option>
@@ -1197,11 +1198,21 @@ $totalPages = ceil($totalRows / $limit);
                             </div>
                             <div class="form-group mb-3">
                                 <label for="nuevoNivel_${id}">Seleccionar nuevo nivel:</label>
-                                <select class="form-control" id="nuevoNivel_${id}" name="nuevoNivel" required>
+                                <select class="form-control" id="nuevoNivel_${id}" name="nuevoNivel" >
                                     <option value="">Seleccionar nivel</option>
                                     <option value="Explorador">Explorador</option>
                                     <option value="Innovador">Innovador</option>
                                     <option value="Integrador">Integrador</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="nuevoSede_${id}">Seleccionar nueva sede:</label>
+                                <select class="form-control" id="nuevoSede_${id}" name="nuevoNivel" >
+                                    <option value="">Seleccionar sede</option>
+                                    <option value="Cota">Cota</option>
+                                    <option value="Tunja">Tunja</option>
+                                    <option value="Sogamoso">Sogamoso</option>
+                                    <option value="Soacha">Soacha</option>
                                 </select>
                             </div>
                             <input type="hidden" name="id" value="${id}">
@@ -1221,57 +1232,67 @@ $totalPages = ceil($totalRows / $limit);
             e.preventDefault();
 
             Swal.fire({
-                title: '¿Está seguro?',
-                text: "¿Desea actualizar el programa y nivel?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, actualizar',
-                cancelButtonText: 'Cancelar'
+            title: '¿Está seguro?',
+            text: "¿Desea actualizar la información?",
+            icon: 'warning', 
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, actualizar',
+            cancelButtonText: 'Cancelar'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    const nuevoPrograma = $('#nuevoPrograma_' + id).val();
-                    const nuevoNivel = $('#nuevoNivel_' + id).val();
-                    actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel);
-                    $('#modalActualizarPrograma_' + id).modal('hide');
-                }
+            if (result.isConfirmed) {
+                // Solo obtener valores si fueron seleccionados
+                const nuevoPrograma = $('#nuevoPrograma_' + id).val() || null;
+                const nuevoNivel = $('#nuevoNivel_' + id).val() || null;
+                const nuevoSede = $('#nuevoSede_' + id).val() || null;
+                
+                actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede);
+                $('#modalActualizarPrograma_' + id).modal('hide');
+            }
             });
         });
-    }
+        }
 
-    function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel) {
+        function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede) {
+        const formData = new FormData();
+        formData.append('id', id);
+        
+        // Solo agregar los campos que tienen valor
+        if (nuevoPrograma) formData.append('nuevoPrograma', nuevoPrograma);
+        if (nuevoNivel) formData.append('nuevoNivel', nuevoNivel);
+        if (nuevoSede) formData.append('nuevoSede', nuevoSede);
+
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_programa.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
+        
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    const response = xhr.responseText.trim();
-                    if (response === "success") {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Actualizado!',
-                            text: 'El programa y nivel se han actualizado correctamente.',
-                            showConfirmButton: false,
-                            timer: 2000
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Hubo un problema al actualizar el programa y nivel.'
-                        });
-                    }
+            if (xhr.status == 200) {
+                const response = xhr.responseText.trim();
+                if (response === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Actualizado!',
+                    text: 'Se ha actualizado correctamente.',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    location.reload();
+                });
+                } else {
+                Swal.fire({
+                    icon: 'error', 
+                    title: 'Error',
+                    text: 'Hubo un problema al actualizar la información.'
+                });
                 }
+            }
             }
         };
 
-        xhr.send("id=" + id + "&nuevoPrograma=" + encodeURIComponent(nuevoPrograma) + "&nuevoNivel=" + encodeURIComponent(nuevoNivel));
-    }
+        xhr.send(formData);
+        }
     // Muestra una notificación de actualización con SweetAlert2
     Swal.fire({
         icon: 'info',

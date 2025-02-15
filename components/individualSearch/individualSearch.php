@@ -204,6 +204,18 @@
                                 <?= htmlspecialchars($row['program']) ?>
                                 <hr>
 
+                                <strong>Nivel de preferencia:</strong><br>
+                                <?= htmlspecialchars($row['level']) ?>
+                                <hr>
+
+                                <strong>Actualizar programa nivel y sede:</strong><br>
+                                <button type="button" class="btn btn-warning" onclick="mostrarModalActualizarPrograma(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
+                                    data-bs-custom-class="custom-tooltip"
+                                    data-bs-title="Cambiar programa y nivel">
+                                    <i class="bi bi-arrow-left-right"></i>
+                                </button>
+                                <hr>
+
                                 <strong>Actualizar registro de contacto:</strong><br>
                                 <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalLlamada_<?php echo $row['number_id']; ?>">
                                     <i class="bi bi-telephone"></i>
@@ -982,7 +994,132 @@
         xhr.send("id=" + id + "&nuevoHorario=" + encodeURIComponent(nuevoHorario));
     }
 
+    function mostrarModalActualizarPrograma(id) {
+        // Remover cualquier modal previo del DOM
+        $('#modalActualizarPrograma_' + id).remove();
 
+        // Crear el modal dinámicamente con un identificador único
+        const modalHtml = `
+        <div id="modalActualizarPrograma_${id}" class="modal fade" aria-hidden="true" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-indigo-dark">
+                        <h5 class="modal-title text-center">
+                            <i class="bi bi-arrow-left-right"></i> Actualizar Programa y Nivel
+                        </h5>
+                        <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formActualizarPrograma_${id}">
+                            <div class="form-group mb-3">
+                                <label for="nuevoPrograma_${id}">Seleccionar nuevo programa:</label>
+                                <select class="form-control" id="nuevoPrograma_${id}" name="nuevoPrograma">
+                                    <option value="">Seleccionar programa</option>
+                                    <option value="Programación">Programación</option>
+                                    <option value="Ciberseguridad">Ciberseguridad</option>
+                                    <option value="Arquitectura en la Nube">Arquitectura en la Nube</option>
+                                    <option value="Análisis de datos">Análisis de datos</option>
+                                    <option value="Inteligencia Artificial">Inteligencia Artificial</option>
+                                    <option value="Blockchain">Blockchain</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="nuevoNivel_${id}">Seleccionar nuevo nivel:</label>
+                                <select class="form-control" id="nuevoNivel_${id}" name="nuevoNivel" >
+                                    <option value="">Seleccionar nivel</option>
+                                    <option value="Explorador">Explorador</option>
+                                    <option value="Innovador">Innovador</option>
+                                    <option value="Integrador">Integrador</option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="nuevoSede_${id}">Seleccionar nueva sede:</label>
+                                <select class="form-control" id="nuevoSede_${id}" name="nuevoNivel" >
+                                    <option value="">Seleccionar sede</option>
+                                    <option value="Cota">Cota</option>
+                                    <option value="Tunja">Tunja</option>
+                                    <option value="Sogamoso">Sogamoso</option>
+                                    <option value="Soacha">Soacha</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="id" value="${id}">
+                            <button type="submit" class="btn bg-indigo-dark text-white w-100">Actualizar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        // Añadir el modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        $('#modalActualizarPrograma_' + id).modal('show');
+
+        // Manejar el envío del formulario
+        $('#formActualizarPrograma_' + id).on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar la información?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Solo obtener valores si fueron seleccionados
+                    const nuevoPrograma = $('#nuevoPrograma_' + id).val() || null;
+                    const nuevoNivel = $('#nuevoNivel_' + id).val() || null;
+                    const nuevoSede = $('#nuevoSede_' + id).val() || null;
+
+                    actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede);
+                    $('#modalActualizarPrograma_' + id).modal('hide');
+                }
+            });
+        });
+    }
+
+    function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede) {
+        const formData = new FormData();
+        formData.append('id', id);
+
+        // Solo agregar los campos que tienen valor
+        if (nuevoPrograma) formData.append('nuevoPrograma', nuevoPrograma);
+        if (nuevoNivel) formData.append('nuevoNivel', nuevoNivel);
+        if (nuevoSede) formData.append('nuevoSede', nuevoSede);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/registrationsContact/actualizar_programa.php", true);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'Se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar la información.'
+                        });
+                    }
+                }
+            }
+        };
+
+        xhr.send(formData);
+    }
 </script>
 
 

@@ -56,11 +56,11 @@ $rol = $infoUsuario['rol'];
 
         <div id="dashboard">
             <div class="position-relative bg-transparent">
-                <h2 class="position-absolute top-4 start-0"><i class="bi bi-robot"></i> Registrar usuarios en Moodle</h2>
+                <h2 class="position-absolute top-4 start-0"><i class="bi bi-card-checklist"></i> Toma de asistencia</h2>
             </div>
             <br><br>
             <hr>
-            <?php include("components/registerMoodle/listRegisterMoodle.php"); ?>
+            <?php include("components/attendance/listAttendance.php"); ?>
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12">
                     <?php //include("components/aceptUsers/updateStatus.php"); 
@@ -75,7 +75,6 @@ $rol = $infoUsuario['rol'];
     </div>
 </div>
 
-<?php include("controller/footer.php"); ?>
 <?php include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 
@@ -89,46 +88,16 @@ $rol = $infoUsuario['rol'];
     $(document).ready(function() {
         $('#link-dashboard').addClass('pagina-activa');
 
-        var table = $('#listaInscritos').DataTable({
+        // Inicialización de DataTable
+        $('#listaInscritos').DataTable({
             responsive: true,
             language: {
                 url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
             },
-            pagingType: "simple",
-            // Agrega esto si necesitas acceder a los datos originales
-            createdRow: function(row, data) {
-                $(row).attr({
-                    'data-department': data.departamento,
-                    'data-headuarters': data.sede,
-                    'data-program': data.program,
-                    'data-mode': data.mode
-                });
-            }
-        });
-
-
-        $('#filterDepartment, #filterHeadquarters, #filterProgram, #filterMode').on('change', function() {
-            table.draw();
-        });
-
-        // Personalizar la función de filtrado
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            var selectedDepartment = $('#filterDepartment').val();
-            var selectedHeadquarters = $('#filterHeadquarters').val();
-            var selectedProgram = $('#filterProgram').val();
-            var selectedMode = $('#filterMode').val();
-
-            var rowDepartment = $(table.row(dataIndex).node()).data('department');
-            var rowHeadquarters = $(table.row(dataIndex).node()).data('headquarters');
-            var rowProgram = $(table.row(dataIndex).node()).data('program');
-            var rowMode = $(table.row(dataIndex).node()).data('mode');
-
-            var departmentMatch = !selectedDepartment || rowDepartment === selectedDepartment;
-            var headquartersMatch = !selectedHeadquarters || rowHeadquarters === selectedHeadquarters;
-            var programMatch = !selectedProgram || rowProgram === selectedProgram;
-            var modeMatch = !selectedMode || rowMode === selectedMode;
-
-            return departmentMatch && headquartersMatch && programMatch && modeMatch;
+            paging: false, // Deshabilita la paginación
+            searching: false, // Oculta la barra de búsqueda
+            lengthChange: false, // Oculta el selector de cantidad de registros
+            info: false, // Oculta el texto de "Mostrando X de Y registros"
         });
     });
 </script>
