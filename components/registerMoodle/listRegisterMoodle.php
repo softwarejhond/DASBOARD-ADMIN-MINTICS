@@ -84,7 +84,6 @@ foreach ($data as $row) {
 
 ?>
 
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
@@ -320,21 +319,6 @@ foreach ($data as $row) {
     </div>
 </div>
 <script>
-    //seleccionamos todos los usuarios al mostrar
-    function toggleCheckboxes(source) {
-        let checkboxes = document.querySelectorAll('.usuario-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = source.checked;
-            checkbox.style.backgroundColor = source.checked ? 'magenta' : 'white';
-        });
-    }
-
-
-
-
-
-</script>
-<script>
     document.addEventListener("DOMContentLoaded", function() {
         // Selecciona todos los checkboxes con la clase 'usuario-checkbox'
         const checkboxes = document.querySelectorAll(".usuario-checkbox");
@@ -376,6 +360,7 @@ foreach ($data as $row) {
                     html: `<div>
                     Procesando: <b>0</b> de ${selectedCheckboxes.length}<br>
                     Por favor espere...</div>`,
+
                     allowOutsideClick: false,
                     allowEscapeKey: false,
                     didOpen: () => {
@@ -414,6 +399,33 @@ foreach ($data as $row) {
                             if (data.success) {
                                 successes++;
                                 updateEnrollmentStatus(formData.number_id, true);
+
+                                // Enviar correo de notificación
+                                const emailData = {
+                                    destinatario: formData.email,
+                                    asunto: '¡Bienvenido al Bootcamp de ' + formData.program + ' de Talento Tech del MINTIC!',
+                                    cuerpo: '',
+                                    program: formData.program,
+                                    first_name: formData.full_name,
+                                    usuario: formData.email, // Asumiendo que el email es el usuario
+                                    contraseña: formData.password // Asumiendo que la contraseña es la misma que se usa para la matrícula
+                                };
+
+                                fetch('components/registerMoodle/send_email.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify(emailData)
+                                }).then(response => response.json())
+                                  .then(data => {
+                                      if (!data.success) {
+                                          console.error('Error al enviar el correo:', data.message);
+                                      }
+                                  }).catch(error => {
+                                      console.error('Error al enviar el correo:', error);
+                                  });
+
                             } else {
                                 errors.push({
                                     student: formData.number_id,
