@@ -10,7 +10,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
         <fieldset class="checkbox-group-bottom d-flex flex-wrap justify-content-center align-items-center">
 
             <!-- Botones e íconos organizados horizontalmente -->
-            <?php if ($rol === 'Docente'): ?>
+            <?php if ($rol === 'Administrador' || $rol === 'Docente'): ?>
                 <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tabla de asistencia">
                     <a href="attendance.php">
                         <label class="checkbox-wrapper">
