@@ -92,51 +92,60 @@ $rol = $infoUsuario['rol'];
 <script src="js/dataTables.js?v=0.2"></script>
 
 <script>
-    $(document).ready(function() {
-        $('#link-dashboard').addClass('pagina-activa');
+   $(document).ready(function () {
+    // Agregar clase activa al enlace del dashboard
+    $('#link-dashboard').addClass('pagina-activa');
 
-        var table = $('#listaInscritos').DataTable({
-            responsive: true,
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-            },
-            pagingType: "simple",
-            // Agrega esto si necesitas acceder a los datos originales
-            createdRow: function(row, data) {
-                $(row).attr({
-                    'data-department': data.departamento,
-                    'data-headuarters': data.sede,
-                    'data-program': data.program,
-                    'data-mode': data.mode
-                });
-            }
-        });
+    // Verificar si DataTable ya está inicializado para evitar errores
+    if ($.fn.DataTable.isDataTable('#listaInscritos')) {
+        $('#listaInscritos').DataTable().destroy(); // Destruir instancia previa si existe
+    }
 
-
-        $('#filterDepartment, #filterHeadquarters, #filterProgram, #filterMode').on('change', function() {
-            table.draw();
-        });
-
-        // Personalizar la función de filtrado
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            var selectedDepartment = $('#filterDepartment').val();
-            var selectedHeadquarters = $('#filterHeadquarters').val();
-            var selectedProgram = $('#filterProgram').val();
-            var selectedMode = $('#filterMode').val();
-
-            var rowDepartment = $(table.row(dataIndex).node()).data('department');
-            var rowHeadquarters = $(table.row(dataIndex).node()).data('headquarters');
-            var rowProgram = $(table.row(dataIndex).node()).data('program');
-            var rowMode = $(table.row(dataIndex).node()).data('mode');
-
-            var departmentMatch = !selectedDepartment || rowDepartment === selectedDepartment;
-            var headquartersMatch = !selectedHeadquarters || rowHeadquarters === selectedHeadquarters;
-            var programMatch = !selectedProgram || rowProgram === selectedProgram;
-            var modeMatch = !selectedMode || rowMode === selectedMode;
-
-            return departmentMatch && headquartersMatch && programMatch && modeMatch;
-        });
+    // Inicializar DataTable con configuración personalizada
+    var table = $('#listaInscritos').DataTable({
+        responsive: true,
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        },
+        pagingType: "simple",
+        columnDefs: [
+            { orderable: false, targets: [4] } // Desactivar ordenación en la columna 5 (checkbox)
+        ],
+        // Agregar atributos personalizados a cada fila
+        createdRow: function (row, data) {
+            $(row).attr({
+                'data-department': data.departamento,
+                'data-headquarters': data.sede,
+                'data-program': data.program,
+                'data-mode': data.mode
+            });
+        }
     });
+
+    // Aplicar filtros cuando cambian los select de filtros
+    $('#filterDepartment, #filterHeadquarters, #filterProgram, #filterMode').on('change', function () {
+        table.draw();
+    });
+
+    // Personalizar la función de filtrado de DataTable
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        var selectedDepartment = $('#filterDepartment').val();
+        var selectedHeadquarters = $('#filterHeadquarters').val();
+        var selectedProgram = $('#filterProgram').val();
+        var selectedMode = $('#filterMode').val();
+
+        var rowDepartment = $(table.row(dataIndex).node()).data('department');
+        var rowHeadquarters = $(table.row(dataIndex).node()).data('headquarters');
+        var rowProgram = $(table.row(dataIndex).node()).data('program');
+        var rowMode = $(table.row(dataIndex).node()).data('mode');
+
+        return (!selectedDepartment || rowDepartment === selectedDepartment) &&
+               (!selectedHeadquarters || rowHeadquarters === selectedHeadquarters) &&
+               (!selectedProgram || rowProgram === selectedProgram) &&
+               (!selectedMode || rowMode === selectedMode);
+    });
+});
+
 </script>
 
 </body>

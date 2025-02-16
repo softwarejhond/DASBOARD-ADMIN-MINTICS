@@ -226,12 +226,12 @@ foreach ($data as $row) {
             <button id="matricularSeleccionados" class="btn bg-magenta-dark text-white btn-lg float-end ms-2">
                 <i class="bi bi-card-checklist"></i> Matricular Seleccionados
             </button>
-            <div class="d-flex justify-content mb-3">
-                <!-- Botón para exportar a Excel 
+            <div class="d-flex justify-content mb-3 p-3">
+                <!-- Botón para exportar a Excel -->
                 <button id="exportarExcel" class="btn btn-success btn-lg"
                     onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
                     <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-                </button>-->
+                </button>
                 <!-- Botón para mostrar usuarios seleccionados -->
                 <button class="btn bg-lime-dark text-vlack ms-2 btn-lg float-end">
                     <i class="bi bi-card-checklist"></i> Usuarios seleccionados:
@@ -247,7 +247,11 @@ foreach ($data as $row) {
                     <th>Número</th>
                     <th>Nombre</th>
                     <th>Modalidad</th>
-                    <th>Seleccionar</th>
+                    <th class="text-center">
+                        <input type="checkbox" id="selectAll" class="form-check-input"
+                            style="width: 25px; height: 25px; appearance: none; background-color: white; border: 2px solid #ec008c; cursor: pointer; position: relative;"
+                            onclick="toggleCheckboxes(this)">
+                    </th>
                     <th>Email</th>
                     <th>Nuevo Email</th>
                     <th>Departamento</th>
@@ -315,7 +319,21 @@ foreach ($data as $row) {
         </table>
     </div>
 </div>
+<script>
+    //seleccionamos todos los usuarios al mostrar
+    function toggleCheckboxes(source) {
+        let checkboxes = document.querySelectorAll('.usuario-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = source.checked;
+            checkbox.style.backgroundColor = source.checked ? 'magenta' : 'white';
+        });
+    }
 
+
+
+
+
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Selecciona todos los checkboxes con la clase 'usuario-checkbox'
@@ -332,6 +350,7 @@ foreach ($data as $row) {
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener("change", actualizarContador);
         });
+
     });
     document.getElementById('matricularSeleccionados').addEventListener('click', confirmBulkEnrollment);
 
