@@ -97,7 +97,7 @@ foreach ($data as $row) {
             <b class="text-left mb-1"><i class="bi bi-card-checklist"></i> Seleccionar cursos</b>
 
             <div class="col-md-6 col-sm-12 col-lg-3">
-                <div class="course-title"><i class="bi bi-laptop"></i> Bootcamp</div>
+                <div class="course-title text-indigo-dark "><i class="bi bi-laptop"></i> Bootcamp</div>
                 <div class="card course-card card-bootcamp" data-icon="💻">
                     <div class="card-body">
                         <select id="bootcamp" class="form-select course-select">
@@ -114,7 +114,7 @@ foreach ($data as $row) {
             </div>
 
             <div class="col-md-6 col-sm-12 col-lg-3">
-                <div class="course-title"><i class="bi bi-translate"></i> Inglés nivelatorio</div>
+                <div class="course-title text-indigo-dark"><i class="bi bi-translate"></i> Inglés nivelatorio</div>
                 <div class="card course-card card-ingles" data-icon="🌍">
                     <div class="card-body">
                         <select id="ingles" class="form-select course-select">
@@ -131,7 +131,7 @@ foreach ($data as $row) {
             </div>
 
             <div class="col-md-6 col-sm-12 col-lg-3">
-                <div class="course-title"><i class="bi bi-code-slash"></i> English Code</div>
+                <div class="course-title text-indigo-dark"><i class="bi bi-code-slash"></i> English Code</div>
                 <div class="card course-card card-english-code" data-icon="👨‍💻">
                     <div class="card-body">
                         <select id="english_code" class="form-select course-select">
@@ -148,7 +148,7 @@ foreach ($data as $row) {
             </div>
 
             <div class="col-md-6 col-sm-12 col-lg-3">
-                <div class="course-title"><i class="bi bi-lightbulb"></i> Habilidades</div>
+                <div class="course-title text-indigo-dark"><i class="bi bi-lightbulb"></i> Habilidades</div>
                 <div class="card course-card card-skills" data-icon="💡">
                     <div class="card-body">
                         <select id="skills" class="form-select course-select">

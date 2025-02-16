@@ -4,13 +4,6 @@ include("conexion.php");
 // Habilitar la visualización de errores
 ini_set('display_errors', 1);
 error_reporting(E_ALL);  // Mostrar todos los errores
-require 'vendor/autoload.php';
-require 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require 'vendor/phpmailer/phpmailer/src/SMTP.php';
-require 'vendor/phpmailer/phpmailer/src/Exception.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
@@ -45,9 +38,6 @@ $rol = $infoUsuario['rol'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Dashboard</title>
     <link rel="icon" href="https://css.mintic.gov.co/mt/mintic/new/img/logo_mintic_24_dark.svg" type="image/x-icon">
-    <style>
-
-    </style>
 </head>
 
 <body style="background-color:white">
@@ -62,11 +52,11 @@ $rol = $infoUsuario['rol'];
 
         <div id="dashboard">
             <div class="position-relative bg-transparent">
-                <h2 class="position-absolute top-4 start-0"><i class="bi bi-robot"></i> Registrar usuarios en Moodle</h2>
+                <h2 class="position-absolute top-4 start-0"><i class="bi bi-person-fill-check"></i> Usuarios matriculados</h2>
             </div>
             <br><br>
             <hr>
-            <?php include("components/registerMoodle/listRegisterMoodle.php"); ?>
+            <?php include("components/activeMoodle/listActiveMoodle.php"); ?>
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12">
                     <?php //include("components/aceptUsers/updateStatus.php"); 
@@ -81,7 +71,6 @@ $rol = $infoUsuario['rol'];
     </div>
 </div>
 
-<?php include("controller/footer.php"); ?>
 <?php include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 
@@ -100,34 +89,24 @@ $rol = $infoUsuario['rol'];
             language: {
                 url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
             },
-            pagingType: "simple",
-            // Agrega esto si necesitas acceder a los datos originales
-            createdRow: function(row, data) {
-                $(row).attr({
-                    'data-department': data.departamento,
-                    'data-headuarters': data.sede,
-                    'data-program': data.program,
-                    'data-mode': data.mode
-                });
-            }
+            pagingType: "simple"
         });
-
 
         $('#filterDepartment, #filterHeadquarters, #filterProgram, #filterMode').on('change', function() {
             table.draw();
         });
 
-        // Personalizar la función de filtrado
         $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
             var selectedDepartment = $('#filterDepartment').val();
             var selectedHeadquarters = $('#filterHeadquarters').val();
             var selectedProgram = $('#filterProgram').val();
             var selectedMode = $('#filterMode').val();
 
-            var rowDepartment = $(table.row(dataIndex).node()).data('department');
-            var rowHeadquarters = $(table.row(dataIndex).node()).data('headquarters');
-            var rowProgram = $(table.row(dataIndex).node()).data('program');
-            var rowMode = $(table.row(dataIndex).node()).data('mode');
+            var row = table.row(dataIndex).node();
+            var rowDepartment = $(row).data('department');
+            var rowHeadquarters = $(row).data('headquarters');
+            var rowProgram = $(row).data('program');
+            var rowMode = $(row).data('mode');
 
             var departmentMatch = !selectedDepartment || rowDepartment === selectedDepartment;
             var headquartersMatch = !selectedHeadquarters || rowHeadquarters === selectedHeadquarters;

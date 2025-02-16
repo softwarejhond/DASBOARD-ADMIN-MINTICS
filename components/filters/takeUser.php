@@ -41,6 +41,8 @@ function rolUsuario($rol)
             return "Visualizador";
         case 5:
             return "Docente";
+        case 6:
+            return "Academico";
         default:
             return "Rol desconocido";
     }

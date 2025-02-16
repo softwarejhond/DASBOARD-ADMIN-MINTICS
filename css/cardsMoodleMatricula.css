@@ -1,113 +1,48 @@
-.course-container {
-    text-align: center;
-    margin-bottom: 20px;
+.card-bootcamp { 
+    background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
 }
 
-.course-card {
-    position: relative;
-    border: none;
-    color: white;
-    text-align: center;
-    overflow: hidden;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding-top: 50px;
+.card-ingles { 
+  background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
 }
 
-.course-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+.card-english-code { 
+  background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
 }
 
-/* Ícono de fondo */
-.course-card::before {
-    content: attr(data-icon);
-    position: absolute;
-    font-family: "Bootstrap Icons";
-    font-size: 5rem;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-20deg);
-    color: rgba(255, 255, 255, 0.2); /* Ícono semi transparente */
-    z-index: 0;
-}
-
-.course-card .card-body {
-    position: relative;
-    z-index: 1;
-}
-
-.course-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 10px;
-    border-radius: 10px;
-    width: 100%;
-    text-align: center;
-    margin-bottom: -40px;
-    z-index: 2;
-    position: relative;
-    color: white;
-}
-
-.card-bootcamp {background: linear-gradient(135deg,rgb(3, 99, 150),rgb(255, 255, 0)); }
-.card-ingles { background: linear-gradient(135deg,rgb(0, 242, 255), #ee0979); }
-.card-english-code { background: linear-gradient(135deg,rgb(240, 1, 109),rgb(142, 0, 243)); }
-.card-skills { background: linear-gradient(135deg,rgb(119, 0, 255), #ff8a00); }
-
-.filter-card {
-    position: relative;
-    border: none;
-    color: white;
-    text-align: center;
-    overflow: hidden;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding-top: 50px;
-}
-
-.filter-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-}
-
-/* Ícono de fondo */
-.filter-card::before {
-    content: attr(data-icon);
-    position: absolute;
-    font-family: "Bootstrap Icons";
-    font-size: 5rem;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-20deg);
-    color: rgba(255, 255, 255, 0.2); /* Ícono semi transparente */
-    z-index: 0;
-}
-
-.filter-card .card-body {
-    position: relative;
-    z-index: 1;
-}
-
-.filter-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 10px;
-    border-radius: 10px;
-    width: 100%;
-    text-align: center;
-    margin-bottom: -40px;
-    z-index: 2;
-    position: relative;
-    color: white;
+.card-skills { 
+  background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
 }
 
 /* Colores de los filtros */
-.card-department { background: linear-gradient(135deg,rgb(119, 0, 255), #ff8a00); }
-.card-headquarters { background: linear-gradient(135deg,rgb(240, 1, 109),rgb(142, 0, 243)); }
-.card-program { background: linear-gradient(135deg,rgb(0, 242, 255), #ee0979); }
-.card-mode { background: linear-gradient(135deg,rgb(3, 99, 150),rgb(255, 255, 0)); }
+.card-department { 
+  background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.card-headquarters { 
+  background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.card-program { 
+  background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.card-mode { 
+  background-image: url('../img/banners/card.png'); 
+    background-size: cover;
+    background-position: center;
+}
