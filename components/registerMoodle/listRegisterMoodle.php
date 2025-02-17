@@ -403,28 +403,54 @@ foreach ($data as $row) {
                                 // Enviar correo de notificación
                                 const emailData = {
                                     destinatario: formData.email,
-                                    asunto: '¡Bienvenido al Bootcamp de ' + formData.program + ' de Talento Tech del MINTIC!',
-                                    cuerpo: '',
                                     program: formData.program,
                                     first_name: formData.full_name,
                                     usuario: formData.email, // Asumiendo que el email es el usuario
-                                    contraseña: formData.password // Asumiendo que la contraseña es la misma que se usa para la matrícula
+                                    password: formData.password // Asumiendo que la contraseña es la misma que se usa para la matrícula
                                 };
 
                                 fetch('components/registerMoodle/send_email.php', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify(emailData)
-                                }).then(response => response.json())
-                                  .then(data => {
-                                      if (!data.success) {
-                                          console.error('Error al enviar el correo:', data.message);
-                                      }
-                                  }).catch(error => {
-                                      console.error('Error al enviar el correo:', error);
-                                  });
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            email: formData.email,
+                                            program: formData.program,
+                                            first_name: formData.full_name,
+                                            usuario: formData.email,
+                                            password: formData.password
+                                        })
+                                    })
+                                    .then(async response => {
+                                        const text = await response.text();
+                                        try {
+                                            return JSON.parse(text);
+                                        } catch (e) {
+                                            console.error('Respuesta no válida:', text);
+                                            throw new Error('Respuesta del servidor no válida');
+                                        }
+                                    })
+                                    .then(data => {
+                                        if (!data.success) {
+                                            throw new Error(data.message || 'Error desconocido');
+                                        }
+                                        Swal.fire({
+                                            title: '¡Éxito!',
+                                            text: 'Correo enviado correctamente',
+                                            icon: 'success',
+                                            timer: 3000
+                                        });
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: error.message || 'Error al enviar el correo',
+                                            icon: 'error'
+                                        });
+                                    });
 
                             } else {
                                 errors.push({
@@ -460,11 +486,7 @@ foreach ($data as $row) {
                         html: message,
                         icon: errors.length > 0 ? 'warning' : 'success',
                         confirmButtonText: 'Entendido'
-                    }).then(() => {
-                        if (successes > 0) {
-                            location.reload();
-                        }
-                    });
+                    })
                 });
             }
         });
