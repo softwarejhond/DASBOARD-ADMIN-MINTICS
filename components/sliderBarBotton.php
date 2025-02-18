@@ -41,9 +41,9 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     <label class="checkbox-wrapper">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
-                                <i class="bi bi-house-up-fill icono text-indigo-dark "></i>
+                                <i class="bi bi-check-circle-fill icono text-indigo-dark "></i>
                             </span>
-                            <span class="checkbox-label">Editar asistencia</span>
+                            <span class="checkbox-label">Asistencia individual</span>
                         </span>
                     </label>
                 </a>

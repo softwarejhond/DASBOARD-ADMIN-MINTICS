@@ -36,7 +36,15 @@ function getCourses()
 // Obtener cursos y almacenarlos en $courses_data
 $courses_data = getCourses();
 
-
+// Función para obtener los datos del estudiante
+function getStudentData($student_id, $conn)
+{
+    $query = "SELECT * FROM groups WHERE number_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $student_id);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
+}
 
 ?>
 
@@ -87,7 +95,8 @@ $courses_data = getCourses();
                         <!-- Selección de Bootcamp (Clase) -->
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <label class="form-label">Clase</label>
-                            <select id="bootcamp" class="form-select course-select">
+                            <select id="bootcamp" class="form-select course-select" disabled>
+                                <option value="">Seleccione un bootcamp</option>
                                 <?php foreach ($courses_data as $course): ?>
                                     <option value="<?= htmlspecialchars($course['id']) ?>">
                                         <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
@@ -121,12 +130,6 @@ $courses_data = getCourses();
                             <label class="form-label">Fecha</label>
                             <input type="date" name="class_date" id="class_date" class="form-control" required max="<?= date('Y-m-d'); ?>">
                         </div>
-                        <!-- Título con nombre del usuario -->
-                        <div class="col-12 mb-3"><br>
-                            <h4>
-                                Docente: <?= isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Usuario' ?>
-                            </h4>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -135,54 +138,6 @@ $courses_data = getCourses();
             <button id="saveAttendance" class="btn btn-primary">
                 <i class="fa fa-save"></i> Guardar Asistencias
             </button>
-        </div>
-        <!-- Modal para exportar informe mensual -->
-        <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exportModalLabel">Exportar Informe Mensual</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card shadow mb-3 mt-4">
-                            <div class="card-body">
-                                <h5 class="card-title">Exportar Informe Mensual</h5>
-                                <form id="exportForm" method="POST" action="components/attendance/exportar_informe.php">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label for="month" class="form-label">Mes</label>
-                                            <select id="month" name="month" class="form-select" required>
-                                                <option value="1">Enero</option>
-                                                <option value="2">Febrero</option>
-                                                <option value="3">Marzo</option>
-                                                <option value="4">Abril</option>
-                                                <option value="5">Mayo</option>
-                                                <option value="6">Junio</option>
-                                                <option value="7">Julio</option>
-                                                <option value="8">Agosto</option>
-                                                <option value="9">Septiembre</option>
-                                                <option value="10">Octubre</option>
-                                                <option value="11">Noviembre</option>
-                                                <option value="12">Diciembre</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="year" class="form-label">Año</label>
-                                            <input type="number" id="year" name="year" class="form-control" min="2020" max="<?= date('Y'); ?>" value="<?= date('Y'); ?>" required>
-                                        </div>
-                                        <div class="col-md-4 d-flex align-items-end">
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fa fa-download"></i> Exportar Excel
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <!-- Tabla donde se mostrarán los datos -->
         <div class="table-responsive">
@@ -208,6 +163,78 @@ $courses_data = getCourses();
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Deshabilitar los selects inicialmente
+            $('#bootcamp, #modalidad, #sede').prop('disabled', true);
+
+            $('#student_id').on('change', function() {
+                const studentId = $(this).val();
+
+                // Si no hay ID, deshabilitar todos los selects
+                if (!studentId) {
+                    $('#bootcamp, #modalidad, #sede').prop('disabled', true);
+                    return;
+                }
+
+                // Hacer una petición AJAX para obtener los datos del estudiante
+                $.ajax({
+                    url: 'components/attendance/get_student_data.php',
+                    type: 'POST',
+                    data: {
+                        student_id: studentId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Habilitar el select de bootcamp
+                            $('#bootcamp').prop('disabled', false);
+
+                            // Primero, ocultar todas las opciones
+                            $('#bootcamp option').hide();
+                            $('#bootcamp option:first').show(); // Mostrar la opción por defecto
+
+                            // Mostrar solo los cursos del estudiante
+                            response.data.courses.forEach(function(course) {
+                                $('#bootcamp option[value="' + course.id + '"]').show();
+                            });
+
+                            // Actualizar select de modalidad
+                            $('#modalidad option').hide();
+                            $('#modalidad option:first').show();
+                            $('#modalidad option[value="' + response.data.mode.toLowerCase() + '"]').show();
+                            $('#modalidad').val(response.data.mode.toLowerCase());
+
+                            // Actualizar select de sede
+                            $('#sede option').hide();
+                            $('#sede option:first').show();
+                            $('#sede option[value="' + response.data.headquarters + '"]').show();
+                            $('#sede').val(response.data.headquarters);
+
+                            // Resetear el valor del bootcamp
+                            $('#bootcamp').val('');
+                        } else {
+                            // Si no se encuentra el estudiante, deshabilitar los selects
+                            $('#bootcamp, #modalidad, #sede').prop('disabled', true);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'No se encontró información para el estudiante ingresado'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al obtener los datos del estudiante'
+                        });
+                        // En caso de error, deshabilitar los selects
+                        $('#bootcamp, #modalidad, #sede').prop('disabled', true);
+                    }
+                });
+            });
+        });
+        $(document).ready(function() {
             function buscarAsistencia() {
                 const studentId = $('#student_id').val();
                 const courseId = $('#bootcamp').val();
@@ -230,12 +257,20 @@ $courses_data = getCourses();
                         if (response.success) {
                             $('#listaInscritos tbody').html(response.html);
                         } else {
-                            alert('Error: ' + (response.error || 'Error desconocido'));
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.error || 'Error desconocido'
+                            });
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error en la solicitud AJAX:', error);
-                        alert('Error al procesar la solicitud');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al procesar la solicitud'
+                        });
                     }
                 });
             }
@@ -290,16 +325,28 @@ $courses_data = getCourses();
                 }),
                 success: function(response) {
                     if (response.success) {
-                        alert('Asistencias guardadas correctamente');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Asistencias guardadas correctamente'
+                        });
                         // Recargar los datos
                         buscarAsistencia();
                     } else {
-                        alert('Error al guardar: ' + (response.error || 'Error desconocido'));
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al guardar: ' + (response.error || 'Error desconocido')
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error en la solicitud AJAX:', error);
-                    alert('Error al procesar la solicitud');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al procesar la solicitud'
+                    });
                 }
             });
         });
