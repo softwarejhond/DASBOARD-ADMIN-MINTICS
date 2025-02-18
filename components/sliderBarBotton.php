@@ -54,7 +54,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
             <?php endif; ?>
             <?php if ($rol === 'Administrador'):?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inmuebles en alquiler">
-                <a href="propiedadesRenta.php">
+            <a href="individualAttendance.php">
                     <label class="checkbox-wrapper">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
