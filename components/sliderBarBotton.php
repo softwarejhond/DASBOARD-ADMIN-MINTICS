@@ -10,7 +10,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
         <fieldset class="checkbox-group-bottom d-flex flex-wrap justify-content-center align-items-center">
 
             <!-- Botones e íconos organizados horizontalmente -->
-            <?php if ($rol === 'Administrador' || $rol === 'Docente'): ?>
+            <?php if ($rol === 'Administrador' || $rol === 'Docente'|| $rol === 'Académico'): ?>
                 <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tabla de asistencia">
                     <a href="attendance.php">
                         <label class="checkbox-wrapper">
@@ -24,6 +24,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
             <?php endif; ?>
+            <?php if ($rol === 'Administrador' || $rol === 'Académico'): ?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Lista de matriculados">
                 <a href="activeMoodle.php">
                     <label class="checkbox-wrapper">
@@ -36,6 +37,8 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
+            <?php endif; ?>
+            <?php if ($rol === 'Administrador' || $rol === 'Académico'): ?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Asignar docente a un grupo">
                 <a href="asignarDocentes.php">
                     <label class="checkbox-wrapper">
@@ -48,6 +51,8 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
+            <?php endif; ?>
+            <?php if ($rol === 'Administrador'):?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inmuebles en alquiler">
                 <a href="propiedadesRenta.php">
                     <label class="checkbox-wrapper">
@@ -60,6 +65,8 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
+            <?php endif; ?>
+            <?php if ($rol === 'Administrador' ):?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inmuebles en venta">
                 <a href="#">
                     <label class="checkbox-wrapper">
@@ -72,6 +79,8 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
+            <?php endif; ?>
+            <?php if ($rol === 'Administrador' ):?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Renovaciones">
                 <a href="renovaciones.php">
                     <label class="checkbox-wrapper">
@@ -84,6 +93,8 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
+            <?php endif; ?>
+            <?php if ($rol === 'Administrador' ):?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar todo">
                 <label class="checkbox-wrapper">
                     <span class="checkbox-tile">
@@ -94,7 +105,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </span>
                 </label>
             </div>
-
+            <?php endif; ?>
 
         </fieldset>
 

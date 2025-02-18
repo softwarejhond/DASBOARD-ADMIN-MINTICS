@@ -94,7 +94,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
                 <?php endif; ?>
-                <?php if ($rol === 'Administrador'): ?>
+                <?php if ($rol === 'Administrador' || $rol === 'Académico'): ?>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Regisrar usuarios en Moodle">
                 <a href="registerMoodle.php">
                     <label class="checkbox-wrapper">

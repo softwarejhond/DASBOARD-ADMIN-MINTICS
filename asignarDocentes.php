@@ -52,7 +52,7 @@ $rol = $infoUsuario['rol'];
           
             <div id="dashboard">
                 <div class="position-relative bg-transparent">
-                    <h2 class="position-absolute top-4 start-0"><i class="bi bi-arrows-fullscreen"></i> Matriz general de inscripciones</h2>
+                    <h2 class="position-absolute top-4 start-0"><i class="fa-solid fa-chalkboard-user"></i> Asignación de docentes a grupos</h2>
                 </div>
                 <br><br>
                 <hr>
@@ -70,7 +70,8 @@ $rol = $infoUsuario['rol'];
             </div>
         </div>
     </div>
-    
+    <br><br>
+    <?php include("controller/footer.php"); ?>
     <?php include("controller/botonFlotanteDerecho.php"); ?>
     <?php include("components/sliderBarBotton.php"); ?>
 
