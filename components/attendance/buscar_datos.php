@@ -20,8 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $modalidad  = $_POST['modalidad'] ?? '';
     $sede       = $_POST['sede'] ?? '';
     $class_date = $_POST['class_date'] ?? '';
+    $courseType = $_POST['courseType'] ?? '';
 
-    if (empty($bootcamp) || empty($modalidad) || empty($sede) || empty($class_date)) {
+    if (empty($bootcamp) || empty($modalidad) || empty($sede) || empty($class_date) || empty($courseType)) {
         echo json_encode(['error' => 'Faltan datos requeridos']);
         exit;
     }
@@ -31,15 +32,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sede = 'No aplica';
     }
 
+    $teacherColumn = '';
+    $courseIdColumn = '';
+
+    switch($courseType) {
+        case 'bootcamp':
+            $teacherColumn = 'bootcamp_teacher_id';
+            $courseIdColumn = 'id_bootcamp';
+            break;
+        case 'leveling_english':
+            $teacherColumn = 'le_teacher_id';
+            $courseIdColumn = 'id_leveling_english';
+            break;
+        case 'english_code':
+            $teacherColumn = 'ec_teacher_id';
+            $courseIdColumn = 'id_english_code';
+            break;
+        case 'skills':
+            $teacherColumn = 'skills_teacher_id';
+            $courseIdColumn = 'id_skills';
+            break;
+    }
+
     // Preparar la consulta
-    $sql = "SELECT * FROM groups WHERE mode = ? AND id_bootcamp = ? AND headquarters = ? AND teacher_id = ?";
+    $sql = "SELECT * FROM groups 
+            WHERE $teacherColumn = ? 
+            AND $courseIdColumn = ? 
+            AND mode = ? 
+            AND headquarters = ?";
     $stmt = mysqli_prepare($conn, $sql);
     if (!$stmt) {
         echo json_encode(['error' => 'Error en la preparación: ' . mysqli_error($conn)]);
         exit;
     }
 
-    mysqli_stmt_bind_param($stmt, "siss", $modalidad, $bootcamp, $sede, $teacher_id);
+    mysqli_stmt_bind_param($stmt, "siss", $teacher_id, $bootcamp, $modalidad, $sede);
 
     if (!mysqli_stmt_execute($stmt)) {
         echo json_encode(['error' => 'Error en la ejecución: ' . mysqli_stmt_error($stmt)]);

@@ -60,7 +60,7 @@ if ($resultado->num_rows > 0) {
                 <img src="https://via.placeholder.com/300x150" class="card-img-top" alt="Curso">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">' . htmlspecialchars($row["nombre"]) . '</h5>
-                    <p class="card-text text-muted small">ID: ' . htmlspecialchars($row["id"]) . ' | Tipo: ' . htmlspecialchars($row["tipocampo"]) . '</p>
+                    <h3 class="card-text text-indigo-dark">ID: ' . htmlspecialchars($row["id"]) . '</h3>
                     
                     <div class="mt-auto">';
 
@@ -78,7 +78,9 @@ if ($resultado->num_rows > 0) {
                         }
                         
                         echo '</select>
-                              <button class="btn btn-primary mt-2 actualizar-docente">Actualizar</button>';
+                              <button class="btn bg-indigo-dark text-white w-100 mt-2 actualizar-docente"><div class="spinner-border spinner-border-sm" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div> Actualizar</button>';
                     }
 
         echo '      </div>

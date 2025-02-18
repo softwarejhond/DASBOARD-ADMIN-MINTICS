@@ -36,12 +36,12 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
-            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inmuebles disponibles">
-                <a href="#">
+            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Asignar docente a un grupo">
+                <a href="asignarDocentes.php">
                     <label class="checkbox-wrapper">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
-                                <i class="bi bi-house-up-fill icono text-indigo-dark "></i>
+                                <i class="bi bi-pencil-square icono text-indigo-dark "></i>
                             </span>
                             <span class="checkbox-label">Ingresar</span>
                         </span>
