@@ -96,7 +96,7 @@ $rol = $infoUsuario['rol'];
             },
             paging: false, // Deshabilita la paginación
             searching: false, // Oculta la barra de búsqueda
-            lengthChange: false, // Oculta el selector de cantidad de registros
+            lengthChange: true, // Oculta el selector de cantidad de registros
             info: false, // Oculta el texto de "Mostrando X de Y registros"
         });
     });

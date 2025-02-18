@@ -90,6 +90,18 @@ $courses_data = getCourses();
                                 <?php endforeach; ?>
                             </select>
                         </div>
+
+                        <!-- Agregar después del select de bootcamp -->
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <label class="form-label">Tipo de Curso</label>
+                            <select id="courseType" class="form-select">
+                                <option value="">Seleccione tipo de curso</option>
+                                <option value="bootcamp">Tecnico</option>
+                                <option value="leveling_english">Inglés Nivelatorio</option>
+                                <option value="english_code">English Code</option>
+                                <option value="skills">Habilidas de poder</option>
+                            </select>
+                        </div>
                         <!-- Selección de Modalidad -->
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <label class="form-label">Modalidad</label>
@@ -234,13 +246,14 @@ $courses_data = getCourses();
             const updateTable = () => {
                 const data = {
                     bootcamp: $('#bootcamp').val(),
+                    courseType: $('#courseType').val(),
                     modalidad: $('#modalidad').val(),
                     sede: $('#sede').val(),
                     class_date: $('#class_date').val()
                 };
 
                 // Verificar que todos los campos requeridos tengan valor
-                if (!data.bootcamp || !data.modalidad || !data.sede || !data.class_date) {
+                if (!data.bootcamp || !data.courseType || !data.modalidad || !data.sede || !data.class_date) {
                     console.log('Por favor, complete todos los campos');
                     return;
                 }
@@ -263,13 +276,12 @@ $courses_data = getCourses();
                     }
                 });
             };
-
             // Actualizar la tabla cuando se cambie algún filtro
             $('#modalidad').change(function() {
                 toggleSede();
                 updateTable();
             });
-            $('#bootcamp, #sede, #class_date').change(updateTable);
+            $('#bootcamp, #courseType, #sede, #class_date').change(updateTable);
 
             // Ejecutar toggleSede al cargar la página
             toggleSede();

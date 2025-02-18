@@ -4,13 +4,6 @@ include("conexion.php");
 // Habilitar la visualización de errores
 ini_set('display_errors', 1);
 error_reporting(E_ALL);  // Mostrar todos los errores
-require 'vendor/autoload.php';
-require 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require 'vendor/phpmailer/phpmailer/src/SMTP.php';
-require 'vendor/phpmailer/phpmailer/src/Exception.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {

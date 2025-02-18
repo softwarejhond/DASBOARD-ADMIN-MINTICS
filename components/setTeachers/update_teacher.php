@@ -26,8 +26,8 @@ try {
     }
 
     // Obtener ID del docente
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? AND rol = 5");
-    $stmt->bind_param("s", $docenteUsername);
+    $stmt = $conn->prepare("SELECT username FROM users WHERE username = ? AND rol = 5");
+    $stmt->bind_param("i", $docenteUsername);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -36,7 +36,7 @@ try {
     }
     
     $docenteData = $result->fetch_assoc();
-    $docenteId = $docenteData['id'];
+    $docenteId = $docenteData['username'];
 
     // Actualizar la tabla groups
     $campoGrupo = $camposPermitidos[$tipo_campo];

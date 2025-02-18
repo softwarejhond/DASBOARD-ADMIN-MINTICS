@@ -303,8 +303,7 @@
                                 if ($row['mode'] === 'Presencial') {
                                     if (
                                         $row['typeID'] === 'C.C' && $row['age'] > 17 &&
-                                        (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
-                                        $row['internet'] === 'Sí'
+                                        (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ')
                                     ) {
                                         $isAccepted = true;
                                     }
@@ -312,17 +311,16 @@
                                     if (
                                         $row['typeID'] === 'C.C' && $row['age'] > 17 &&
                                         (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
-                                        $row['internet'] === 'Sí' &&
-                                        $row['technologies'] === 'computador'
+                                        $row['internet'] === 'Sí'
                                     ) {
                                         $isAccepted = true;
                                     }
                                 }
 
                                 if ($isAccepted) {
-                                    echo '<button class="btn bg-teal-dark w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></button>';
+                                    echo '<a class="btn bg-teal-dark w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></a>';
                                 } else {
-                                    echo '<button class="btn bg-danger text-white w-100" style="max-width: 100px;" data-bs-toggle="tooltip" data-bs-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></button>';
+                                    echo '<a class="btn bg-danger text-white w-100" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></a>';
                                 }
                                 ?>
                                 <hr>
