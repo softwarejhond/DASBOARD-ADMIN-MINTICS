@@ -109,14 +109,14 @@ function getStudentData($student_id, $conn)
                             <label class="form-label">Modalidad</label>
                             <select name="modalidad" id="modalidad" class="form-select" onchange="toggleSede()">
                                 <option value="">Seleccione modalidad</option>
-                                <option value="virtual">Virtual</option>
+                                <option value="Virtual">Virtual</option>
                                 <option value="Presencial">Presencial</option>
                             </select>
                         </div>
                         <!-- Selección de Sede -->
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12"><br>
                             <label class="form-label">Sede</label>
-                            <select name="sede" id="sede" class="form-select">
+                            <select name="sede" id="sede" class="form-select" >
                                 <option value="">Seleccione una sede</option>
                                 <option value="Cota">Cota</option>
                                 <option value="Tunja">Tunja</option>
@@ -175,7 +175,6 @@ function getStudentData($student_id, $conn)
                     return;
                 }
 
-                // Hacer una petición AJAX para obtener los datos del estudiante
                 $.ajax({
                     url: 'components/attendance/get_student_data.php',
                     type: 'POST',
@@ -185,50 +184,32 @@ function getStudentData($student_id, $conn)
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            // Habilitar el select de bootcamp
-                            $('#bootcamp').prop('disabled', false);
+                            // Habilitar los selects
+                            $('#bootcamp, #modalidad, #sede').prop('disabled', false);
 
-                            // Primero, ocultar todas las opciones
+                            // Manejo del select de bootcamp
                             $('#bootcamp option').hide();
-                            $('#bootcamp option:first').show(); // Mostrar la opción por defecto
-
-                            // Mostrar solo los cursos del estudiante
+                            $('#bootcamp option:first').show();
                             response.data.courses.forEach(function(course) {
                                 $('#bootcamp option[value="' + course.id + '"]').show();
                             });
 
-                            // Actualizar select de modalidad
-                            $('#modalidad option').hide();
-                            $('#modalidad option:first').show();
-                            $('#modalidad option[value="' + response.data.mode.toLowerCase() + '"]').show();
-                            $('#modalidad').val(response.data.mode.toLowerCase());
+                            // Manejo del select de modalidad
+                            $('#modalidad').val(response.data.mode);
 
-                            // Actualizar select de sede
-                            $('#sede option').hide();
-                            $('#sede option:first').show();
-                            $('#sede option[value="' + response.data.headquarters + '"]').show();
+                            // Manejo del select de sede
                             $('#sede').val(response.data.headquarters);
 
                             // Resetear el valor del bootcamp
                             $('#bootcamp').val('');
                         } else {
-                            // Si no se encuentra el estudiante, deshabilitar los selects
                             $('#bootcamp, #modalidad, #sede').prop('disabled', true);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'No se encontró información para el estudiante ingresado'
-                            });
+                            alert('No se encontró información para el estudiante ingresado');
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error al obtener los datos del estudiante'
-                        });
-                        // En caso de error, deshabilitar los selects
+                        alert('Error al obtener los datos del estudiante');
                         $('#bootcamp, #modalidad, #sede').prop('disabled', true);
                     }
                 });

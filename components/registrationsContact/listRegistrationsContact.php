@@ -120,6 +120,18 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo '<div class="alert alert-info">No hay datos disponibles.</div>';
 }
+
+
+$sedes = []; // Agregar array para sedes
+
+foreach ($data as $row) {
+    $sede = $row['headquarters'];
+
+    // Obtener sedes únicas
+    if (!in_array($sede, $sedes) && !empty($sede)) {
+        $sedes[] = $sede;
+    }
+}
 // Obtener el total de registros para la paginación
 $totalSql = "SELECT COUNT(*) as total FROM user_register
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
@@ -141,9 +153,12 @@ $totalPages = ceil($totalRows / $limit);
         <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
     </button>
     <div class="container mt-3">
-        <div class="row justify-content-between align-items-center">
+        <div class="row align-items-center">
+
+            
+
             <!-- Formulario de búsqueda -->
-            <div class="col-md-6 col-sm-12 mb-3 text-center">
+            <div class="col-md-4 col-sm-12 mb-3 text-center">
                 <p class="mb-2">Buscar usuarios</p>
                 <form method="GET" action="" class="d-flex">
 
@@ -153,10 +168,10 @@ $totalPages = ceil($totalRows / $limit);
             </div>
 
             <!-- Indicador y paginación -->
-            <div class="col-md-6 col-sm-12 text-end">
+            <div class="col-md-4 col-sm-12">
                 <p class="h6 pb-2 mb-2 text-indigo-dark"><b>Navega entre páginas para ver más registros.</b></p>
                 <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-end">
+                    <ul class="pagination">
                         <!-- Botón Anterior -->
                         <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
                             <a class="page-link btn-sm" href="?page=<?php echo max(1, $page - 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
@@ -195,6 +210,21 @@ $totalPages = ceil($totalRows / $limit);
                         </li>
                     </ul>
                 </nav>
+            </div>
+
+            <!-- Filtro por sede -->
+            <div class="col-md-4">
+                <div class="filter-title"><i class="bi bi-building"></i> Sede</div>
+                <div class="card filter-card card-headquarters" data-icon="🏫">
+                    <div class="card-body">
+                        <select id="filterHeadquarters" class="form-select">
+                            <option value="">Todas las sedes</option>
+                            <?php foreach ($sedes as $sede): ?>
+                                <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1232,32 +1262,32 @@ $totalPages = ceil($totalRows / $limit);
             e.preventDefault();
 
             Swal.fire({
-            title: '¿Está seguro?',
-            text: "¿Desea actualizar la información?",
-            icon: 'warning', 
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, actualizar',
-            cancelButtonText: 'Cancelar'
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar la información?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
-            if (result.isConfirmed) {
-                // Solo obtener valores si fueron seleccionados
-                const nuevoPrograma = $('#nuevoPrograma_' + id).val() || null;
-                const nuevoNivel = $('#nuevoNivel_' + id).val() || null;
-                const nuevoSede = $('#nuevoSede_' + id).val() || null;
-                
-                actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede);
-                $('#modalActualizarPrograma_' + id).modal('hide');
-            }
+                if (result.isConfirmed) {
+                    // Solo obtener valores si fueron seleccionados
+                    const nuevoPrograma = $('#nuevoPrograma_' + id).val() || null;
+                    const nuevoNivel = $('#nuevoNivel_' + id).val() || null;
+                    const nuevoSede = $('#nuevoSede_' + id).val() || null;
+
+                    actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede);
+                    $('#modalActualizarPrograma_' + id).modal('hide');
+                }
             });
         });
-        }
+    }
 
-        function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede) {
+    function actualizarProgramaNivel(id, nuevoPrograma, nuevoNivel, nuevoSede) {
         const formData = new FormData();
         formData.append('id', id);
-        
+
         // Solo agregar los campos que tienen valor
         if (nuevoPrograma) formData.append('nuevoPrograma', nuevoPrograma);
         if (nuevoNivel) formData.append('nuevoNivel', nuevoNivel);
@@ -1265,34 +1295,34 @@ $totalPages = ceil($totalRows / $limit);
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "components/registrationsContact/actualizar_programa.php", true);
-        
+
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                const response = xhr.responseText.trim();
-                if (response === "success") {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Actualizado!',
-                    text: 'Se ha actualizado correctamente.',
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    location.reload();
-                });
-                } else {
-                Swal.fire({
-                    icon: 'error', 
-                    title: 'Error',
-                    text: 'Hubo un problema al actualizar la información.'
-                });
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'Se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar la información.'
+                        });
+                    }
                 }
-            }
             }
         };
 
         xhr.send(formData);
-        }
+    }
     // Muestra una notificación de actualización con SweetAlert2
     Swal.fire({
         icon: 'info',
@@ -1310,6 +1340,26 @@ $totalPages = ceil($totalRows / $limit);
             trigger: 'focus',
             html: true
         });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterHeadquarters = document.getElementById('filterHeadquarters');
+        const tabla = document.getElementById('listaInscritos');
+
+        if (filterHeadquarters && tabla) {
+            filterHeadquarters.addEventListener('change', function() {
+                const sede = this.value;
+                const filas = tabla.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+                for (let fila of filas) {
+                    const celdaSede = fila.cells[16]; // Índice de la columna de sede (ajustar si es necesario)
+                    if (sede === '' || celdaSede.textContent.trim() === sede) {
+                        fila.style.display = ''; // Mostrar fila
+                    } else {
+                        fila.style.display = 'none'; // Ocultar fila
+                    }
+                }
+            });
+        }
     });
 </script>
 
