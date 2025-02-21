@@ -12,8 +12,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
-// Consultar la cantidad de hombres y mujeres
-$query = "SELECT gender, COUNT(*) as cantidad FROM user_register GROUP BY gender";
+// Consultar la cantidad de registros por departamento con filtro
+$query = "SELECT department, COUNT(*) as cantidad FROM user_register WHERE department IN (15, 25) GROUP BY department";
 $resultado = $conn->query($query);
 
 $data = [
@@ -21,12 +21,20 @@ $data = [
     'data' => []
 ];
 
+$departamentos = [
+    15 => 'Boyacá',
+    25 => 'Cundinamarca'
+];
+
 if ($resultado->num_rows > 0) {
     while ($fila = $resultado->fetch_assoc()) {
-        $data['labels'][] = $fila['gender'];
+        $data['labels'][] = $departamentos[$fila['department']];
         $data['data'][] = $fila['cantidad'];
     }
 }
+
+// Depuración: Verificar los datos obtenidos
+error_log(print_r($data, true));
 
 // Retornar los datos en formato JSON si es una solicitud específica
 if (isset($_GET['json'])) {
@@ -34,6 +42,4 @@ if (isset($_GET['json'])) {
     echo json_encode($data);
     exit;
 }
-
 ?>
-
