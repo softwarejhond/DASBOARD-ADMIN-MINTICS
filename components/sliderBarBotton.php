@@ -36,7 +36,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
-            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Editar asistencia individual"> 
+            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Editar asistencia individual">
                 <a href="individualAttendance.php">
                     <label class="checkbox-wrapper">
                         <span class="checkbox-tile">
@@ -48,14 +48,14 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </label>
                 </a>
             </div>
-            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Inmuebles en alquiler">
-                <a href="propiedadesRenta.php">
+            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Visualizar asistencia grupal">
+                <a href="attendanceGroup.php">
                     <label class="checkbox-wrapper">
                         <span class="checkbox-tile">
                             <span class="checkbox-icon">
-                                <i class="bi bi-house-heart-fill icono text-indigo-dark "></i>
+                                <i class="bi bi-list-task icono text-indigo-dark "></i>
                             </span>
-                            <span class="checkbox-label">Ingresar</span>
+                            <span class="checkbox-label">Asistencia por grupo</span>
                         </span>
                     </label>
                 </a>
