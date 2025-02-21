@@ -122,12 +122,12 @@
     </div>
        <!-- Tarjeta establecio contacto de los verificados -->
        <div class="col-sm-12 col-lg-3 col-md-6 mb-3 mb-sm-0 mb-md-1">
-        <div class="card bg-lime-light shadow">
+        <div class="card bg-brown-light shadow">
             <div class="card-body d-flex align-items-center">
                 <div class="icon-container me-3">
-                    <i class="bi bi-telephone-inbound fa-3x text-gray-dark"></i>
+                    <i class="bi bi-telephone-inbound fa-3x text-white"></i>
                 </div>
-                <div class="text-container">
+                <div class="text-container text-white">
                     <h5 class="card-title">Se estableció contacto a verificados</h5>
                     <h2>
                         Sí: <span id="total_contacto_si_admin"></span> |
@@ -135,6 +135,18 @@
                         No: <span id="total_contacto_no_admin"></span> |
                         <span id="porc_contacto_no_admin"></span>
                     </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Tarjeta establecio contacto de los verificados -->
+        <div class="col-sm-12 col-lg-3 col-md-6 mb-3 mb-sm-0 mb-md-1">
+        <div class="card bg-teal-light shadow">
+            <div class="card-body d-flex align-items-center">
+      
+                <div class="text-container text-black">
+                    <?php include("components/graphics/stratum.php");  ?>
                 </div>
             </div>
         </div>
