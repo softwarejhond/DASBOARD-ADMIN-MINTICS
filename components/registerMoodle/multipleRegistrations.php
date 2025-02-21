@@ -1,5 +1,4 @@
 <?php
-
 // Definir las variables globales para Moodle
 $api_url = "https://talento-tech.uttalento.co/webservice/rest/server.php";
 $token   = "3f158134506350615397c83d861c2104";
@@ -220,22 +219,23 @@ foreach ($data as $row) {
             </div>
         </div>
         <table id="listaInscritos" class="table table-hover table-bordered">
-            <button id="matricularSeleccionados" class="btn bg-magenta-dark text-white btn-lg float-end ms-2">
-                <i class="bi bi-card-checklist"></i> Matricular Seleccionados
-            </button>
-            <div class="d-flex justify-content mb-3 p-3">
+            <div class="d-flex justify-content-between align-items-center p-2 mb-2">
                 <!-- Botón para exportar a Excel -->
-                <button id="exportarExcel" class="btn btn-success btn-lg"
+                <button id="exportarExcel" class="btn btn-success"
                     onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
                     <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
                 </button>
+            
                 <!-- Botón para mostrar usuarios seleccionados -->
-                <button class="btn bg-lime-dark text-vlack ms-2 btn-lg float-end">
-                    <i class="bi bi-card-checklist"></i> Usuarios seleccionados:
-                    <span id="contador">0</span>
+                <button class="btn bg-magenta-dark text-white d-flex align-items-center gap-2"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#selectedUsersList">
+                    <i class="bi bi-list-check"></i>
+                    <span>Gestionar seleccionados (<span id="floatingSelectedCount">0</span>)</span>
                 </button>
-
-
+                <!-- Contador de usuarios seleccionados -->
+                <span id="contador" style="display: none;">0</span>
             </div>
 
             <thead class="thead-dark text-center">
@@ -314,9 +314,34 @@ foreach ($data as $row) {
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <!-- Agregar después de la tabla -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="selectedUsersList" aria-labelledby="selectedUsersListLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="selectedUsersListLabel">
+                    <i class="bi bi-person-check"></i> Beneficiarios seleccionados (<span id="selectedCount">0</span>)
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+
+            </div>
+
+
+            <div class="offcanvas-body">
+
+                <div id="selectedUsersContainer"></div>
+                <div class="m-3">
+                    <button id="enrollSelectedUsers" class="btn bg-magenta-dark text-white w-100">
+                        <i class="bi bi-card-checklist"></i> Matricular Seleccionados
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 <script>
+    const selectedUsers = new Map();
+
     document.addEventListener("DOMContentLoaded", function() {
         // Selecciona todos los checkboxes con la clase 'usuario-checkbox'
         const checkboxes = document.querySelectorAll(".usuario-checkbox");
@@ -330,35 +355,48 @@ foreach ($data as $row) {
 
         // Agrega un evento a cada checkbox para actualizar el contador
         checkboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", actualizarContador);
+            checkbox.addEventListener("change", function() {
+                const row = this.closest('tr');
+                toggleUserSelection(this, row);
+                actualizarContador();
+            });
         });
 
+        // Agregar evento para el checkbox "Seleccionar todos"
+        const selectAllCheckbox = document.getElementById('selectAll');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.usuario-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    const row = checkbox.closest('tr');
+                    toggleUserSelection(checkbox, row);
+                });
+                actualizarContador();
+            });
+        }
     });
-    document.getElementById('matricularSeleccionados').addEventListener('click', confirmBulkEnrollment);
 
-    function confirmBulkEnrollment(event) {
-        const selectedCheckboxes = document.querySelectorAll('#listaInscritos tbody input[type="checkbox"]:checked');
-        if (selectedCheckboxes.length === 0) {
+    // No necesitamos este evento ya que está duplicado más abajo con el ID correcto 'enrollSelectedUsers'
+
+    function confirmBulkEnrollment(usersToEnroll) {
+        if (usersToEnroll.length === 0) {
             Swal.fire('Error', 'Por favor seleccione al menos un estudiante', 'error');
             return;
         }
 
         Swal.fire({
             title: 'Confirmar matrícula',
-            text: `¿Está seguro que desea matricular a ${selectedCheckboxes.length} estudiantes seleccionados?`,
+            text: `¿Está seguro que desea matricular a ${usersToEnroll.length} estudiantes seleccionados?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, matricular',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                // Mostrar loader con SweetAlert2
                 Swal.fire({
                     title: 'Procesando matrículas',
-                    html: `<div>
-                    Procesando: <b>0</b> de ${selectedCheckboxes.length}<br>
-                    Por favor espere...</div>`,
-
+                    html: `<div>Procesando: <b>0</b> de ${usersToEnroll.length}<br>Por favor espere...</div>`,
                     allowOutsideClick: false,
                     allowEscapeKey: false,
                     didOpen: () => {
@@ -366,132 +404,137 @@ foreach ($data as $row) {
                     }
                 });
 
-                const promises = [];
-                const errors = [];
-                let successes = 0;
-                let processed = 0;
+                const result = await processEnrollments(usersToEnroll);
 
-                selectedCheckboxes.forEach(checkbox => {
-                    const row = checkbox.closest('tr');
-                    const formData = getFormDataFromRow(row);
-
-                    const promise = fetch('components/registerMoodle/enroll_user.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(formData)
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            processed++;
-                            // Actualizar el contador en el loader
-                            const content = Swal.getHtmlContainer();
-                            if (content) {
-                                const b = content.querySelector('b');
-                                if (b) {
-                                    b.textContent = processed;
-                                }
-                            }
-
-                            if (data.success) {
-                                successes++;
-                                updateEnrollmentStatus(formData.number_id, true);
-
-                                // Enviar correo de notificación
-                                const emailData = {
-                                    destinatario: formData.email,
-                                    program: formData.program,
-                                    first_name: formData.full_name,
-                                    usuario: formData.email, // Asumiendo que el email es el usuario
-                                    password: formData.password // Asumiendo que la contraseña es la misma que se usa para la matrícula
-                                };
-
-                                fetch('components/registerMoodle/send_email.php', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Accept': 'application/json'
-                                        },
-                                        body: JSON.stringify({
-                                            email: formData.email,
-                                            program: formData.program,
-                                            first_name: formData.full_name,
-                                            usuario: formData.email,
-                                            password: formData.password
-                                        })
-                                    })
-                                    .then(async response => {
-                                        const text = await response.text();
-                                        try {
-                                            return JSON.parse(text);
-                                        } catch (e) {
-                                            console.error('Respuesta no válida:', text);
-                                            throw new Error('Respuesta del servidor no válida');
-                                        }
-                                    })
-                                    .then(data => {
-                                        if (!data.success) {
-                                            throw new Error(data.message || 'Error desconocido');
-                                        }
-                                        Swal.fire({
-                                            title: '¡Éxito!',
-                                            text: 'Correo enviado correctamente',
-                                            icon: 'success',
-                                            timer: 3000
-                                        });
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        Swal.fire({
-                                            title: 'Error',
-                                            text: error.message || 'Error al enviar el correo',
-                                            icon: 'error'
-                                        });
-                                    });
-
-                            } else {
-                                errors.push({
-                                    student: formData.number_id,
-                                    message: data.message || 'Error desconocido'
-                                });
-                                updateEnrollmentStatus(formData.number_id, false);
-                            }
-                        })
-                        .catch(error => {
-                            processed++;
-                            errors.push({
-                                student: formData.number_id,
-                                message: 'Error de conexión o servidor'
-                            });
-                            updateEnrollmentStatus(formData.number_id, false);
-                        });
-
-                    promises.push(promise);
-                });
-
-                Promise.all(promises).then(() => {
-                    let message = `Matrículas completadas: ${successes} exitosas.`;
-                    if (errors.length > 0) {
-                        message += '<br><br>Errores:<br>';
-                        errors.forEach(err => {
-                            message += `• ${err.student}: ${err.message}<br>`;
-                        });
-                    }
-
-                    Swal.fire({
-                        title: 'Resultado de la matrícula',
-                        html: message,
-                        icon: errors.length > 0 ? 'warning' : 'success',
-                        confirmButtonText: 'Entendido'
-                    })
+                Swal.fire({
+                    title: 'Proceso completado',
+                    html: result.message,
+                    icon: result.icon,
+                    confirmButtonText: 'Entendido'
+                }).then(() => {
+                    updateSelectedUsersList();
                 });
             }
         });
     }
 
+    async function processEnrollments(usersToEnroll) {
+        const errors = [];
+        let successes = 0;
+        let processed = 0;
+        let emailSuccesses = 0;
+
+        for (const formData of usersToEnroll) {
+            try {
+                // Matrícula
+                const enrollResponse = await fetch('components/registerMoodle/enroll_user_multiple.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const enrollData = await enrollResponse.json();
+                processed++;
+
+                // Actualizar progreso
+                const content = Swal.getHtmlContainer();
+                if (content) {
+                    const b = content.querySelector('b');
+                    if (b) {
+                        b.textContent = processed;
+                    }
+                }
+
+                // Si la matrícula fue exitosa
+                if (enrollData.success) {
+                    try {
+                        // Intentar enviar el correo
+                        const emailResponse = await sendEnrollmentEmail(formData);
+                        if (emailResponse.success) {
+                            emailSuccesses++;
+                            successes++;
+                        } else {
+                            // Solo registrar error de correo
+                            errors.push({
+                                student: formData.number_id,
+                                message: `Matrícula exitosa, pero error al enviar correo: ${emailResponse.message}`,
+                                type: 'email'
+                            });
+                            successes++; // Aún consideramos exitosa la matrícula
+                        }
+                    } catch (emailError) {
+                        // Error al enviar correo pero matrícula exitosa
+                        errors.push({
+                            student: formData.number_id,
+                            message: `Matrícula exitosa, pero error al enviar correo: ${emailError.message}`,
+                            type: 'email'
+                        });
+                        successes++; // Aún consideramos exitosa la matrícula
+                    }
+
+                    // Eliminar usuario de la lista
+                    selectedUsers.delete(formData.number_id);
+                    updateSelectedUsersList();
+                } else {
+                    // Error en la matrícula
+                    errors.push({
+                        student: formData.number_id,
+                        message: enrollData.message || 'Error desconocido en la matrícula',
+                        type: 'enroll'
+                    });
+                }
+            } catch (error) {
+                processed++;
+                errors.push({
+                    student: formData.number_id,
+                    message: 'Error de conexión o servidor',
+                    type: 'server'
+                });
+            }
+        }
+
+        // Mensaje final más detallado
+        let message = `<div class="text-start">
+            <p><b>Resultados:</b></p>
+            <ul>
+                <li>Matrículas exitosas: ${successes} de ${usersToEnroll.length}</li>
+                <li>Correos enviados: ${emailSuccesses} de ${successes}</li>
+            </ul>`;
+
+        if (errors.length > 0) {
+            const enrollErrors = errors.filter(e => e.type === 'enroll').length;
+            const emailErrors = errors.filter(e => e.type === 'email').length;
+            const serverErrors = errors.filter(e => e.type === 'server').length;
+
+            message += `<p><b>Resumen de errores:</b></p>
+            <ul>
+                ${enrollErrors > 0 ? `<li>Errores de matrícula: ${enrollErrors}</li>` : ''}
+                ${emailErrors > 0 ? `<li>Errores de correo: ${emailErrors}</li>` : ''}
+                ${serverErrors > 0 ? `<li>Errores de servidor: ${serverErrors}</li>` : ''}
+            </ul>
+            <p><b>Detalles:</b></p>`;
+
+            errors.forEach(err => {
+                message += `<p>• ${err.student}: ${err.message}</p>`;
+            });
+        }
+
+        message += '</div>';
+
+        return {
+            success: successes > 0,
+            message: message,
+            icon: errors.length > 0 ? (successes > 0 ? 'warning' : 'error') : 'success'
+        };
+    }
+
+    // Modificar la función getFormDataFromRow en multipleRegistrations.php
     function getFormDataFromRow(row) {
-        const studentId = row.dataset.numberId;
+        // Obtener datos del usuario desde el Map de usuarios seleccionados
+        const numberId = row.dataset.numberId;
+        const userData = selectedUsers.get(numberId) || {};
 
         const getCourseData = (prefix) => {
             const select = document.getElementById(prefix);
@@ -507,10 +550,6 @@ foreach ($data as $row) {
             const id = option.value;
             const name = fullText.split(' - ').slice(1).join(' - ').trim();
 
-            console.log(`${prefix}:`, {
-                id,
-                name
-            }); // Debug
             return {
                 id,
                 name
@@ -518,16 +557,16 @@ foreach ($data as $row) {
         };
 
         const formData = {
-            type_id: row.dataset.typeId,
-            number_id: studentId,
-            full_name: row.dataset.fullName,
-            email: row.dataset.email,
-            institutional_email: row.dataset.institutionalEmail,
-            department: row.dataset.department,
-            headquarters: row.dataset.headquarters,
-            program: row.dataset.program,
-            mode: row.dataset.mode,
-            password: 'UTt@2025!',
+            type_id: userData.type_id || row.dataset.typeId,
+            number_id: numberId,
+            full_name: userData.full_name || row.dataset.fullName,
+            email: userData.email || row.dataset.email,
+            institutional_email: userData.institutional_email || row.dataset.institutionalEmail,
+            department: userData.department || row.dataset.department,
+            headquarters: userData.headquarters || row.dataset.headquarters,
+            program: userData.program || row.dataset.program,
+            mode: userData.mode || row.dataset.mode,
+            password: userData.password || 'UTt@2025!',
             id_bootcamp: getCourseData('bootcamp').id,
             bootcamp_name: getCourseData('bootcamp').name,
             id_leveling_english: getCourseData('ingles').id,
@@ -538,17 +577,183 @@ foreach ($data as $row) {
             skills_name: getCourseData('skills').name
         };
 
-        console.log('FormData:', formData); // Debug
+        // Verificar que todos los campos requeridos estén presentes
+        const requiredFields = [
+            'type_id', 'number_id', 'full_name', 'email', 'institutional_email',
+            'department', 'headquarters', 'program', 'mode', 'password',
+            'id_bootcamp', 'bootcamp_name', 'id_leveling_english', 'leveling_english_name',
+            'id_english_code', 'english_code_name', 'id_skills', 'skills_name'
+        ];
+
+        const missingFields = requiredFields.filter(field => !formData[field]);
+        if (missingFields.length > 0) {
+            console.error('Campos faltantes:', missingFields);
+            throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
+        }
+
         return formData;
     }
 
-    function updateEnrollmentStatus(studentId, success) {
-        const row = document.querySelector(`tr[data-number-id="${studentId}"]`);
-        if (row) {
-            const checkbox = row.querySelector('input[type="checkbox"]');
-            checkbox.disabled = true;
-            checkbox.checked = success;
-            row.style.backgroundColor = success ? '#d4edda' : '#f8d7da';
+    // Modificar el evento de matrícula
+    document.getElementById('enrollSelectedUsers').addEventListener('click', function() {
+        if (selectedUsers.size === 0) {
+            Swal.fire('Error', 'No hay usuarios seleccionados', 'error');
+            return;
+        }
+
+        try {
+            const usersToEnroll = Array.from(selectedUsers.values()).map(userData => {
+                const row = document.querySelector(`tr[data-number-id="${userData.number_id}"]`);
+                if (!row) {
+                    throw new Error(`No se encontraron los datos completos para el usuario ${userData.full_name}`);
+                }
+                return getFormDataFromRow(row);
+            });
+
+            confirmBulkEnrollment(usersToEnroll);
+        } catch (error) {
+            Swal.fire('Error', error.message, 'error');
+        }
+    });
+
+    // Modificar la función toggleUserSelection para guardar todos los campos necesarios
+    function toggleUserSelection(checkbox, row) {
+        const numberId = row.dataset.numberId;
+
+        if (checkbox.checked) {
+            // Obtener datos de los cursos seleccionados
+            const getCourseData = (prefix) => {
+                const select = document.getElementById(prefix);
+                if (!select) {
+                    console.error(`Select no encontrado: ${prefix}`);
+                    return {
+                        id: '0',
+                        name: 'No seleccionado'
+                    };
+                }
+                const option = select.options[select.selectedIndex];
+                return {
+                    id: option.value,
+                    name: option.text.split(' - ').slice(1).join(' - ').trim()
+                };
+            };
+
+            const bootcamp = getCourseData('bootcamp');
+            const ingles = getCourseData('ingles');
+            const englishCode = getCourseData('english_code');
+            const skills = getCourseData('skills');
+
+            // Agregar usuario a la lista con todos los campos requeridos
+            selectedUsers.set(numberId, {
+                type_id: row.dataset.typeId,
+                number_id: numberId,
+                full_name: row.dataset.fullName,
+                email: row.dataset.email,
+                institutional_email: row.dataset.institutionalEmail,
+                department: row.dataset.department,
+                headquarters: row.dataset.headquarters,
+                program: row.dataset.program,
+                mode: row.dataset.mode,
+                password: 'UTt@2025!',
+                id_bootcamp: bootcamp.id,
+                bootcamp_name: bootcamp.name,
+                id_leveling_english: ingles.id,
+                leveling_english_name: ingles.name,
+                id_english_code: englishCode.id,
+                english_code_name: englishCode.name,
+                id_skills: skills.id,
+                skills_name: skills.name
+            });
+        } else {
+            selectedUsers.delete(numberId);
+        }
+
+        updateSelectedUsersList();
+    }
+
+    function updateSelectedUsersList() {
+        const container = document.getElementById('selectedUsersContainer');
+        const selectedCount = document.getElementById('selectedCount');
+        const floatingSelectedCount = document.getElementById('floatingSelectedCount');
+        const mainCounter = document.getElementById('contador');
+
+        container.innerHTML = '';
+        selectedUsers.forEach((userData, numberId) => {
+            const userCard = document.createElement('div');
+            userCard.className = 'card mb-2';
+            userCard.innerHTML = `
+            <div class="card-body d-flex flex-column text-center">
+                <h6 class="card-title mb-2"><b>${userData.full_name}</b></h6>
+                <p class="card-text mb-1">
+                    <strong>ID:</strong> ${numberId}
+                </p>
+                <p class="card-text mb-1">
+                    <strong>Email:</strong> ${userData.institutional_email}
+                </p>
+                <button class="btn border-0" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span role="status">En espera para matricular</span>
+                </button>
+                <button class="btn btn-danger btn-sm mt-auto">
+                    <i class="bi bi-trash"></i> Eliminar selección
+                </button>
+            </div>
+        `;
+            container.appendChild(userCard);
+        });
+
+        const count = selectedUsers.size;
+        selectedCount.textContent = count;
+        floatingSelectedCount.textContent = count;
+        mainCounter.textContent = count;
+    }
+
+    document.getElementById('enrollSelectedUsers').addEventListener('click', function() {
+        if (selectedUsers.size === 0) {
+            Swal.fire('Error', 'No hay usuarios seleccionados', 'error');
+            return;
+        }
+
+        // Convertir el Map a un array de usuarios para procesar
+        const usersToEnroll = Array.from(selectedUsers.values());
+        confirmBulkEnrollment(usersToEnroll);
+    });
+
+    function removeSelectedUser(numberId) {
+        selectedUsers.delete(numberId);
+        // Desmarcar el checkbox en la tabla si está visible
+        const checkbox = document.querySelector(`tr[data-number-id="${numberId}"] input[type="checkbox"]`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+        updateSelectedUsersList();
+    }
+
+    // Agregar esta nueva función para enviar el correo
+    async function sendEnrollmentEmail(userData) {
+        try {
+            const response = await fetch('components/registerMoodle/send_email.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: userData.email,
+                    program: userData.program,
+                    first_name: userData.full_name.split(' ')[0], // Toma el primer nombre
+                    usuario: userData.number_id,
+                    password: userData.password
+                })
+            });
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error enviando email:', error);
+            return {
+                success: false,
+                message: 'Error enviando el correo electrónico'
+            };
         }
     }
 </script>

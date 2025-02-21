@@ -80,19 +80,18 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 </a>
             </div>
             <?php endif; ?>
-            <?php if ($rol === 'Administrador' ):?>
-            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Renovaciones">
-                <a href="renovaciones.php">
-                    <label class="checkbox-wrapper">
-                        <span class="checkbox-tile">
-                            <span class="checkbox-icon">
-                                <i class="bi bi-cake2-fill icono text-indigo-dark "></i>
-                            </span>
-                            <span class="checkbox-label">Ingresar</span>
-                        </span>
-                    </label>
-                </a>
-            </div>
+            <?php if ($rol === 'Administrador' || $rol === 'Académico'): ?>
+                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Matricula múltiple">
+                        <a href="multipleMoodle.php"><label class="checkbox-wrapper">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-robot icono text-indigo-dark "></i>
+                                    </span>
+                                    <span class="checkbox-label">Ingresar</span>
+                                </span>
+                            </label>
+                        </a>
+                    </div>
             <?php endif; ?>
             <?php if ($rol === 'Administrador' ):?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar todo">

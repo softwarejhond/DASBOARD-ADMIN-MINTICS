@@ -1,11 +1,11 @@
-<!-- HTML de las tarjetas -->
- <!-- Barra de progreso global -->
+<!-- Barra de progreso global -->
 <div class="progress mt-3">
     <div id="progress-bar-global" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 <div class="text-center">
     <small id="countdown-timer" class="text-muted">Actualización en tiempo real</small>
 </div>
+<!-- HTML de las tarjetas -->
 <div class="row">
     <!-- Tarjeta Usuarios por Verificar -->
     <div class="col-sm-12 col-lg-3 col-md-6 mb-3 mb-sm-0 mb-md-1">
@@ -88,10 +88,12 @@
                     <i class="fas fa-university fa-3x text-gray-dark"></i>
                 </div>
                 <div class="text-container">
-                    <h5 class="card-title">Gobernación Boyacá</h5>
+                    <h5 class="card-title">Se estableció contacto</h5>
                     <h2>
-                        <span id="total_GobernacionBoyaca"></span> | 
-                        <span id="porc_GobernacionBoyaca"></span>%
+                        Sí: <span id="total_contacto_si"></span> | 
+                        <span id="porc_contacto_si"></span><br>
+                        No: <span id="total_contacto_no"></span> | 
+                        <span id="porc_contacto_no"></span>
                     </h2>
                     <a href="#" class="btn btn-light btn-sm">Registrados por el formulario de la Gobernación</a>
                 </div>
@@ -125,6 +127,10 @@ $(document).ready(function () {
                 $('#porc_con_programa').text(data.porc_sinVerificar + "%");
                 $('#total_GobernacionBoyaca').text(data.total_GobernacionBoyaca);
                 $('#porc_GobernacionBoyaca').text(data.porc_GobernacionBoyaca + "%");
+                $('#total_contacto_si').text(data.total_contacto_si);
+                $('#porc_contacto_si').text(data.porc_contacto_si + "%");
+                $('#total_contacto_no').text(data.total_contacto_no);
+                $('#porc_contacto_no').text(data.porc_contacto_no + "%");
             },
             error: function(xhr, status, error) {
                 console.error("Error en la solicitud AJAX:", error);

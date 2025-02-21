@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '../../../vendor/autoload.php';
-require __DIR__ . '/../../conexion.php';
+require  '../../controller/conexion.php';// Asegúrate de incluir la conexión a la BD
+
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

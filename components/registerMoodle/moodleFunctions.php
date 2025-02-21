@@ -43,14 +43,13 @@ class MoodleAPI
         $params = [
             'users[0][username]' => $userData['username'],
             'users[0][password]' => $userData['password'],
-            'users[0][firstname]' => $userData['firstname'],
-            'users[0][lastname]' => $userData['lastname'],
+            'users[0][firstname]' => $userData['firstname'] . ' ' . ($userData['secondname'] ?? ''),
+            'users[0][lastname]' => $userData['lastname'] . ' ' . ($userData['secondlastname'] ?? ''),
             'users[0][email]' => $userData['email'],
             'users[0][auth]' => 'manual',
             // Forzar cambio de contraseña en el primer login
             'users[0][preferences][0][type]' => 'auth_forcepasswordchange',
             'users[0][preferences][0][value]' => 1
-
         ];
 
         return $this->callAPI('core_user_create_users', $params);

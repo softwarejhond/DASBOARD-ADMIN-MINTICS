@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../../conexion.php';
+require  '../../controller/conexion.php';// Asegúrate de incluir la conexión a la BD
 require_once 'moodleFunctions.php';
 
 header('Content-Type: application/json');
