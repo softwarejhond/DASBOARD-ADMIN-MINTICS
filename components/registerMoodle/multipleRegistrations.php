@@ -407,7 +407,7 @@ foreach ($data as $row) {
                 const result = await processEnrollments(usersToEnroll);
 
                 Swal.fire({
-                    title: 'Proceso completado',
+                    title: 'Be',
                     html: result.message,
                     icon: result.icon,
                     confirmButtonText: 'Entendido'
@@ -499,9 +499,58 @@ foreach ($data as $row) {
         let message = `<div class="text-start">
             <p><b>Resultados:</b></p>
             <ul>
-                <li>Matrículas exitosas: ${successes} de ${usersToEnroll.length}</li>
-                <li>Correos enviados: ${emailSuccesses} de ${successes}</li>
+            <li>Matrículas exitosas: ${successes} de ${usersToEnroll.length}</li>
+            <li>Correos enviados: ${emailSuccesses} de ${successes}</li>
             </ul>`;
+
+        if (errors.length > 0) {
+            const enrollErrors = errors.filter(e => e.type === 'enroll').length;
+            const emailErrors = errors.filter(e => e.type === 'email').length;
+            const serverErrors = errors.filter(e => e.type === 'server').length;
+
+            message += `<p><b>Resumen de errores:</b></p>
+            <ul>
+            ${enrollErrors > 0 ? `<li>Errores de matrícula: ${enrollErrors}</li>` : ''}
+            ${emailErrors > 0 ? `<li>Errores de correo: ${emailErrors}</li>` : ''}
+            ${serverErrors > 0 ? `<li>Errores de servidor: ${serverErrors}</li>` : ''}
+            </ul>
+            <p><b>Detalles:</b></p>`;
+
+            errors.forEach(err => {
+            message += `<p>• ${err.student}: ${err.message}</p>`;
+            });
+        }
+
+        message += '</div>';
+
+        // Mostrar alerta de matrículas
+        Swal.fire({
+            title: 'Resultados de Matrícula',
+            html: `<div class="text-start">
+            <p><b>Resultados:</b></p>
+            <ul>
+                <li>Matrículas exitosas: ${successes} de ${usersToEnroll.length}</li>
+            </ul>
+            </div>`,
+            icon: successes > 0 ? 'success' : 'error',
+            confirmButtonText: 'Entendido'
+        }).then(() => {
+            // Mostrar alerta de correos
+            Swal.fire({
+            title: 'Usuarios matriculados exitosamente',
+            html: `<div class="text-center">
+                <p><b>Resultados:</b></p>
+                <ul>
+                <li>Correos enviados: ${emailSuccesses} de ${successes}</li>
+                </ul>
+                ${errors.length > 0 ? message : ''}
+            </div>`,
+            icon: emailSuccesses > 0 ? 'success' : 'error',
+            confirmButtonText: 'Entendido'
+            }).then(() => {
+            updateSelectedUsersList();
+            });
+        });
 
         if (errors.length > 0) {
             const enrollErrors = errors.filter(e => e.type === 'enroll').length;

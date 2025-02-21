@@ -70,7 +70,7 @@ $rol = $infoUsuario['rol'];
         </div>
     </div>
 </div>
-
+<?php include("controller/footer.php"); ?>
 <?php include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 
