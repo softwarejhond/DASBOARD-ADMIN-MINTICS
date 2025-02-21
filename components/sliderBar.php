@@ -25,114 +25,114 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                             </span>
                         </label>
                     </div>
-                    <?php endif; ?>
+                <?php endif; ?>
                 <?php if ($rol === 'Administrador' || $rol === 'Asesor'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Contacto de registros">
-                    <a href="registrarionsContact.php">
-                        <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReporte" data-bs-toggle="modal">
+                    <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Contacto de registros">
+                        <a href="registrarionsContact.php">
+                            <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoReporte" data-bs-toggle="modal">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-people-fill icono"></i>
+                                    </span>
+                                    <span class="checkbox-label ">Ingresar</span>
+                                </span>
+                            </label>
+                        </a>
+                    </div>
+                <?php endif; ?>
+                <?php if ($rol === 'Administrador'): ?>
+                    <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir asesor">
+                        <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoAsesor" data-bs-toggle="modal">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
                                     <i class="bi bi-people-fill icono"></i>
                                 </span>
-                                <span class="checkbox-label ">Ingresar</span>
+                                <span class="checkbox-label">Añadir</span>
                             </span>
                         </label>
-                    </a>
-                </div> 
-                <?php endif; ?>
-                <?php if ($rol === 'Administrador'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Añadir asesor">
-                    <label class="checkbox-wrapper" data-bs-target="#exampleModalNuevoAsesor" data-bs-toggle="modal">
-                        <span class="checkbox-tile">
-                            <span class="checkbox-icon">
-                                <i class="bi bi-people-fill icono"></i>
-                            </span>
-                            <span class="checkbox-label">Añadir</span>
-                        </span>
-                    </label>
-                </div>
+                    </div>
                 <?php endif; ?>
                 <?php if ($rol === 'Administrador' || $rol === 'Asesor'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Usuarios verificados">
-                    <a href="verifiedUsers.php">
-                        <label class="checkbox-wrapper">
-                            <span class="checkbox-tile">
-                                <span class="checkbox-icon">
-                                    <i class="bi bi-mortarboard-fill icono"></i>
+                    <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Usuarios verificados">
+                        <a href="verifiedUsers.php">
+                            <label class="checkbox-wrapper">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-mortarboard-fill icono"></i>
+                                    </span>
+                                    <span class="checkbox-label">Ingresar</span>
                                 </span>
-                                <span class="checkbox-label">Ingresar</span>
-                            </span>
-                        </label>
-                    </a>
-                </div>
+                            </label>
+                        </a>
+                    </div>
                 <?php endif; ?>
                 <?php if ($rol === 'Administrador' || $rol === 'Asesor'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Actualizar identificación">
-                    <a href="updateDocument.php">
-                        <label class="checkbox-wrapper">
-                            <span class="checkbox-tile">
-                                <span class="checkbox-icon">
-                                    <i class="bi bi-person-vcard-fill icono"></i>
+                    <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Actualizar identificación">
+                        <a href="updateDocument.php">
+                            <label class="checkbox-wrapper">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-person-vcard-fill icono"></i>
+                                    </span>
+                                    <span class="checkbox-label ">Actualizar ID</span>
                                 </span>
-                                <span class="checkbox-label ">Actualizar ID</span>
-                            </span>
-                        </label>
-                    </a>
-                </div>
+                            </label>
+                        </a>
+                    </div>
                 <?php endif; ?>
                 <?php if ($rol === 'Administrador' || $rol === 'Asesor'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Consulta individual">
-                    <a href="individualSearch.php">
-                        <label class="checkbox-wrapper">
-                            <span class="checkbox-tile">
-                                <span class="checkbox-icon">
-                                <i class="bi bi-person-bounding-box icono"></i>
+                    <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Consulta individual">
+                        <a href="individualSearch.php">
+                            <label class="checkbox-wrapper">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-person-bounding-box icono"></i>
+                                    </span>
+                                    <span class="checkbox-label">Ingresar</span>
                                 </span>
-                                <span class="checkbox-label">Ingresar</span>
-                            </span>
-                        </label>
-                    </a>
-                </div>
+                            </label>
+                        </a>
+                    </div>
                 <?php endif; ?>
                 <?php if ($rol === 'Administrador' || $rol === 'Académico'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Regisrar usuarios en Moodle">
-                <a href="registerMoodle.php">
-                    <label class="checkbox-wrapper">
-                        <span class="checkbox-tile">
-                            <span class="checkbox-icon">
-                            <i class="bi bi-robot icono"></i>
-                            </span>
-                            <span class="checkbox-label">Ingresar</span>
-                        </span>
-                    </label>
-                    </a>
-                </div>
+                    <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Regisrar usuarios en Moodle">
+                        <a href="registerMoodle.php">
+                            <label class="checkbox-wrapper">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-robot icono"></i>
+                                    </span>
+                                    <span class="checkbox-label">Ingresar</span>
+                                </span>
+                            </label>
+                        </a>
+                    </div>
                 <?php endif; ?>
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Perfil">
-                    <a href="profile.php"> <label class="checkbox-wrapper">
+                    <a href="contactLogs.php"> <label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
-                                    <i class="bi bi-person-circle icono"></i>
+                                <i class="fa-solid fa-address-book icono"></i>
                                 </span>
-                                <span class="checkbox-label">Perfil</span>
+                                <span class="checkbox-label">Registro de contactos</span>
                             </span>
                         </label>
                     </a>
                 </div>
                 <?php if ($rol === 'Administrador'): ?>
-                <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Configuracion">
-                    <a href="actualizar-smtp.php"><label class="checkbox-wrapper">
-                            <span class="checkbox-tile">
-                                <span class="checkbox-icon">
-                                    <i class="bi bi-gear-wide-connected icono"></i>
+                    <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Matriculación multiple">
+                        <a href="multipleMoodle.php"><label class="checkbox-wrapper">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-robot icono"></i>
+                                    </span>
+                                    <span class="checkbox-label">Regitro multiple</span>
                                 </span>
-                                <span class="checkbox-label">Configuración</span>
-                            </span>
-                        </label>
-                    </a>
-                </div>
+                            </label>
+                        </a>
+                    </div>
                 <?php endif; ?>
-             
+
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Visítanos">
                     <a href="https://agenciaeaglesoftware.com/" target="_blank">
                         <label class="checkbox-wrapper">
@@ -148,5 +148,6 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
             </fieldset>
         </div>
     </div>
-    <?php include("controller/footer.php"); ?>
+    <?php //include("controller/footer.php"); 
+    ?>
 </div>
