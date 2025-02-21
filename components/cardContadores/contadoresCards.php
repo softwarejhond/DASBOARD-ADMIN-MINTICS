@@ -1,56 +1,11 @@
-<?php
-// NO SE REQUIERE IMPORTAR LA CONEXIÓN PORQUE DESDE EL MAIN YA ESTÁ CONECTADA
-
-// Obtener total de usuarios verificados
-$sql_total = "SELECT COUNT(*) AS total FROM user_register WHERE status = '1' AND statusAdmin = '1'";
-$result_total = mysqli_query($conn, $sql_total);
-$total_usuarios = mysqli_fetch_assoc($result_total)['total'];
-
-// Obtener total de usuarios en Boyacá
-$sql_boyaca = "SELECT COUNT(*) AS total_boyaca FROM user_register WHERE status = '1' AND statusAdmin = '1' AND department = 15";
-$result_boyaca = mysqli_query($conn, $sql_boyaca);
-$total_boyaca = mysqli_fetch_assoc($result_boyaca)['total_boyaca'];
-
-// Obtener total de usuarios en Cundinamarca
-$sql_cundinamarca = "SELECT COUNT(*) AS total_cundinamarca FROM user_register WHERE status = '1' AND statusAdmin = '1' AND department = 25";
-$result_cundinamarca = mysqli_query($conn, $sql_cundinamarca);
-$total_cundinamarca = mysqli_fetch_assoc($result_cundinamarca)['total_cundinamarca'];
-
-// Obtener total de usuarios sin verificar
-$sql_sin_verificar = "SELECT COUNT(*) AS total_sinVerificar FROM user_register WHERE status = '1' AND statusAdmin = '0'";
-$result_sinVerificar = mysqli_query($conn, $sql_sin_verificar);
-$total_sinVerificar = mysqli_fetch_assoc($result_sinVerificar)['total_sinVerificar'];
-
-// Obtener total de Gobernación de Boyacá
-$sql_GobernacionBoyaca = "SELECT COUNT(*) AS total_GobernacionBoyaca FROM user_register WHERE status = '1' AND statusAdmin = '0' AND institution = 'Gobernación de Boyacá'";
-$result_GobernacionBoyaca = mysqli_query($conn, $sql_GobernacionBoyaca);
-$total_GobernacionBoyaca = mysqli_fetch_assoc($result_GobernacionBoyaca)['total_GobernacionBoyaca'];
-
-
-// Calcular porcentajes
-$porc_boyaca = ($total_usuarios > 0) ? round(($total_boyaca / $total_usuarios) * 100, 2) : 0;
-$porc_cundinamarca = ($total_usuarios > 0) ? round(($total_cundinamarca / $total_usuarios) * 100, 2) : 0;
-$porc_sinVerificar = ($total_usuarios > 0) ? round(($total_sinVerificar / $total_usuarios) * 100, 2) : 0;
-$porc_GobernacionBoyaca = ($total_usuarios > 0) ? round(($total_GobernacionBoyaca / $total_usuarios) * 100, 2) : 0;
-
-// Si la petición es AJAX, devolver JSON
-if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
-    echo json_encode([
-        "total_usuarios" => $total_usuarios,
-        "total_boyaca" => $total_boyaca,
-        "porc_boyaca" => $porc_boyaca,
-        "total_cundinamarca" => $total_cundinamarca,
-        "porc_cundinamarca" => $porc_cundinamarca,
-        "total_sinVerificar" => $total_sinVerificar,
-        "porc_sinVerificar" => $porc_sinVerificar,
-        "total_GobernacionBoyaca" => $total_GobernacionBoyaca,
-        "porc_GobernacionBoyaca" => $porc_GobernacionBoyaca
-    ]);
-    exit;
-}
-?>
-
 <!-- HTML de las tarjetas -->
+ <!-- Barra de progreso global -->
+<div class="progress mt-3">
+    <div id="progress-bar-global" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<div class="text-center">
+    <small id="countdown-timer" class="text-muted">Actualización en tiempo real</small>
+</div>
 <div class="row">
     <!-- Tarjeta Usuarios por Verificar -->
     <div class="col-sm-12 col-lg-3 col-md-6 mb-3 mb-sm-0 mb-md-1">
@@ -62,14 +17,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                 <div class="text-container">
                     <h5 class="card-title">Usuarios por verificar</h5>
                     <h2>
-                        <span id="con_programa"><?php echo $total_sinVerificar; ?></span> | 
-                        <span id="porc_con_programa"><?php echo $porc_sinVerificar; ?></span>%
+                        <span id="con_programa"></span> | 
+                        <span id="porc_con_programa"></span>%
                     </h2>
                     <a href="registrarionsContact.php" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
-            </div>
-            <div class="progress mt-3">
-                <div id="progress-bar-1" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
     </div>
@@ -83,12 +35,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                 </div>
                 <div class="text-container">
                     <h5 class="card-title">Total de Usuarios verificados</h5>
-                    <h2><span id="total_usuarios"><?php echo $total_usuarios; ?></span></h2>
+                    <h2><span id="total_usuarios"></span></h2>
                     <a href="verifiedUsers.php" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
-            </div>
-            <div class="progress mt-3">
-                <div id="progress-bar-2" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
     </div>
@@ -103,14 +52,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                 <div class="text-container">
                     <h5 class="card-title">Usuarios en Cundinamarca</h5>
                     <h2>
-                        <span id="total_cundinamarca"><?php echo $total_cundinamarca; ?></span> | 
-                        <span id="porc_cundinamarca"><?php echo $porc_cundinamarca; ?></span>%
+                        <span id="total_cundinamarca"></span> | 
+                        <span id="porc_cundinamarca"></span>%
                     </h2>
                     <a href="#" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
-            </div>
-            <div class="progress mt-3">
-                <div id="progress-bar-3" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
     </div>
@@ -125,14 +71,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                 <div class="text-container">
                     <h5 class="card-title">Usuarios en Boyacá</h5>
                     <h2>
-                        <span id="total_boyaca"><?php echo $total_boyaca; ?></span> | 
-                        <span id="porc_boyaca"><?php echo $porc_boyaca; ?></span>%
+                        <span id="total_boyaca"></span> | 
+                        <span id="porc_boyaca"></span>%
                     </h2>
                     <a href="#" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
-            </div>
-            <div class="progress mt-3">
-                <div id="progress-bar-4" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
     </div>
@@ -147,31 +90,32 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                 <div class="text-container">
                     <h5 class="card-title">Gobernación Boyacá</h5>
                     <h2>
-                        <span id="total_GobernacionBoyaca"><?php echo $total_GobernacionBoyaca; ?></span> | 
-                        <span id="porc_GobernacionBoyaca"><?php echo $porc_GobernacionBoyaca; ?></span>%
+                        <span id="total_GobernacionBoyaca"></span> | 
+                        <span id="porc_GobernacionBoyaca"></span>%
                     </h2>
                     <a href="#" class="btn btn-light btn-sm">Registrados por el formulario de la Gobernación</a>
                 </div>
             </div>
-            <div class="progress mt-3">
-                <div id="progress-bar-5" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
         </div>
     </div>
-
 </div>
 
+
+
 <!-- Asegúrate de incluir jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
 $(document).ready(function () {
     function actualizarContadores() {
         $.ajax({
-            url: window.location.href.split('?')[0] + "?ajax=1",
+            url: "components/cardContadores/actualizarContadores.php", // Archivo externo que proporciona los datos en JSON
             method: "GET",
             dataType: "json",
             success: function(data) {
+                console.log("Datos recibidos:", data); // Debugging
+
+                // Actualiza los valores numéricos
                 $('#total_usuarios').text(data.total_usuarios);
                 $('#total_boyaca').text(data.total_boyaca);
                 $('#porc_boyaca').text(data.porc_boyaca + "%");
@@ -182,8 +126,8 @@ $(document).ready(function () {
                 $('#total_GobernacionBoyaca').text(data.total_GobernacionBoyaca);
                 $('#porc_GobernacionBoyaca').text(data.porc_GobernacionBoyaca + "%");
             },
-            error: function() {
-                console.error("No se pudieron cargar los datos.");
+            error: function(xhr, status, error) {
+                console.error("Error en la solicitud AJAX:", error);
             }
         });
     }
@@ -191,22 +135,23 @@ $(document).ready(function () {
     function actualizarBarraProgreso() {
         var progreso = 0;
         var intervalo = setInterval(function() {
-            progreso += 1.43; // Incremento para completar 100% en 7 segundos
-            $('.progress-bar').css('width', progreso + '%').attr('aria-valuenow', progreso);
+            progreso += 20; // Incremento para completar 100% en 5 segundos
+            $('#progress-bar-global').css('width', progreso + '%').attr('aria-valuenow', progreso);
             if (progreso >= 100) {
                 clearInterval(intervalo);
-                $('.progress-bar').css('width', '0%').attr('aria-valuenow', 0); // Reiniciar la barra de progreso
+                $('#progress-bar-global').css('width', '0%').attr('aria-valuenow', 0); // Reiniciar la barra de progreso
             }
-        }, 100); // Actualizar cada 100ms
+        }, 1000); // Actualizar cada 1 segundo
     }
 
-    // Actualizar los contadores y la barra de progreso cada 7 segundos
+    // Ejecutar la función cada 5 segundos para actualizar en tiempo real
     function iniciarActualizacion() {
         actualizarContadores();
         actualizarBarraProgreso();
     }
 
     iniciarActualizacion();
-    setInterval(iniciarActualizacion, 7000);
+    setInterval(iniciarActualizacion, 5000);
 });
 </script>
+

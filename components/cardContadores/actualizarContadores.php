@@ -1,7 +1,7 @@
 <?php
-//NO SE REQUIERE IMPORTAR LA CONEXIÓN PORQUE DESDE EL MAIN YA ESTÁ CONECTADA
+// NO SE REQUIERE IMPORTAR LA CONEXIÓN PORQUE DESDE EL MAIN YA ESTÁ CONECTADA
 include '../../controller/conexion.php';
-// Obtener total de usuarios
+// Obtener total de usuarios verificados
 $sql_total = "SELECT COUNT(*) AS total FROM user_register WHERE status = '1' AND statusAdmin = '1'";
 $result_total = mysqli_query($conn, $sql_total);
 $total_usuarios = mysqli_fetch_assoc($result_total)['total'];
@@ -16,32 +16,34 @@ $sql_cundinamarca = "SELECT COUNT(*) AS total_cundinamarca FROM user_register WH
 $result_cundinamarca = mysqli_query($conn, $sql_cundinamarca);
 $total_cundinamarca = mysqli_fetch_assoc($result_cundinamarca)['total_cundinamarca'];
 
-// Obtener total de usuarios con programa
+// Obtener total de usuarios sin verificar
 $sql_sin_verificar = "SELECT COUNT(*) AS total_sinVerificar FROM user_register WHERE status = '1' AND statusAdmin = '0'";
-$result_sinVerificar= mysqli_query($conn, $sql_sin_verificar);
-$total_sinVerificar= mysqli_fetch_assoc($result_sinVerificar)['total_sinVerificar'];
+$result_sinVerificar = mysqli_query($conn, $sql_sin_verificar);
+$total_sinVerificar = mysqli_fetch_assoc($result_sinVerificar)['total_sinVerificar'];
 
-// Obtener total de Gobernacion de boyaca
-$sql_GoberanacionBoyaca = "SELECT COUNT(*) AS total_GobernacionBoyaca FROM user_register WHERE status = '1' AND statusAdmin = '0' AND institution = 'Gobernación de Boyacá";
-$result_GobernacionBoyaca= mysqli_query($conn, $sql_GoberanacionBoyaca);
-$total_GobernacioBoyaca= mysqli_fetch_assoc($result_GobernacionBoyaca)['total_GobernacionBoyaca'];
-
+// Obtener total de Gobernación de Boyacá
+$sql_GobernacionBoyaca = "SELECT COUNT(*) AS total_GobernacionBoyaca FROM user_register WHERE status = '1' AND statusAdmin = '0' AND institution = 'Gobernación de Boyacá'";
+$result_GobernacionBoyaca = mysqli_query($conn, $sql_GobernacionBoyaca);
+$total_GobernacionBoyaca = mysqli_fetch_assoc($result_GobernacionBoyaca)['total_GobernacionBoyaca'];
 
 // Calcular porcentajes
 $porc_boyaca = ($total_usuarios > 0) ? round(($total_boyaca / $total_usuarios) * 100, 2) : 0;
 $porc_cundinamarca = ($total_usuarios > 0) ? round(($total_cundinamarca / $total_usuarios) * 100, 2) : 0;
 $porc_sinVerificar = ($total_usuarios > 0) ? round(($total_sinVerificar / $total_usuarios) * 100, 2) : 0;
-$porc_GobernacionBoyaca = ($total_usuarios > 0) ? round(($total_GobernacioBoyaca / $total_usuarios) * 100, 2) : 0;
+$porc_GobernacionBoyaca = ($total_usuarios > 0) ? round(($total_GobernacionBoyaca / $total_usuarios) * 100, 2) : 0;
+
 // Devolver los datos en formato JSON
+header('Content-Type: application/json');
 echo json_encode([
-    'total_usuarios' => $total_usuarios,
-    'total_boyaca' => $total_boyaca,
-    'total_cundinamarca' => $total_cundinamarca,
-    'total_sinVerificar' => $total_sinVerificar,
-    'total_GobernacionBoyaca' => $total_GobernacioBoyaca,
-    'porc_boyaca' => $porc_boyaca,
-    'porc_cundinamarca' => $porc_cundinamarca,
-    'porc_sinVerificar' => $porc_sinVerificar,
-    'porc_GobernacionBoyaca' => $porc_GobernacionBoyaca
+    "total_usuarios" => $total_usuarios,
+    "total_boyaca" => $total_boyaca,
+    "porc_boyaca" => $porc_boyaca,
+    "total_cundinamarca" => $total_cundinamarca,
+    "porc_cundinamarca" => $porc_cundinamarca,
+    "total_sinVerificar" => $total_sinVerificar,
+    "porc_sinVerificar" => $porc_sinVerificar,
+    "total_GobernacionBoyaca" => $total_GobernacionBoyaca,
+    "porc_GobernacionBoyaca" => $porc_GobernacionBoyaca
 ]);
+exit;
 ?>
