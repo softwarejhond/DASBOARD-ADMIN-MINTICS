@@ -124,6 +124,11 @@
                                 <strong>Nombre:</strong><br>
                                 <b style="text-transform:capitalize"><?= $nombre ?></b>
                                 <hr>
+                                <strong>Actualizar nombre:</strong><br>
+                                <button type="button" class="btn btn-primary mt-2" onclick="mostrarModalActualizarNombre(<?= $row['number_id'] ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar Nombre">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <hr>
                                 <strong>Tipo de identificación:</strong><br>
                                 <?= htmlspecialchars($row['typeID']) ?>
                                 <hr>
@@ -135,20 +140,61 @@
                                 <strong>Edad:</strong><br>
                                 <?= htmlspecialchars($row['age']) ?> años
                                 <hr>
+                                <strong>Actualizar fecha de nacimiento:</strong><br>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="mostrarModalActualizarNacimiento(<?= $row['number_id'] ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar fecha de nacimiento">
+                                    <i class="bi bi-calendar-date"></i>
+                                </button>
+                                <hr>
+                                <script>
+                                    function actualizarNacimiento(id) {
+                                        var form = document.getElementById('formActualizarNacimiento_' + id);
+                                        var formData = new FormData(form);
+
+                                        var xhr = new XMLHttpRequest();
+                                        xhr.open("POST", "components/registrationsContact/actualizar_nacimiento.php", true);
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState == 4) {
+                                                if (xhr.status == 200 && xhr.responseText.trim() === "success") {
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: '¡Actualizado!',
+                                                        text: 'La fecha de nacimiento se actualizó correctamente.',
+                                                        showConfirmButton: false,
+                                                        timer: 2000
+                                                    }).then(() => {
+                                                        location.reload();
+                                                    });
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'No se pudo actualizar la fecha de nacimiento.'
+                                                    });
+                                                }
+                                            }
+                                        };
+                                        xhr.send(formData);
+                                    }
+                                </script>
 
                                 <strong>Correo:</strong><br>
                                 <?= htmlspecialchars($row['email']) ?>
                                 <hr>
+
+
+
+                            </div>
+
+
+                            <!--Columana dos-->
+                            <div class="col-md-3 col-lg-3 col-sm-12 p-3">
 
                                 <strong>Telefono 1:</strong><br>
                                 <?= htmlspecialchars($row['first_phone']) ?>
                                 <hr>
                                 <strong>Telefono 2:</strong><br>
                                 <?= htmlspecialchars($row['second_phone']) ?>
-
-                            </div>
-                            <!--Columana dos-->
-                            <div class="col-md-3 col-lg-3 col-sm-12 p-3">
+                                <hr>
                                 <?php include 'contactMedium.php'; ?>
                                 <hr>
                                 <strong>Actualizar medio de contacto:</strong><br>
@@ -221,14 +267,17 @@
                                     <i class="bi bi-telephone"></i>
                                 </button>
                                 <hr>
+
+                            </div>
+                            <!--Columana cuatro-->
+                            <div class="col-md-3 col-lg-3 col-sm-12 p-3">
+
                                 <strong>Actualizar estado de admision:</strong><br>
                                 <button class="btn bg-indigo-dark text-white" type="button" onclick="mostrarModalActualizarAdmision(<?php echo $row['number_id']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top"
                                     data-bs-custom-class="custom-tooltip"
                                     data-bs-title="Cambiar estado de admisión">
                                     <i class="bi bi-arrow-left-right"></i></button>
-                            </div>
-                            <!--Columana cuatro-->
-                            <div class="col-md-3 col-lg-3 col-sm-12 p-3">
+                                <hr>
 
                                 <strong>Horarios:</strong><br>
                                 <button type="button" class="btn bg-indigo-light"
@@ -318,7 +367,7 @@
                                 }
 
                                 if ($isAccepted) {
-                                    echo '<a class="btn bg-teal-dark" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></a>';
+                                    echo '<a class="btn bg-teal-dark " tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="CUMPLE"><i class="bi bi-check-circle"></i></a>';
                                 } else {
                                     echo '<a class="btn bg-danger text-white " tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" title="NO CUMPLE"><i class="bi bi-x-circle"></i></a>';
                                 }
@@ -338,14 +387,14 @@
                                 if (isset($nivelesUsuarios[$row['number_id']])) {
                                     $puntaje = $nivelesUsuarios[$row['number_id']];
                                     if ($puntaje >= 1 && $puntaje <= 5) {
-                                        echo '<button class="btn bg-magenta-dark w-100" style="max-width: 100px;" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
+                                        echo '<button class="btn bg-magenta-dark " style="max-width: 100px;" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                                     } elseif ($puntaje >= 6 && $puntaje <= 10) {
-                                        echo '<button class="btn bg-orange-dark w-100" style="max-width: 100px;" role="alert"role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
+                                        echo '<button class="btn bg-orange-dark " style="max-width: 100px;" role="alert"role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                                     } elseif ($puntaje >= 11 && $puntaje <= 15) {
-                                        echo '<button class="btn bg-teal-dark w-100" style="max-width: 100px;" role="alert" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
+                                        echo '<button class="btn bg-teal-dark " style="max-width: 100px;" role="alert" role="alert">' . htmlspecialchars($nivelesUsuarios[$row['number_id']]) . '</button>';
                                     }
                                 } else {
-                                    echo '<button class="btn bg-silver w-100" style="max-width: 100px;" role="alert"role="alert data-bs-toggle="tooltip" data-bs-placement="top"
+                                    echo '<button class="btn bg-silver " style="max-width: 100px;" role="alert"role="alert data-bs-toggle="tooltip" data-bs-placement="top"
                                             data-bs-custom-class="custom-tooltip"
                                             data-bs-title="No ha presebtado la prueba" >
                                         <i class="bi bi-ban"></i>
@@ -358,14 +407,14 @@
                                 if (isset($nivelesUsuarios[$row['number_id']])) {
                                     $puntaje = $nivelesUsuarios[$row['number_id']];
                                     if ($puntaje >= 1 && $puntaje <= 5) {
-                                        echo '<button class="btn bg-magenta-dark w-100" style="max-width: 150px;" role="alert">Básico</div>';
+                                        echo '<button class="btn bg-magenta-dark " style="max-width: 150px;" role="alert">Básico</div>';
                                     } elseif ($puntaje >= 6 && $puntaje <= 10) {
-                                        echo '<button class="btn bg-orange-dark w-100" style="max-width: 150px;" role="alert"role="alert">Intermedio</div>';
+                                        echo '<button class="btn bg-orange-dark " style="max-width: 150px;" role="alert"role="alert">Intermedio</div>';
                                     } elseif ($puntaje >= 11 && $puntaje <= 15) {
-                                        echo '<button class="btn bg-teal-dark w-100" style="max-width: 150px;" role="alert" role="alert">Avanzado</div>';
+                                        echo '<button class="btn bg-teal-dark " style="max-width: 150px;" role="alert" role="alert">Avanzado</div>';
                                     }
                                 } else {
-                                    echo '<button class="btn bg-silver w-100" style="max-width: 150px;" role="alert"role="alert  data-bs-toggle="tooltip" data-bs-placement="top"
+                                    echo '<button class="btn bg-silver " style="max-width: 150px;" role="alert"role="alert  data-bs-toggle="tooltip" data-bs-placement="top"
                                                 data-bs-custom-class="custom-tooltip"
                                                 data-bs-title="No ha presebtado la prueba" >
                                                 <i class="bi bi-ban"></i></button>';
@@ -544,12 +593,14 @@
                         </select>
                     </div>
                     <br>
-                    <button type="submit" class="btn bg-indigo-dark text-white w-100">Actualizar Horario</button>
+                    <button type="submit" class="btn bg-indigo-dark text-white ">Actualizar Horario</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+
 </div>
 </div>
 </form>
@@ -651,13 +702,13 @@
         let icon = '';
 
         if (medio == 'WhatsApp') {
-            btnClass = 'bg-lime-dark w-100';
+            btnClass = 'bg-lime-dark ';
             icon = '<i class="bi bi-whatsapp"></i>';
         } else if (medio == 'Teléfono') {
-            btnClass = 'bg-teal-dark w-100';
+            btnClass = 'bg-teal-dark ';
             icon = '<i class="bi bi-telephone"></i>';
         } else if (medio == 'Correo') {
-            btnClass = 'bg-amber-light w-100';
+            btnClass = 'bg-amber-light ';
             icon = '<i class="bi bi-envelope"></i>';
         }
 
@@ -1041,7 +1092,7 @@
                                 </select>
                             </div>
                             <input type="hidden" name="id" value="${id}">
-                            <button type="submit" class="btn bg-indigo-dark text-white w-100">Actualizar</button>
+                            <button type="submit" class="btn bg-indigo-dark text-white ">Actualizar</button>
                         </form>
                     </div>
                 </div>
@@ -1110,6 +1161,239 @@
                             icon: 'error',
                             title: 'Error',
                             text: 'Hubo un problema al actualizar la información.'
+                        });
+                    }
+                }
+            }
+        };
+
+        xhr.send(formData);
+    }
+
+    function mostrarModalActualizarNombre(id) {
+        // Remover cualquier modal previo del DOM
+        $('#modalActualizarNombre_' + id).remove();
+
+        // Crear el modal dinámicamente
+        const modalHtml = `
+        <div id="modalActualizarNombre_${id}" class="modal fade" aria-hidden="true" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-indigo-dark">
+                        <h5 class="modal-title text-center">
+                            <i class="bi bi-person"></i> Actualizar Nombre
+                        </h5>
+                        <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formActualizarNombre_${id}">
+                            <div class="form-group mb-3">
+                                <label>Primer Nombre:</label>
+                                <input type="text" class="form-control" name="primerNombre" value="<?= htmlspecialchars($row['first_name']) ?>" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Segundo Nombre:</label>
+                                <input type="text" class="form-control" name="segundoNombre" value="<?= htmlspecialchars($row['second_name']) ?>">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Primer Apellido:</label>
+                                <input type="text" class="form-control" name="primerApellido" value="<?= htmlspecialchars($row['first_last']) ?>" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Segundo Apellido:</label>
+                                <input type="text" class="form-control" name="segundoApellido" value="<?= htmlspecialchars($row['second_last']) ?>">
+                            </div>
+                            <input type="hidden" name="id" value="${id}">
+                            <button type="submit" class="btn bg-indigo-dark text-white ">Actualizar Nombre</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        // Añadir el modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        $('#modalActualizarNombre_' + id).modal('show');
+
+        // Manejar el envío del formulario
+        $('#formActualizarNombre_' + id).on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar el nombre?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData(this);
+                    actualizarNombre(id, formData);
+                    $('#modalActualizarNombre_' + id).modal('hide');
+                }
+            });
+        });
+    }
+
+    function actualizarNombre(id, formData) {
+        // Validar que los campos requeridos no estén vacíos
+        const primerNombre = formData.get('primerNombre').trim();
+        const primerApellido = formData.get('primerApellido').trim();
+
+        if (!primerNombre || !primerApellido) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'El primer nombre y primer apellido son obligatorios'
+            });
+            return;
+        }
+
+        // Convertir nombres a formato título (primera letra mayúscula)
+        formData.set('primerNombre', capitalizarPalabra(primerNombre));
+        formData.set('segundoNombre', capitalizarPalabra(formData.get('segundoNombre').trim()));
+        formData.set('primerApellido', capitalizarPalabra(primerApellido));
+        formData.set('segundoApellido', capitalizarPalabra(formData.get('segundoApellido').trim()));
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/individualSearch/actualizar_nombre.php", true);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    const response = xhr.responseText.trim();
+                    console.log("Respuesta del servidor:", response); // Debug
+
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'El nombre se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar el nombre: ' + response
+                        });
+                    }
+                } else {
+                    console.error("Error en la petición:", xhr.status);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error en la conexión con el servidor'
+                    });
+                }
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error("Error de red");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error de conexión con el servidor'
+            });
+        };
+
+        xhr.send(formData);
+    }
+
+    // Función auxiliar para capitalizar palabras
+    function capitalizarPalabra(str) {
+        if (!str) return '';
+        return str.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
+
+    function mostrarModalActualizarNacimiento(id) {
+        // Remover cualquier modal previo del DOM
+        $('#modalActualizarNacimiento_' + id).remove();
+
+        // Crear el modal dinámicamente
+        const modalHtml = `
+            <div id="modalActualizarNacimiento_${id}" class="modal fade" aria-hidden="true" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-indigo-dark">
+                            <h5 class="modal-title text-center">
+                                <i class="bi bi-calendar-date"></i> Actualizar Fecha de Nacimiento
+                            </h5>
+                            <button type="button" class="btn-close bg-gray-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formActualizarNacimiento_${id}">
+                                <div class="form-group mb-3">
+                                    <label>Nueva fecha de nacimiento:</label>
+                                    <input type="date" class="form-control" name="nuevaFecha" required max="<?php echo date('Y-m-d'); ?>">
+                                </div>
+                                <input type="hidden" name="id" value="${id}">
+                                <button type="submit" class="btn bg-indigo-dark text-white ">Actualizar Fecha</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+        // Añadir el modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        $('#modalActualizarNacimiento_' + id).modal('show');
+
+        // Manejar el envío del formulario
+        $('#formActualizarNacimiento_' + id).on('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Desea actualizar la fecha de nacimiento?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData(this);
+                    actualizarNacimiento(id, formData);
+                    $('#modalActualizarNacimiento_' + id).modal('hide');
+                }
+            });
+        });
+    }
+
+    function actualizarNacimiento(id, formData) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "components/individualSearch/actualizar_nacimiento.php", true);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    const response = xhr.responseText.trim();
+                    if (response === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: 'La fecha de nacimiento se ha actualizado correctamente.',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al actualizar la fecha de nacimiento.'
                         });
                     }
                 }

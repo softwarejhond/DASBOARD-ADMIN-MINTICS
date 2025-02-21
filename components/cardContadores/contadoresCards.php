@@ -68,6 +68,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                     <a href="registrarionsContact.php" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
             </div>
+            <div class="progress mt-3">
+                <div id="progress-bar-1" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </div>
     </div>
 
@@ -83,6 +86,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                     <h2><span id="total_usuarios"><?php echo $total_usuarios; ?></span></h2>
                     <a href="verifiedUsers.php" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
+            </div>
+            <div class="progress mt-3">
+                <div id="progress-bar-2" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
     </div>
@@ -103,6 +109,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                     <a href="#" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
             </div>
+            <div class="progress mt-3">
+                <div id="progress-bar-3" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </div>
     </div>
 
@@ -121,6 +130,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                     </h2>
                     <a href="#" class="btn btn-light btn-sm">Ver detalles</a>
                 </div>
+            </div>
+            <div class="progress mt-3">
+                <div id="progress-bar-4" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
     </div>
@@ -141,10 +153,16 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
                     <a href="#" class="btn btn-light btn-sm">Registrados por el formulario de la Gobernación</a>
                 </div>
             </div>
+            <div class="progress mt-3">
+                <div id="progress-bar-5" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </div>
     </div>
 
 </div>
+
+<!-- Asegúrate de incluir jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
 $(document).ready(function () {
@@ -170,8 +188,25 @@ $(document).ready(function () {
         });
     }
 
-    // Actualizar los contadores cada 5 segundos
-    actualizarContadores();
-    setInterval(actualizarContadores, 5000);
+    function actualizarBarraProgreso() {
+        var progreso = 0;
+        var intervalo = setInterval(function() {
+            progreso += 1.43; // Incremento para completar 100% en 7 segundos
+            $('.progress-bar').css('width', progreso + '%').attr('aria-valuenow', progreso);
+            if (progreso >= 100) {
+                clearInterval(intervalo);
+                $('.progress-bar').css('width', '0%').attr('aria-valuenow', 0); // Reiniciar la barra de progreso
+            }
+        }, 100); // Actualizar cada 100ms
+    }
+
+    // Actualizar los contadores y la barra de progreso cada 7 segundos
+    function iniciarActualizacion() {
+        actualizarContadores();
+        actualizarBarraProgreso();
+    }
+
+    iniciarActualizacion();
+    setInterval(iniciarActualizacion, 7000);
 });
 </script>

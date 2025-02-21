@@ -14,13 +14,12 @@
 <?php
 
 // Parámetros de paginación
-$limit = isset($_GET['filterHeadquarters']) ? 1000 : 30; // Número de registros por página
+$limit = 60; // Número de registros por página
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Parámetro de búsqueda
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$filterHeadquarters = isset($_GET['filterHeadquarters']) ? $_GET['filterHeadquarters'] : '';
 
 // Obtener los datos con paginación y búsqueda
 $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
@@ -30,7 +29,6 @@ $sql = "SELECT user_register.*, municipios.municipio, departamentos.departamento
     WHERE departamentos.id_departamento IN (15, 25)
     AND user_register.status = '1' AND user_register.statusAdmin = '0'
     AND (user_register.first_name LIKE ? OR user_register.number_id LIKE ?)
-    " . ($filterHeadquarters ? "AND user_register.headquarters = ?" : "") . "
     ORDER BY user_register.first_name ASC
     LIMIT ? OFFSET ?";
 
@@ -41,11 +39,7 @@ $sqlContactLog = "SELECT cl.*, a.name AS advisor_name
 
 $stmt = $conn->prepare($sql);
 $searchParam = "%$search%";
-if ($filterHeadquarters) {
-    $stmt->bind_param('sssii', $searchParam, $searchParam, $filterHeadquarters, $limit, $offset);
-} else {
-    $stmt->bind_param('ssii', $searchParam, $searchParam, $limit, $offset);
-}
+$stmt->bind_param('ssii', $searchParam, $searchParam, $limit, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
 $data = [];
@@ -143,16 +137,10 @@ $totalSql = "SELECT COUNT(*) as total FROM user_register
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
     INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
     WHERE departamentos.id_departamento IN (15, 25)
-    AND user_register.status = '1' AND user_register.statusAdmin = '0'
-    AND (user_register.first_name LIKE ? OR user_register.number_id LIKE ?)
-    " . ($filterHeadquarters ? "AND user_register.headquarters = ?" : "");
-
+    AND user_register.status = '1' AND user_register.statusAdmin = '' AND user_register.department=15 OR user_register.department=25
+    AND (user_register.first_name LIKE ? OR user_register.number_id LIKE ?)";
 $stmtTotal = $conn->prepare($totalSql);
-if ($filterHeadquarters) {
-    $stmtTotal->bind_param('sss', $searchParam, $searchParam, $filterHeadquarters);
-} else {
-    $stmtTotal->bind_param('ss', $searchParam, $searchParam);
-}
+$stmtTotal->bind_param('ss', $searchParam, $searchParam);
 $stmtTotal->execute();
 $totalResult = $stmtTotal->get_result();
 $totalRows = $totalResult->fetch_assoc()['total'];
@@ -167,7 +155,7 @@ $totalPages = ceil($totalRows / $limit);
     <div class=" mt-4">
         <div class="row align-items-center">
 
-
+            
 
             <!-- Formulario de búsqueda -->
             <div class="col-md-4 col-sm-12 mb-3 text-center">
@@ -178,64 +166,64 @@ $totalPages = ceil($totalRows / $limit);
                     <button type="submit" class="btn btn-sm bg-indigo-dark text-white w-100"><i class="bi bi-search"></i> Buscar</button>
                 </form>
             </div>
-            <!-- Filtro por sede -->
-            <div class="col-md-4">
+   <!-- Filtro por sede -->
+   <div class="col-md-4">
                 <div class="filter-title"><i class="bi bi-building"></i> Sede</div>
                 <div class="card filter-card card-headquarters" data-icon="🏫">
-                    <select id="filterHeadquarters" class="form-select">
-                        <option value="">Todas las sedes</option>
-                        <?php foreach ($sedes as $sede): ?>
-                            <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                        <select id="filterHeadquarters" class="form-select">
+                            <option value="">Todas las sedes</option>
+                            <?php foreach ($sedes as $sede): ?>
+                                <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                 </div>
             </div>
             <!-- Indicador y paginación -->
             <div class="col-md-4 col-sm-12">
                 <p class="h6 pb-2 mb-2 text-indigo-dark"><b>Navega entre páginas para ver más registros.</b></p>
                 <nav aria-label="Page navigation">
-    <ul class="pagination">
-        <!-- Botón Anterior -->
-        <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-            <a class="page-link btn-sm" href="?page=<?php echo max(1, $page - 1); ?>&search=<?php echo htmlspecialchars($search); ?>&filterHeadquarters=<?php echo htmlspecialchars($filterHeadquarters); ?>">
-                &laquo; Anterior
-            </a>
-        </li>
+                    <ul class="pagination">
+                        <!-- Botón Anterior -->
+                        <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link btn-sm" href="?page=<?php echo max(1, $page - 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
+                                &laquo; Anterior
+                            </a>
+                        </li>
 
-        <!-- Primera página -->
-        <?php if ($page > 2): ?>
-            <li class="page-item"><a class="page-link btn-sm" href="?page=1&search=<?php echo htmlspecialchars($search); ?>&filterHeadquarters=<?php echo htmlspecialchars($filterHeadquarters); ?>">1</a></li>
-            <?php if ($page > 3): ?>
-                <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
-            <?php endif; ?>
-        <?php endif; ?>
+                        <!-- Primera página -->
+                        <?php if ($page > 2): ?>
+                            <li class="page-item"><a class="page-link btn-sm" href="?page=1&search=<?php echo htmlspecialchars($search); ?>">1</a></li>
+                            <?php if ($page > 3): ?>
+                                <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
+                            <?php endif; ?>
+                        <?php endif; ?>
 
-        <!-- Páginas visibles -->
-        <?php for ($i = max(1, $page - 1); $i <= min($totalPages, $page + 1); $i++): ?>
-            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-                <a class="page-link btn-sm" href="?page=<?php echo $i; ?>&search=<?php echo htmlspecialchars($search); ?>&filterHeadquarters=<?php echo htmlspecialchars($filterHeadquarters); ?>"><?php echo $i; ?></a>
-            </li>
-        <?php endfor; ?>
+                        <!-- Páginas visibles -->
+                        <?php for ($i = max(1, $page - 1); $i <= min($totalPages, $page + 1); $i++): ?>
+                            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                                <a class="page-link btn-sm" href="?page=<?php echo $i; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
 
-        <!-- Última página -->
-        <?php if ($page < $totalPages - 1): ?>
-            <?php if ($page < $totalPages - 2): ?>
-                <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
-            <?php endif; ?>
-            <li class="page-item"><a class="page-link btn-sm" href="?page=<?php echo $totalPages; ?>&search=<?php echo htmlspecialchars($search); ?>&filterHeadquarters=<?php echo htmlspecialchars($filterHeadquarters); ?>"><?php echo $totalPages; ?></a></li>
-        <?php endif; ?>
+                        <!-- Última página -->
+                        <?php if ($page < $totalPages - 1): ?>
+                            <?php if ($page < $totalPages - 2): ?>
+                                <li class="page-item disabled"><span class="page-link btn-sm">...</span></li>
+                            <?php endif; ?>
+                            <li class="page-item"><a class="page-link btn-sm" href="?page=<?php echo $totalPages; ?>&search=<?php echo htmlspecialchars($search); ?>"><?php echo $totalPages; ?></a></li>
+                        <?php endif; ?>
 
-        <!-- Botón Siguiente -->
-        <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
-            <a class="page-link btn-sm" href="?page=<?php echo min($totalPages, $page + 1); ?>&search=<?php echo htmlspecialchars($search); ?>&filterHeadquarters=<?php echo htmlspecialchars($filterHeadquarters); ?>">
-                Siguiente &raquo;
-            </a>
-        </li>
-    </ul>
-</nav>
+                        <!-- Botón Siguiente -->
+                        <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link btn-sm" href="?page=<?php echo min($totalPages, $page + 1); ?>&search=<?php echo htmlspecialchars($search); ?>">
+                                Siguiente &raquo;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
-
+         
         </div>
     </div>
 
@@ -1351,16 +1339,23 @@ $totalPages = ceil($totalRows / $limit);
             html: true
         });
     });
-   document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         const filterHeadquarters = document.getElementById('filterHeadquarters');
         const tabla = document.getElementById('listaInscritos');
 
         if (filterHeadquarters && tabla) {
             filterHeadquarters.addEventListener('change', function() {
                 const sede = this.value;
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('filterHeadquarters', sede);
-                window.location.search = urlParams.toString();
+                const filas = tabla.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+                for (let fila of filas) {
+                    const celdaSede = fila.cells[16]; // Índice de la columna de sede (ajustar si es necesario)
+                    if (sede === '' || celdaSede.textContent.trim() === sede) {
+                        fila.style.display = ''; // Mostrar fila
+                    } else {
+                        fila.style.display = 'none'; // Ocultar fila
+                    }
+                }
             });
         }
     });
