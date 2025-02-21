@@ -5,6 +5,11 @@ require '.././../controller/conexion.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 try {
+    // Obtener total de usuarios registrados
+    $sql_total_registrados = "SELECT COUNT(*) AS total_registrados FROM user_register";
+    $result_total_registrados = mysqli_query($conn, $sql_total_registrados);
+    $total_registrados = mysqli_fetch_assoc($result_total_registrados)['total_registrados'];
+
     // Obtener total de usuarios verificados
     $sql_total = "SELECT COUNT(*) AS total FROM user_register WHERE status = '1' AND statusAdmin = '1'";
     $result_total = mysqli_query($conn, $sql_total);
@@ -30,31 +35,62 @@ try {
     $result_GobernacionBoyaca = mysqli_query($conn, $sql_GobernacionBoyaca);
     $total_GobernacionBoyaca = mysqli_fetch_assoc($result_GobernacionBoyaca)['total_GobernacionBoyaca'];
 
-    // Obtener total de contactos establecidos (Sí)
-    $sql_contacto_si = "SELECT COUNT(DISTINCT ur.number_id) AS total_contacto_si FROM user_register ur
-                        JOIN contact_log cl ON ur.number_id = cl.number_id
-                        WHERE cl.contact_established = '1'";
+    // Obtener total de contactos establecidos (Sí) y su porcentaje
+    $sql_contacto_si = "SELECT 
+                            COUNT(DISTINCT cl.number_id) AS total_contactos,
+                            (COUNT(DISTINCT cl.number_id) / (SELECT COUNT(*) FROM user_register) * 100) AS porcentaje
+                        FROM contact_log cl
+                        WHERE cl.contact_established = 1";
     $result_contacto_si = mysqli_query($conn, $sql_contacto_si);
-    $total_contacto_si = mysqli_fetch_assoc($result_contacto_si)['total_contacto_si'];
+    $contacto_si_data = mysqli_fetch_assoc($result_contacto_si);
+    $total_contacto_si = $contacto_si_data['total_contactos'];
+    $porc_contacto_si = round($contacto_si_data['porcentaje'], 2);
 
-    // Obtener total de contactos no establecidos (No)
-    $sql_contacto_no = "SELECT COUNT(DISTINCT ur.number_id) AS total_contacto_no FROM user_register ur
-                        JOIN contact_log cl ON ur.number_id = cl.number_id
-                        WHERE cl.contact_established = '0'";
+    // Obtener total de contactos no establecidos (No) y su porcentaje
+    $sql_contacto_no = "SELECT 
+                            COUNT(DISTINCT cl.number_id) AS total_contactos,
+                            (COUNT(DISTINCT cl.number_id) / (SELECT COUNT(*) FROM user_register) * 100) AS porcentaje
+                        FROM contact_log cl
+                        WHERE cl.contact_established = 0";
     $result_contacto_no = mysqli_query($conn, $sql_contacto_no);
-    $total_contacto_no = mysqli_fetch_assoc($result_contacto_no)['total_contacto_no'];
+    $contacto_no_data = mysqli_fetch_assoc($result_contacto_no);
+    $total_contacto_no = $contacto_no_data['total_contactos'];
+    $porc_contacto_no = round($contacto_no_data['porcentaje'], 2);
+
+    // Obtener total de contactos establecidos (Sí) y su porcentaje cuando su estado es 1 y statusAdmin es 1
+    $sql_contacto_si_admin = "SELECT 
+        COUNT(DISTINCT cl.number_id) AS total_contactos_admin,
+        (COUNT(DISTINCT cl.number_id) / (SELECT COUNT(*) FROM user_register) * 100) AS porcentaje_admin
+    FROM contact_log cl
+    JOIN user_register ur ON cl.number_id = ur.number_id
+    WHERE cl.contact_established = 1 AND ur.statusAdmin = 1";
+    $result_contacto_si_admin = mysqli_query($conn, $sql_contacto_si_admin);
+    $contacto_si_data_admin = mysqli_fetch_assoc($result_contacto_si_admin);
+    $total_contacto_si_admin = $contacto_si_data_admin['total_contactos_admin'];
+    $porc_contacto_si_admin = round($contacto_si_data_admin['porcentaje_admin'], 2);
+
+    // Obtener total de contactos no establecidos (No) y su porcentaje cuando su estado es 1 y statusAdmin es 1
+    $sql_contacto_no_admin = "SELECT 
+        COUNT(DISTINCT cl.number_id) AS total_contactos_admin,
+        (COUNT(DISTINCT cl.number_id) / (SELECT COUNT(*) FROM user_register) * 100) AS porcentaje_admin
+    FROM contact_log cl
+    JOIN user_register ur ON cl.number_id = ur.number_id
+    WHERE cl.contact_established = 0 AND ur.statusAdmin = 1";
+    $result_contacto_no_admin = mysqli_query($conn, $sql_contacto_no_admin);
+    $contacto_no_data_admin = mysqli_fetch_assoc($result_contacto_no_admin);
+    $total_contacto_no_admin = $contacto_no_data_admin['total_contactos_admin'];
+    $porc_contacto_no_admin = round($contacto_no_data_admin['porcentaje_admin'], 2);
 
     // Calcular porcentajes
     $porc_boyaca = ($total_usuarios > 0) ? round(($total_boyaca / $total_usuarios) * 100, 2) : 0;
     $porc_cundinamarca = ($total_usuarios > 0) ? round(($total_cundinamarca / $total_usuarios) * 100, 2) : 0;
     $porc_sinVerificar = ($total_usuarios > 0) ? round(($total_sinVerificar / $total_usuarios) * 100, 2) : 0;
     $porc_GobernacionBoyaca = ($total_usuarios > 0) ? round(($total_GobernacionBoyaca / $total_usuarios) * 100, 2) : 0;
-    $porc_contacto_si = ($total_usuarios > 0) ? round(($total_contacto_si / $total_usuarios) * 100, 2) : 0;
-    $porc_contacto_no = ($total_usuarios > 0) ? round(($total_contacto_no / $total_usuarios) * 100, 2) : 0;
 
     // Devolver los datos en formato JSON
     header('Content-Type: application/json');
     echo json_encode([
+        "total_registrados" => $total_registrados,
         "total_usuarios" => $total_usuarios,
         "total_boyaca" => $total_boyaca,
         "porc_boyaca" => $porc_boyaca,
@@ -67,7 +103,11 @@ try {
         "total_contacto_si" => $total_contacto_si,
         "porc_contacto_si" => $porc_contacto_si,
         "total_contacto_no" => $total_contacto_no,
-        "porc_contacto_no" => $porc_contacto_no
+        "porc_contacto_no" => $porc_contacto_no,
+        "total_contacto_si_admin" => $total_contacto_si_admin,
+        "porc_contacto_si_admin" => $porc_contacto_si_admin,
+        "total_contacto_no_admin" => $total_contacto_no_admin,
+        "porc_contacto_no_admin" => $porc_contacto_no_admin
     ]);
 } catch (Exception $e) {
     // Manejo de errores

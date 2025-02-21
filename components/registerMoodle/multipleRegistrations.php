@@ -245,16 +245,14 @@ foreach ($data as $row) {
                     <th>Nombre</th>
                     <th>Modalidad</th>
                     <th class="text-center">
-                        <input type="checkbox" id="selectAll" class="form-check-input"
-                            style="width: 25px; height: 25px; appearance: none; background-color: white; border: 2px solid #ec008c; cursor: pointer; position: relative;"
-                            onclick="toggleCheckboxes(this)">
+                    <i class="bi bi-patch-check-fill"></i>
                     </th>
                     <th>Email</th>
                     <th>Nuevo Email</th>
                     <th>Departamento</th>
                     <th>Sede</th>
                     <th>Programa</th>
-                    <th>Nivel de preferencia</th>
+                    <th>Preferencia</th>
 
                 </tr>
             </thead>
@@ -326,13 +324,13 @@ foreach ($data as $row) {
 
 
             <div class="offcanvas-body">
-
-                <div id="selectedUsersContainer"></div>
-                <div class="m-3">
+            <div class="m-3">
                     <button id="enrollSelectedUsers" class="btn bg-magenta-dark text-white w-100">
-                        <i class="bi bi-card-checklist"></i> Matricular Seleccionados
+                    <i class="bi bi-patch-check-fill"></i> Matricular Seleccionados
                     </button>
                 </div>
+                <div id="selectedUsersContainer"></div>
+            
             </div>
         </div>
 
