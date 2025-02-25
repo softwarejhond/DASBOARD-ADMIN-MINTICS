@@ -144,6 +144,7 @@
         </div>
     </div>
     <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
+        <div class="row">
         <!-- Tarjeta establecio contacto de los verificados -->
         <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
             <div class="card bg-teal-light shadow">
@@ -155,6 +156,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
+            <div class="card bg-teal-light shadow">
+                <div class="card-body d-flex align-items-center">
+
+                    <div class="text-container text-black">
+                        <h5 class="card-title"> <i class="bi bi-geo-alt-fill fa-2x text-black"></i> Registros por departamento</h5>
+                        <?php include("components/graphics/registerDeparments.php");  ?>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 </div>
