@@ -96,19 +96,17 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
             <?php endif; ?>
             <?php if ($rol === 'Administrador'): ?>
                 <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar datos">
-                    <button type="button" class="checkbox-wrapper btn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar datos"
-                    onclick="window.location.href='components/infoWeek/exportAll.php?action=export'">
-                        <span class="checkbox-tile">
-                            <span class="checkbox-icon">
-                                <i class="bi bi-file-earmark-excel-fill icono text-indigo-dark"></i>
+                    <a href="components/infoWeek/exportAll.php?action=export">
+                        <label class="checkbox-wrapper">
+                            <span class="checkbox-tile">
+                                <span class="checkbox-icon">
+                                    <i class="bi bi-file-earmark-excel-fill icono text-indigo-dark"></i>
+                                </span>
+                                <span class="checkbox-label">Exportar</span>
                             </span>
-                            <span class="checkbox-label">Exportar</span>
-                        </span>
-                    </button>
-
+                        </label>
+                    </a>
                 </div>
-
-
             <?php endif; ?>
 
         </fieldset>

@@ -3,7 +3,7 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 :root{
     --colorPrimario:#ec008c;
-    --colorVerde:#00976a
+    --colorVerde:#00976a;
     --blanco:#fff;
     --bs-primary-light: #cce5ff;      /* Azul claro */
     --bs-primary-dark: #004085;       /* Azul oscuro */

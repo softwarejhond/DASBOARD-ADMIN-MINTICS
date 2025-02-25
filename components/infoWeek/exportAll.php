@@ -18,6 +18,36 @@ if (isset($_GET['action']) && $_GET['action'] === 'export') {
 
 function exportDataToExcel($conn)
 {
+    // Obtener datos de la API DIVIPOLA
+    $divipolaData = file_get_contents('https://www.datos.gov.co/resource/gdxc-w37w.json?$limit=1112');
+    $divipolaArray = json_decode($divipolaData, true);
+
+    // Crear mapeos de nombres a códigos
+    $departamentosMap = [];
+    $municipiosMap = [];
+
+    foreach ($divipolaArray as $item) {
+        // Normalizar nombres
+        $dptoNormalizado = strtoupper(normalizeString($item['dpto']));
+        $mpioNormalizado = strtoupper(normalizeString($item['nom_mpio']));
+
+        // Manejar caso especial de Bogotá
+        if ($dptoNormalizado === 'BOGOTA, D.C.' || $dptoNormalizado === 'BOGOTA D.C.' || $dptoNormalizado === 'BOGOTA') {
+            $departamentosMap['BOGOTA'] = $item['cod_dpto'];
+            $departamentosMap['BOGOTA D.C.'] = $item['cod_dpto'];
+            $departamentosMap['BOGOTA, D.C.'] = $item['cod_dpto'];
+
+            // También mapear el municipio de Bogotá con sus variantes
+            $municipiosMap['BOGOTA|BOGOTA'] = $item['cod_mpio'];
+            $municipiosMap['BOGOTA D.C.|BOGOTA'] = $item['cod_mpio'];
+            $municipiosMap['BOGOTA, D.C.|BOGOTA'] = $item['cod_mpio'];
+        }
+
+        // Mapeo normal para otros departamentos y municipios
+        $departamentosMap[$dptoNormalizado] = $item['cod_dpto'];
+        $municipiosMap[$dptoNormalizado . '|' . $mpioNormalizado] = $item['cod_mpio'];
+    }
+
     // Obtener niveles de usuarios
     $nivelesUsuarios = obtenerNivelesUsuarios($conn);
 
@@ -38,12 +68,18 @@ function exportDataToExcel($conn)
         g.skills_teacher_id,
         g.id_skills,
         g.skills_name,
-        u.nombre as teacher_name
+        u1.nombre as bootcamp_teacher_name,
+        u2.nombre as le_teacher_name,
+        u3.nombre as ec_teacher_name,
+        u4.nombre as skills_teacher_name
     FROM user_register
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
     INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
     LEFT JOIN groups g ON user_register.number_id = g.number_id
-    LEFT JOIN users u ON g.bootcamp_teacher_id = u.username 
+    LEFT JOIN users u1 ON g.bootcamp_teacher_id = u1.username
+    LEFT JOIN users u2 ON g.le_teacher_id = u2.username
+    LEFT JOIN users u3 ON g.ec_teacher_id = u3.username
+    LEFT JOIN users u4 ON g.skills_teacher_id = u4.username
     WHERE departamentos.id_departamento IN (15, 25)
     AND user_register.status = '1' 
     ORDER BY user_register.first_name ASC";
@@ -146,18 +182,22 @@ function exportDataToExcel($conn)
                 'ID' => $row['id'],
                 'Tipo documento' => $row['typeID'],
                 'Número' => $row['number_id'],
-                'Primer Nombre' => $row['first_name'],
-                'Segundo Nombre' => $row['second_name'],
-                'Primer Apellido' => $row['first_last'],
-                'Segundo Apellido' => $row['second_last'],
-                'Fecha de Nacimiento' => $row['birthdate'],
+                'Primer Nombre' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['first_name'])),
+                'Segundo Nombre' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['second_name'])),
+                'Primer Apellido' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['first_last'])),
+                'Segundo Apellido' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['second_last'])),
+                'Fecha de Nacimiento' => date('d/m/Y', strtotime($row['birthdate'])),
                 'Edad' => $age,
                 'Correo' => $row['email'],
                 'Nacionalidad' => $row['nationality'],
-                'Código Departamento' => $row['department'],
+                'Código Departamento' => $departamentosMap[strtoupper(normalizeString($row['departamento']))] ?? $row['department'],
                 'Departamento' => $row['departamento'],
                 'Region' => '7',
-                'Código Municipio' => $row['municipality'],
+                'Código Municipio' => (strtoupper(normalizeString($row['municipio'])) === 'BOGOTA D.C.' ||
+                    strtoupper(normalizeString($row['municipio'])) === 'BOGOTA, D.C.' ||
+                    strtoupper(normalizeString($row['municipio'])) === 'BOGOTA')
+                    ? '11001'
+                    : ($municipiosMap[strtoupper(normalizeString($row['departamento'])) . '|' . strtoupper(normalizeString($row['municipio']))] ?? $row['municipality']),
                 'Municipio' => $row['municipio'],
                 'Teléfono principal' => $row['first_phone'],
                 'Teléfono secundario' => $row['second_phone'],
@@ -180,7 +220,7 @@ function exportDataToExcel($conn)
                 'Fecha de inicio' => '',
                 'Tiempo en segundos' => '',
                 'Eje tematico' => '',
-                'Eje final' => '',
+                'Eje final' => $row['program'],
                 'Puntaje eje tematico seleccionado' => $puntaje,
                 'Linea 1 programación' => '',
                 'Linea 2 inteligencia artificial' => '',
@@ -206,12 +246,12 @@ function exportDataToExcel($conn)
                 'Area 4 des seguridad' => '',
                 'Area 5 des solución de problemas' => '',
                 'Origen' => '',
-                'Matriculado' => ($row['statusAdmin'] == 3) ? 'si' : 'No',
-                'Estado' => '',
+                'Matriculado' => ($row['statusAdmin'] == 3) ? 'si' : '',
+                'Estado' => ($row['statusAdmin'] == 3) ? 'En formación' : '',
                 'Programa de interés' => $row['program'],
                 'Nivel' => $row['level'],
                 'Documento profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
-                'Nombre de profesor principal a cargo del programa de formación' => $row['teacher_name'],
+                'Nombre de profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_name'],
                 'Fecha de inicio del programa de formación' => '',
                 'Cohorte (1, 2, 3, 4, 5, 6, 7 o 8)' => '',
                 'Tipo de programa de formación' => '',
@@ -226,9 +266,9 @@ function exportDataToExcel($conn)
                 'Documento monitor' => '',
                 'Nombre monitor' => '',
                 'Documento ejecutor de ingles' => $row['ec_teacher_id'],
-                'Nombre ejecutor de ingles' => $row['teacher_name'],
+                'Nombre ejecutor de ingles' => $row['ec_teacher_name'],
                 'Documento ejecutor de habilidades de poder' => $row['skills_teacher_id'],
-                'Nombre ejecutor de habilidades de poder' => $row['teacher_name'],
+                'Nombre ejecutor de habilidades de poder' => $row['skills_teacher_name'],
             ];
         }
     }
@@ -305,4 +345,76 @@ function obtenerNivelesUsuarios($conn)
         }
     }
     return $niveles;
+}
+
+// Agregar esta función helper para normalizar strings
+function normalizeString($string)
+{
+    $unwanted_array = array(
+        'Š' => 'S',
+        'š' => 's',
+        'Ž' => 'Z',
+        'ž' => 'z',
+        'À' => 'A',
+        'Á' => 'A',
+        'Â' => 'A',
+        'Ã' => 'A',
+        'Ä' => 'A',
+        'Å' => 'A',
+        'Æ' => 'A',
+        'Ç' => 'C',
+        'È' => 'E',
+        'É' => 'E',
+        'Ê' => 'E',
+        'Ë' => 'E',
+        'Ì' => 'I',
+        'Í' => 'I',
+        'Î' => 'I',
+        'Ï' => 'I',
+        'Ñ' => 'N',
+        'Ò' => 'O',
+        'Ó' => 'O',
+        'Ô' => 'O',
+        'Õ' => 'O',
+        'Ö' => 'O',
+        'Ø' => 'O',
+        'Ù' => 'U',
+        'Ú' => 'U',
+        'Û' => 'U',
+        'Ü' => 'U',
+        'Ý' => 'Y',
+        'Þ' => 'B',
+        'ß' => 'Ss',
+        'à' => 'a',
+        'á' => 'a',
+        'â' => 'a',
+        'ã' => 'a',
+        'ä' => 'a',
+        'å' => 'a',
+        'æ' => 'a',
+        'ç' => 'c',
+        'è' => 'e',
+        'é' => 'e',
+        'ê' => 'e',
+        'ë' => 'e',
+        'ì' => 'i',
+        'í' => 'i',
+        'î' => 'i',
+        'ï' => 'i',
+        'ð' => 'o',
+        'ñ' => 'n',
+        'ò' => 'o',
+        'ó' => 'o',
+        'ô' => 'o',
+        'õ' => 'o',
+        'ö' => 'o',
+        'ø' => 'o',
+        'ù' => 'u',
+        'ú' => 'u',
+        'û' => 'u',
+        'ý' => 'y',
+        'þ' => 'b',
+        'ÿ' => 'y'
+    );
+    return strtr($string, $unwanted_array);
 }
