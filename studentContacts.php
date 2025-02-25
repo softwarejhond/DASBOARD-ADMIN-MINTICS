@@ -86,10 +86,10 @@ $contactHistory = $stmtHistory->get_result()->fetch_all(MYSQLI_ASSOC);
             </div>
             <br><br>
             <hr>
-            <div class="container mt-4">
+            <div class="m-4">
                 <h2>
                     Estudiante:
-                    <span class="badge bg-magenta-dark"><?php echo htmlspecialchars($userData['first_name'] . ' ' .
+                    <span class="badge bg-magenta-dark text-capitalize"><?php echo htmlspecialchars($userData['first_name'] . ' ' .
                                                             $userData['second_name'] . ' ' .
                                                             $userData['first_last'] . ' ' .
                                                             $userData['second_last']); ?></span>
@@ -160,6 +160,7 @@ $contactHistory = $stmtHistory->get_result()->fetch_all(MYSQLI_ASSOC);
     </div>
 </div>
 
+<?php include("controller/footer.php"); ?>
 <?php include("controller/botonFlotanteDerecho.php"); ?>
 <?php include("components/sliderBarBotton.php"); ?>
 

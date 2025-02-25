@@ -350,19 +350,29 @@
                                 // Verificar condiciones para cada registro
                                 $isAccepted = false;
                                 if ($row['mode'] === 'Presencial') {
-                                    if (
-                                        $row['typeID'] === 'C.C' && $row['age'] > 17 &&
-                                        (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ')
-                                    ) {
-                                        $isAccepted = true;
+                                    if ($row['typeID'] === 'C.C' && $row['age'] > 17) {
+                                        // Primero verificamos que NO sea Bogotá
+                                        if ($row['municipality'] !== '107') {
+                                            // Luego verificamos que sea de los departamentos permitidos
+                                            if (
+                                                strtoupper($row['departamento']) === 'CUNDINAMARCA' ||
+                                                strtoupper($row['departamento']) === 'BOYACÁ'
+                                            ) {
+                                                $isAccepted = true;
+                                            }
+                                        }
                                     }
                                 } elseif ($row['mode'] === 'Virtual') {
-                                    if (
-                                        $row['typeID'] === 'C.C' && $row['age'] > 17 &&
-                                        (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
-                                        $row['internet'] === 'Sí'
-                                    ) {
-                                        $isAccepted = true;
+                                    // Similar lógica para modo virtual
+                                    if ($row['typeID'] === 'C.C' && $row['age'] > 17 && $row['internet'] === 'Sí') {
+                                        if ($row['municipality'] !== '107') {
+                                            if (
+                                                strtoupper($row['departamento']) === 'CUNDINAMARCA' ||
+                                                strtoupper($row['departamento']) === 'BOYACÁ'
+                                            ) {
+                                                $isAccepted = true;
+                                            }
+                                        }
                                     }
                                 }
 

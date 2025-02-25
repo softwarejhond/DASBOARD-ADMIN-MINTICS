@@ -271,7 +271,7 @@ $totalPages = ceil($totalRows / $limit);
                     </td>
                     <td class="text-center">
                         <a href="studentContacts.php?id=<?php echo $row['number_id']; ?>" class="btn btn-info" data-toggle="tooltip" title="Ver historial de llamadas">
-                            <i class="bi bi-telephone"></i>
+                            <i class="bi bi-eye"></i>
                         </a>
                     </td>
                 </tr>

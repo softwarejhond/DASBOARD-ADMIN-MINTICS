@@ -52,7 +52,7 @@ $rol = $infoUsuario['rol'];
 
         <div id="dashboard">
             <div class="position-relative bg-transparent">
-                <h2 class="position-absolute top-4 start-0"><i class="fa-solid fa-file-contract"></i> Registro de contactos</h2>
+                <h2 class="position-absolute top-4 start-0"><i class="bi bi-eye"></i> Ver registros</h2>
             </div>
             <br><br>
             <hr>

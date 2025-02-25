@@ -108,6 +108,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                         </a>
                     </div>
                 <?php endif; ?>
+                
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Perfil">
                     <a href="contactLogs.php"> <label class="checkbox-wrapper">
                             <span class="checkbox-tile">

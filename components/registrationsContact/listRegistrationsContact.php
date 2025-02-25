@@ -155,7 +155,7 @@ $totalPages = ceil($totalRows / $limit);
     <div class=" mt-4">
         <div class="row align-items-center">
 
-            
+
 
             <!-- Formulario de búsqueda -->
             <div class="col-md-4 col-sm-12 mb-3 text-center">
@@ -166,16 +166,16 @@ $totalPages = ceil($totalRows / $limit);
                     <button type="submit" class="btn btn-sm bg-indigo-dark text-white w-100"><i class="bi bi-search"></i> Buscar</button>
                 </form>
             </div>
-   <!-- Filtro por sede -->
-   <div class="col-md-4">
+            <!-- Filtro por sede -->
+            <div class="col-md-4">
                 <div class="filter-title"><i class="bi bi-building"></i> Sede</div>
                 <div class="card filter-card card-headquarters" data-icon="🏫">
-                        <select id="filterHeadquarters" class="form-select">
-                            <option value="">Todas las sedes</option>
-                            <?php foreach ($sedes as $sede): ?>
-                                <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <select id="filterHeadquarters" class="form-select">
+                        <option value="">Todas las sedes</option>
+                        <?php foreach ($sedes as $sede): ?>
+                            <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
             <!-- Indicador y paginación -->
@@ -223,7 +223,7 @@ $totalPages = ceil($totalRows / $limit);
                 </nav>
             </div>
 
-         
+
         </div>
     </div>
 
@@ -512,19 +512,29 @@ $totalPages = ceil($totalRows / $limit);
                         // Verificar condiciones para cada registro
                         $isAccepted = false;
                         if ($row['mode'] === 'Presencial') {
-                            if (
-                                $row['typeID'] === 'C.C' && $row['age'] > 17 &&
-                                (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ')
-                            ) {
-                                $isAccepted = true;
+                            if ($row['typeID'] === 'C.C' && $row['age'] > 17) {
+                                // Primero verificamos que NO sea Bogotá
+                                if ($row['municipality'] !== '107') {
+                                    // Luego verificamos que sea de los departamentos permitidos
+                                    if (
+                                        strtoupper($row['departamento']) === 'CUNDINAMARCA' ||
+                                        strtoupper($row['departamento']) === 'BOYACÁ'
+                                    ) {
+                                        $isAccepted = true;
+                                    }
+                                }
                             }
                         } elseif ($row['mode'] === 'Virtual') {
-                            if (
-                                $row['typeID'] === 'C.C' && $row['age'] > 17 &&
-                                (strtoupper($row['departamento']) === 'CUNDINAMARCA' || strtoupper($row['departamento']) === 'BOYACÁ') &&
-                                $row['internet'] === 'Sí'
-                            ) {
-                                $isAccepted = true;
+                            // Similar lógica para modo virtual
+                            if ($row['typeID'] === 'C.C' && $row['age'] > 17 && $row['internet'] === 'Sí') {
+                                if ($row['municipality'] !== '107') {
+                                    if (
+                                        strtoupper($row['departamento']) === 'CUNDINAMARCA' ||
+                                        strtoupper($row['departamento']) === 'BOYACÁ'
+                                    ) {
+                                        $isAccepted = true;
+                                    }
+                                }
                             }
                         }
 
