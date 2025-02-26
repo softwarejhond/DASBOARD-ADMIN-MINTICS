@@ -15,6 +15,11 @@ try {
     $result_total = mysqli_query($conn, $sql_total);
     $total_usuarios = mysqli_fetch_assoc($result_total)['total'];
 
+    // Obtener total de registros en la tabla groups
+    $sql_total_groups = "SELECT COUNT(*) AS total_groups FROM groups";
+    $result_total_groups = mysqli_query($conn, $sql_total_groups);
+    $total_groups = mysqli_fetch_assoc($result_total_groups)['total_groups'];
+
     // Obtener total de usuarios en Boyacá
     $sql_boyaca = "SELECT COUNT(*) AS total_boyaca FROM user_register WHERE status = '1' AND statusAdmin = '1' AND department = 15";
     $result_boyaca = mysqli_query($conn, $sql_boyaca);
@@ -81,17 +86,30 @@ try {
     $total_contacto_no_admin = $contacto_no_data_admin['total_contactos_admin'];
     $porc_contacto_no_admin = round($contacto_no_data_admin['porcentaje_admin'], 2);
 
+    // Obtener total de usuarios que conocieron el programa a través de Radio
+    $sql_radio = "SELECT COUNT(*) AS total_radio FROM user_register WHERE knowledge_program = 'Radio'";
+    $result_radio = mysqli_query($conn, $sql_radio);
+    $total_radio = mysqli_fetch_assoc($result_radio)['total_radio'];
+
+    // Obtener total de usuarios que conocieron el programa a través de Redes sociales
+    $sql_redes_sociales = "SELECT COUNT(*) AS total_redes_sociales FROM user_register WHERE knowledge_program = 'Redes sociales'";
+    $result_redes_sociales = mysqli_query($conn, $sql_redes_sociales);
+    $total_redes_sociales = mysqli_fetch_assoc($result_redes_sociales)['total_redes_sociales'];
+
     // Calcular porcentajes
     $porc_boyaca = ($total_usuarios > 0) ? round(($total_boyaca / $total_registrados) * 100, 2) : 0;
     $porc_cundinamarca = ($total_usuarios > 0) ? round(($total_cundinamarca / $total_registrados) * 100, 2) : 0;
     $porc_sinVerificar = ($total_usuarios > 0) ? round(($total_sinVerificar / $total_registrados) * 100, 2) : 0;
     $porc_GobernacionBoyaca = ($total_usuarios > 0) ? round(($total_GobernacionBoyaca / $total_registrados) * 100, 2) : 0;
+    $porc_matriculados = ($total_registrados > 0) ? round(($total_matriculados / $total_registrados) * 100, 2) : 0;
 
     // Devolver los datos en formato JSON
     header('Content-Type: application/json');
     echo json_encode([
         "total_registrados" => $total_registrados,
         "total_usuarios" => $total_usuarios,
+        "total_matriculados" => $total_matriculados,
+        "porc_matriculados" => $porc_matriculados,
         "total_boyaca" => $total_boyaca,
         "porc_boyaca" => $porc_boyaca,
         "total_cundinamarca" => $total_cundinamarca,
@@ -107,7 +125,10 @@ try {
         "total_contacto_si_admin" => $total_contacto_si_admin,
         "porc_contacto_si_admin" => $porc_contacto_si_admin,
         "total_contacto_no_admin" => $total_contacto_no_admin,
-        "porc_contacto_no_admin" => $porc_contacto_no_admin
+        "porc_contacto_no_admin" => $porc_contacto_no_admin,
+        "total_radio" => $total_radio,
+        "total_redes_sociales" => $total_redes_sociales,
+        "total_groups" => $total_groups
     ]);
 } catch (Exception $e) {
     // Manejo de errores

@@ -141,33 +141,85 @@
                     </div>
                 </div>
             </div>
+            <!-- Tarjeta Total de matriculados -->
+            <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
+                <div class="card bg-indigo-dark text-white shadow">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container me-3">
+                            <i class="fa-brands fa-the-red-yeti fa-4x text-white"></i>
+                        </div>
+                        <div class="text-container">
+                            <h5 class="card-title">Total de campistas matriculados</h5>
+                            <h2><span id="total_matriculados"></span></h2>
+                         
+                            <h6 id="current-time" class="text-white"><i class="bi bi-hourglass-split"></i> </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Tarjeta Usuarios que conocieron el programa por Radio -->
+
         </div>
     </div>
     <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
         <div class="row">
-        <!-- Tarjeta establecio contacto de los verificados -->
-        <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
-            <div class="card bg-teal-light shadow">
-                <div class="card-body d-flex align-items-center">
+            <!-- Tarjeta establecio contacto de los verificados -->
+            <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
+                <div class="card bg-teal-light shadow">
+                    <div class="card-body d-flex align-items-center">
 
-                    <div class="text-container text-black">
-                        <h5 class="card-title"> <i class="bi bi-geo-alt-fill fa-2x text-black"></i> Registros por departamento</h5>
-                        <?php include("components/graphics/registerDeparments.php");  ?>
+                        <div class="text-container text-black">
+                            <h5 class="card-title"> <i class="bi bi-geo-alt-fill fa-2x text-black"></i> Registros por departamento</h5>
+                            <?php include("components/graphics/registerDeparments.php");  ?>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
+                <div class="card bg-teal-light shadow">
+                    <div class="card-body d-flex align-items-center">
+
+                        <div class="text-container text-black">
+                            <h5 class="card-title"> <i class="bi bi-geo-alt-fill fa-2x text-black"></i> Registros por departamento</h5>
+                            <?php include("components/graphics/registerDeparments.php");  ?>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
+                <div class="card bg-purple-light text-dark shadow">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container me-3">
+                            <i class="bi bi-broadcast fa-3x text-gray-dark"></i>
+                        </div>
+                        <div class="text-container">
+                            <h5 class="card-title">Impacto por Radio</h5>
+                            <h2><span id="total_radio"></span></h2>
+                            <br>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
-            <div class="card bg-teal-light shadow">
-                <div class="card-body d-flex align-items-center">
-
-                    <div class="text-container text-black">
-                        <h5 class="card-title"> <i class="bi bi-geo-alt-fill fa-2x text-black"></i> Registros por departamento</h5>
-                        <?php include("components/graphics/registerDeparments.php");  ?>
+            
+            <!-- Tarjeta Usuarios que conocieron el programa por Redes Sociales -->
+            <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
+                <div class="card bg-pink-light text-dark shadow">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container me-3">
+                            <i class="bi bi-share-fill fa-3x text-gray-dark"></i>
+                        </div>
+                        <div class="text-container">
+                            <h5 class="card-title">Impacto por redes sociales</h5>
+                            <h2><span id="total_redes_sociales"></span></h2>
+                           <br>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+     
+                
         </div>
     </div>
 </div>
@@ -201,6 +253,9 @@
                     $('#porc_contacto_si_admin').text(data.porc_contacto_si_admin + '%');
                     $('#total_contacto_no_admin').text(data.total_contacto_no_admin);
                     $('#porc_contacto_no_admin').text(data.porc_contacto_no_admin + '%');
+                    $('#total_matriculados').text(data.total_groups);
+                    $('#total_radio').text(data.total_radio);
+                    $('#total_redes_sociales').text(data.total_redes_sociales);
                 },
                 error: function(error) {
                     console.error('Error al obtener los datos:', error);
@@ -220,6 +275,18 @@
             }, 1000); // Actualizar cada 1 segundo
         }
 
+        function actualizarHoraActual() {
+            var now = new Date();
+            var horas = now.getHours();
+            var minutos = now.getMinutes().toString().padStart(2, '0');
+            var segundos = now.getSeconds().toString().padStart(2, '0');
+            var ampm = horas >= 12 ? 'PM' : 'AM';
+            horas = horas % 12;
+            horas = horas ? horas : 12; // La hora '0' debe ser '12'
+            var horaActual = '<i class="bi bi-hourglass-split"></i> Actualización en tiempo real: ' + horas + ':' + minutos + ':' + segundos + ' ' + ampm;
+            $('#current-time').html(horaActual);
+        }
+
         // Ejecutar la función cada 5 segundos para actualizar en tiempo real
         function iniciarActualizacion() {
             actualizarContadores();
@@ -228,5 +295,6 @@
 
         iniciarActualizacion();
         setInterval(iniciarActualizacion, 5000);
+        setInterval(actualizarHoraActual, 1000); // Actualizar la hora cada segundo
     });
 </script>
