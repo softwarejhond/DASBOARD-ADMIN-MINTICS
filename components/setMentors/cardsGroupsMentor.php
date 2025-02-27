@@ -65,7 +65,7 @@ if ($resultado->num_rows > 0) {
         echo '
         <div class="col">
             <div class="card h-100 shadow-sm">
-               <div class="bg-magenta-dark p-3 text-center text-black" style="height:110px">
+               <div class="bg-lime-dark p-3 text-center text-black" style="height:110px">
                   <h5 class="card-title text-center">' . htmlspecialchars($row["nombre"]) . '</h5>
                     <h4 class="card-text text-indigo-dark">ID: ' . htmlspecialchars($row["id"]) . '</h4>
                </div>

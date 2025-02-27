@@ -1,6 +1,7 @@
 <?php
 // NO SE REQUIERE IMPORTAR LA CONEXIÓN PORQUE DESDE EL MAIN YA ESTÁ CONECTADA
-require '.././../controller/conexion.php';
+require  '../../controller/conexion.php';// Asegúrate de incluir la conexión a la BD
+
 // Agregar manejo de errores
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
