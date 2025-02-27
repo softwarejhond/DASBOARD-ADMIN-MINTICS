@@ -151,7 +151,7 @@
                         <div class="text-container">
                             <h5 class="card-title">Total de campistas matriculados</h5>
                             <h2><span id="total_matriculados"></span></h2>
-                         
+                         <hr class="m-1 mb-2">
                             <h6 id="current-time" class="text-white"><i class="bi bi-hourglass-split"></i> </h6>
                         </div>
                     </div>
@@ -183,6 +183,7 @@
                         <div class="text-container text-black">
                             <h5 class="card-title"> <i class="fa-solid fa-code-compare fa-2x text-black"></i> Registros VS  matriculados</h5>
                             <?php include("components/graphics/registerVsEnrolled.php");  ?>
+                           
                         </div>
                     </div>
                 </div>
@@ -197,7 +198,33 @@
                         <div class="text-container">
                             <h5 class="card-title">Impacto por Radio</h5>
                             <h2><span id="total_radio"></span></h2>
-                            <br>
+                            <hr class="m-1 mb-2">
+                            <canvas id="voice-waveform" width="300" height="20"></canvas>
+                            <script>
+                                const canvas = document.getElementById('voice-waveform');
+                                const ctx = canvas.getContext('2d');
+                                let waveOffset = 0;
+
+                                function drawWaveform() {
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                    ctx.beginPath();
+                                    ctx.moveTo(0, canvas.height / 2);
+
+                                    for (let x = 0; x < canvas.width; x++) {
+                                        const y = canvas.height / 2 + Math.sin((x + waveOffset) * 0.1) * 5;
+                                        ctx.lineTo(x, y);
+                                    }
+
+                                    ctx.strokeStyle = '#6f42c1'; // Color de la onda
+                                    ctx.lineWidth = 2;
+                                    ctx.stroke();
+
+                                    waveOffset += 1;
+                                    requestAnimationFrame(drawWaveform);
+                                }
+
+                                drawWaveform();
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -213,7 +240,10 @@
                         <div class="text-container">
                             <h5 class="card-title">Impacto por redes sociales</h5>
                             <h2><span id="total_redes_sociales"></span></h2>
-                           <br>
+                            <hr class="m-1 mb-2">
+                            <i class="bi bi-facebook fa-1x text-gray-dark me-2"></i>
+                            <i class="bi bi-instagram fa-1x text-gray-dark me-2"></i>
+                            <i class="bi bi-whatsapp fa-1x text-gray-dark"></i>
                         </div>
                     </div>
                 </div>
@@ -283,7 +313,7 @@
             var ampm = horas >= 12 ? 'PM' : 'AM';
             horas = horas % 12;
             horas = horas ? horas : 12; // La hora '0' debe ser '12'
-            var horaActual = '<i class="bi bi-hourglass-split"></i> Actualización en tiempo real: ' + horas + ':' + minutos + ':' + segundos + ' ' + ampm;
+            var horaActual = '<i class="bi bi-hourglass-split"></i> Actualiza en tiempo real: ' + horas + ':' + minutos + ':' + segundos + ' ' + ampm;
             $('#current-time').html(horaActual);
         }
 
