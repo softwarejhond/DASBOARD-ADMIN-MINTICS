@@ -107,22 +107,38 @@ $courses_data = getCourses();
                             <label class="form-label">Modalidad</label>
                             <select name="modalidad" id="modalidad" class="form-select" onchange="toggleSede()">
                                 <option value="">Seleccione modalidad</option>
-                                <option value="virtual">Virtual</option>
-                                <option value="Presencial">Presencial</option>
+                                <?php
+                                $modalidades = ['virtual' => 'Virtual', 'Presencial' => 'Presencial'];
+                                foreach ($modalidades as $valor => $texto): ?>
+                                    <option value="<?= htmlspecialchars($valor) ?>"><?= htmlspecialchars($texto) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
+
                         <!-- Selección de Sede -->
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12"><br>
                             <label class="form-label">Sede</label>
                             <select name="sede" id="sede" class="form-select">
                                 <option value="">Seleccione una sede</option>
-                                <option value="Cota">Cota</option>
-                                <option value="Tunja">Tunja</option>
-                                <option value="Sogamoso">Sogamoso</option>
-                                <option value="Soacha">Soacha</option>
-                                <option value="No aplica">No aplica</option>
+                                <?php
+                                $sedes = ['Cota', 'Tunja', 'Sogamoso', 'Soacha', 'No aplica'];
+                                foreach ($sedes as $sede): ?>
+                                    <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
+
+                        <!-- Selección de intensidad -->
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <label class="form-label">Intensidad horaria</label>
+                            <select name="intensidad" id="intensidad" class="form-select">
+                                <option value="">Seleccione intensidad</option>
+                                <?php for ($i = 0; $i <= 15; $i++): ?>
+                                    <option value="<?= $i ?>"><?= $i ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+
                         <!-- Selección de Fecha -->
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12"><br>
                             <label class="form-label">Fecha</label>
@@ -215,7 +231,7 @@ $courses_data = getCourses();
                         <th style="width: 8%">Presente</th>
                         <th style="width: 8%">Tarde</th>
                         <th style="width: 8%">Ausente</th>
-                        <th style="width: 8%">Festivo</th>
+                        <th style="width: 8%">Cumplimiento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -249,11 +265,12 @@ $courses_data = getCourses();
                     courseType: $('#courseType').val(),
                     modalidad: $('#modalidad').val(),
                     sede: $('#sede').val(),
-                    class_date: $('#class_date').val()
+                    class_date: $('#class_date').val(),
+                    intensidad: $('#intensidad').val()
                 };
 
                 // Verificar que todos los campos requeridos tengan valor
-                if (!data.bootcamp || !data.courseType || !data.modalidad || !data.sede || !data.class_date) {
+                if (!data.bootcamp || !data.courseType || !data.modalidad || !data.sede || !data.class_date || !data.intensidad) {
                     console.log('Por favor, complete todos los campos');
                     return;
                 }
@@ -281,8 +298,7 @@ $courses_data = getCourses();
                 toggleSede();
                 updateTable();
             });
-            $('#bootcamp, #courseType, #sede, #class_date').change(updateTable);
-
+            $('#bootcamp, #courseType, #sede, #class_date, #intensidad').change(updateTable);
             // Ejecutar toggleSede al cargar la página
             toggleSede();
         });
@@ -290,11 +306,15 @@ $courses_data = getCourses();
 
         $('#saveAttendance').click(function() {
             const attendanceData = {};
+            const intensityData = {}; // Nuevo objeto para almacenar las intensidades
 
             $('input[type="radio"]:checked').each(function() {
                 const studentId = $(this).attr('name').split('_')[2];
                 const status = $(this).data('estado');
+                const cumplimiento = $(`input[name="cumplimiento_${studentId}"]`).val(); // Obtener valor del input de cumplimiento
+
                 attendanceData[studentId] = status;
+                intensityData[studentId] = parseInt(cumplimiento); // Guardar el valor de cumplimiento
             });
 
             const postData = {
@@ -302,7 +322,9 @@ $courses_data = getCourses();
                 modalidad: $('#modalidad').val(),
                 sede: $('#sede').val(),
                 class_date: $('#class_date').val(),
-                attendance: attendanceData
+                course_type: $('#courseType').val(),
+                attendance: attendanceData,
+                intensity_data: intensityData // Enviar los valores de intensidad por estudiante
             };
 
             $.ajax({
@@ -319,7 +341,7 @@ $courses_data = getCourses();
                         }).then((result) => {
                             // Recargar la página después de cerrar el alert
                             location.reload();
-                        });;
+                        });
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -332,6 +354,36 @@ $courses_data = getCourses();
                     alert('Error en la solicitud: ' + xhr.responseText);
                 }
             });
+        });
+
+        // Manejar cambios en los radio buttons de asistencia
+        $(document).on('change', '.estado-asistencia', function() {
+            const studentId = $(this).data('student-id');
+            const estado = $(this).data('estado');
+            const cumplimientoInput = $(`input[name="cumplimiento_${studentId}"]`);
+            const maxValue = cumplimientoInput.data('max');
+
+            switch (estado) {
+                case 'presente':
+                    cumplimientoInput.val(maxValue);
+                    cumplimientoInput.prop('readonly', true);
+                    break;
+                case 'tarde':
+                    cumplimientoInput.val(maxValue);
+                    cumplimientoInput.prop('readonly', false);
+                    cumplimientoInput.attr('max', maxValue);
+                    // Agregar validación para el valor máximo
+                    cumplimientoInput.on('input', function() {
+                        if (parseFloat($(this).val()) > maxValue) {
+                            $(this).val(maxValue);
+                        }
+                    });
+                    break;
+                case 'ausente':
+                    cumplimientoInput.val(0);
+                    cumplimientoInput.prop('readonly', true);
+                    break;
+            }
         });
     </script>
 

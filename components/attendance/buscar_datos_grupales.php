@@ -23,6 +23,20 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
+// Función para obtener las horas totales según el tipo de curso
+function getHorasTotalesCurso($courseType) {
+    switch ($courseType) {
+        case 'bootcamp':
+            return 120; // Técnico
+        case 'english_code':
+            return 24;  // English Code
+        case 'skills':
+            return 15;  // Habilidades de poder
+        default:
+            return 0;
+    }
+}
+
 try {
     // Recoger y validar datos
     $bootcamp   = isset($_POST['bootcamp']) ? (int)$_POST['bootcamp'] : 0;
@@ -58,13 +72,17 @@ try {
     }
 
     // Modificar la consulta SQL sin la validación del profesor
-    $sql = "SELECT g.*, ar.attendance_status 
-            FROM groups g 
-            LEFT JOIN attendance_records ar ON g.number_id = ar.student_id 
-                AND ar.class_date = ? 
-            WHERE g.$courseIdColumn = ? 
-            AND g.mode = ? 
-            AND g.headquarters = ?";
+    $sql = "SELECT g.*, ar.attendance_status,
+        (SELECT COUNT(DISTINCT class_date) 
+         FROM attendance_records 
+         WHERE student_id = g.number_id 
+         AND (attendance_status = 'presente' OR attendance_status = 'tarde')) as total_attendance
+        FROM groups g 
+        LEFT JOIN attendance_records ar ON g.number_id = ar.student_id 
+            AND ar.class_date = ? 
+        WHERE g.$courseIdColumn = ? 
+        AND g.mode = ? 
+        AND g.headquarters = ?";
 
     $stmt = mysqli_prepare($conn, $sql);
     if (!$stmt) {
@@ -91,12 +109,38 @@ try {
     while ($row = mysqli_fetch_assoc($result)) {
         $attendanceStatus = $row['attendance_status'] ?? '';
 
+        // Obtener las horas según el tipo de curso
+        $horasAsistidas = 0;
+        switch ($courseType) {
+            case 'bootcamp':
+                $horasAsistidas = (float)$row['b_intensity'] ?? 0;
+                break;
+            case 'english_code':
+                $horasAsistidas = (float)$row['ec_intensity'] ?? 0;
+                break;
+            case 'skills':
+                $horasAsistidas = (float)$row['s_intensity'] ?? 0;
+                break;
+        }
+
+        // Obtener el total de horas para el tipo de curso
+        $totalHorasRequeridas = getHorasTotalesCurso($courseType);
+
+        // Calcular el porcentaje
+        $attendance_percent = ($totalHorasRequeridas > 0) ? ($horasAsistidas / $totalHorasRequeridas) * 100 : 0;
+
+        // Redondear para mejor visualización
+        $horasAsistidasRound = round($horasAsistidas, 1);
+        $totalHorasRequeridasRound = $totalHorasRequeridas;
+
+        $circumference = 2 * pi() * 21;
+        $offset = $circumference - ($circumference * ($attendance_percent / 100));
+
         $tableContent .= '<tr>
             <td class="text-center align-middle" style="width: 8%">' . htmlspecialchars($row['type_id']) . '</td>
             <td class="text-center align-middle" style="width: auto">' . htmlspecialchars($row['number_id']) . '</td>
             <td class="align-middle text-truncate" style="width: 30%; max-width: 300px">' . htmlspecialchars($row['full_name']) . '</td>
-            <td class="align-middle" style="width: 30%; max-width: 300px">' . htmlspecialchars($row['institutional_email']) . '</td>
-
+            <td class="email-cell">' . htmlspecialchars($row['institutional_email']) . '</td>
 
             <td class="text-center align-middle">
                 <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" 
@@ -114,9 +158,23 @@ try {
                     ' . ($attendanceStatus === 'ausente' ? 'checked' : '') . ' disabled>
             </td>
             <td class="text-center align-middle">
-                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" 
-                    class="form-check-input estado-asistencia" data-estado="festivo" 
-                    ' . ($attendanceStatus === 'festivo' ? 'checked' : '') . ' disabled>
+                <div class="circular-progress">
+                    <svg width="50" height="50">
+                        <circle class="progress-background" cx="25" cy="25" r="21" />
+                        <circle class="progress-bar" cx="25" cy="25" r="21" 
+                            stroke-dasharray="' . $circumference . '" 
+                            stroke-dashoffset="' . $offset . '" />
+                    </svg>
+                    <div class="progress-text">' . round($attendance_percent) . '%</div>
+                </div>
+            </td>
+            
+            <td class="text-center align-middle">
+                <div class="attendance-hours">
+                    <span class="font-weight-bold">' . $horasAsistidasRound . '</span> / 
+                    <span>' . $totalHorasRequeridasRound . '</span>
+                    <small class="d-block">hrs</small>
+                </div>
             </td>
 
             <td class="text-center align-middle">

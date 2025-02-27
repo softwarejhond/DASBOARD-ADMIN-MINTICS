@@ -155,7 +155,7 @@ $totalPages = ceil($totalRows / $limit);
     <div class=" mt-4">
         <div class="row align-items-center">
 
-            
+
 
             <!-- Formulario de búsqueda -->
             <div class="col-md-4 col-sm-12 mb-3 text-center">
@@ -166,16 +166,16 @@ $totalPages = ceil($totalRows / $limit);
                     <button type="submit" class="btn btn-sm bg-indigo-dark text-white w-100"><i class="bi bi-search"></i> Buscar</button>
                 </form>
             </div>
-   <!-- Filtro por sede -->
-   <div class="col-md-4">
+            <!-- Filtro por sede -->
+            <div class="col-md-4">
                 <div class="filter-title"><i class="bi bi-building"></i> Sede</div>
                 <div class="card filter-card card-headquarters" data-icon="🏫">
-                        <select id="filterHeadquarters" class="form-select">
-                            <option value="">Todas las sedes</option>
-                            <?php foreach ($sedes as $sede): ?>
-                                <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <select id="filterHeadquarters" class="form-select">
+                        <option value="">Todas las sedes</option>
+                        <?php foreach ($sedes as $sede): ?>
+                            <option value="<?= htmlspecialchars($sede) ?>"><?= htmlspecialchars($sede) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
             <!-- Indicador y paginación -->
@@ -223,7 +223,7 @@ $totalPages = ceil($totalRows / $limit);
                 </nav>
             </div>
 
-         
+
         </div>
     </div>
 
@@ -737,23 +737,52 @@ $totalPages = ceil($totalRows / $limit);
                                         <select class="form-control" id="nuevoHorario_<?php echo $row['number_id']; ?>" name="nuevoHorario" required>
                                             <option value="">Seleccionar</option>
                                             <?php if ($row['mode'] == 'Virtual'): ?>
-                                                <option value="Lunes a Viernes - 8:00 am a 12:00 am">Lunes a Viernes - 8:00 am a 12:00 am</option>
-                                                <option value="Lunes a Viernes - 1:00 pm a 5:00 pm">Lunes a Viernes - 1:00 pm a 5:00 pm</option>
-                                                <option value="Lunes a Viernes - 6:00 pm a 10:00 pm">Lunes a Viernes - 6:00 pm a 10:00 pm</option>
-                                                <option value="Lunes, Miércoles y Viernes - 7:00 am a 12:00 am">Lunes, Miércoles y Viernes - 7:00 am a 12:00 am</option>
-                                                <option value="Lunes, Miércoles y Viernes - 1:00 pm a 6:00 pm">Lunes, Miércoles y Viernes - 1:00 pm a 6:00 pm</option>
-                                                <option value="Lunes, Miércoles, Viernes y Sábado - 7:00 pm a 10:00 pm y Sábado de 7:00 am a 12:00 pm">Lunes, Miércoles, Viernes y Sábado - 7:00 pm a 10:00 pm y Sábado de 7:00 am a 12:00 pm</option>
+                                                <option value="LUNES A VIERNES DE 6:00 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 5:00 PM">LUNES A VIERNES DE 6:00 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 5:00 PM</option>
+                                                <option value="LUNES A VIERNES DE 1:00 PM A 6:00 PM Y SÁBADOS DE 7:00 AM A 5:00 PM">LUNES A VIERNES DE 1:00 PM A 6:00 PM Y SÁBADOS DE 7:00 AM A 5:00 PM</option>
+                                                <option value="LUNES A VIERNES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 7:00 AM A 5:00 PM">LUNES A VIERNES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 7:00 AM A 5:00 PM</option>
 
                                             <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Cota'): ?>
-                                                <option value="Viernes 2:00 pm a 6pm y Sábados 7:00 am a 5:00 pm">Viernes 2:00 pm a 6pm y Sabado 7:00 am a 5:00 pm</option>
+                                                <?php if (strtolower(trim($row['program'])) === 'programación' || strtolower(trim($row['program'])) === 'programacion'): ?>
+                                                    <option value="VIERNES DE 2:00 PM A 6:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM">VIERNES DE 2:00 PM A 6:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM</option>
+                                                <?php elseif (strtolower(trim($row['program'])) === 'análisis de datos' || strtolower(trim($row['program'])) === 'analisis de datos'): ?>
+                                                    <option value="VIERNES DE 2:00 PM A 6:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM">VIERNES DE 2:00 PM A 6:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM</option>
+                                                <?php endif; ?>
+
                                             <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Tunja'): ?>
-                                                <option value="Martes y Jueves 8:00 am a 1:00 pm - Sábados 7:00 am a 11:00 am">Martes y Jueves 8:00 am a 1:00 pm - Sábados 7:00 am a 11:00 am</option>
-                                                <option value="Martes y Jueves 2:00 pm a 6:00 pm - Sábados 11:00 am a 5:00 pm">Martes y Jueves 2:00 pm a 6:00 pm - Sábados 11:00 am a 5:00 pm</option>
+                                                <?php if ($row['program'] == 'Programación'): ?>
+                                                    <option value="MARTES DE 8:00 AM A 1:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM">MARTES DE 8:00 AM A 1:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM</option>
+                                                    <option value="MARTES DE 7:00 AM A 12:00 PM Y JUEVES 7:00 AM A 6:00 PM">MARTES DE 7:00 AM A 12:00 PM Y JUEVES 7:00 AM A 6:00 PM</option>
+                                                <?php elseif ($row['program'] == 'Análisis de datos'): ?>
+                                                    <option value="MARTES Y JUEVES DE 2:00 AM A 6:00 PM Y SÁBADO DE 11:00 AM A 5:00 PM">MARTES Y JUEVES DE 2:00 AM A 6:00 PM Y SÁBADO DE 11:00 AM A 5:00 PM</option>
+                                                    <option value="MARTES DE 7:00 AM A 12:00 PM Y JUEVES 7:00 AM A 6:00 PM">MARTES DE 7:00 AM A 12:00 PM Y JUEVES 7:00 AM A 6:00 PM</option>
+                                                <?php elseif ($row['program'] == 'Inteligencia Artificial'): ?>
+                                                    <option value="MARTES DE 2:00 PM A 6:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM">MARTES DE 2:00 PM A 6:00 PM Y SÁBADO DE 7:00 AM A 5:00 PM</option>
+                                                    <option value="MARTES DE 2:00 PM A 6:00 PM - JUEVES DE 7:00 AM A 1:00 PM y SÁBADOS DE 7:00 AM A 11:00 AM">MARTES DE 2:00 PM A 6:00 PM - JUEVES DE 7:00 AM A 1:00 PM y SÁBADOS DE 7:00 AM A 11:00 AM</option>
+                                                <?php endif; ?>
+
                                             <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Sogamoso'): ?>
-                                                <option value="Martes y Jueves 6:00pm a 9:00pm - Sábados 7:00 am a 4:30 pm">Martes y Jueves 6:00pm a 9:00pm - Sábados 7:00 am a 4:30 pm</option>
+                                                <?php if ($row['program'] == 'Programación'): ?>
+                                                    <option value="MARTES Y JUEVES DE 5:00 PM A 9:00 PM Y SÁBADOS DE 11:00 AM A 5:00 PM">MARTES Y JUEVES DE 5:00 PM A 9:00 PM Y SÁBADOS DE 11:00 AM A 5:00 PM</option>
+                                                <?php elseif ($row['program'] == 'Análisis de datos'): ?>
+                                                    <option value="MARTES Y JUEVES DE 12:00 PM A 5:00 PM Y SÁBADOS DE 7:00 AM A 11:00 AM">MARTES Y JUEVES DE 12:00 PM A 5:00 PM Y SÁBADOS DE 7:00 AM A 11:00 AM</option>
+                                                <?php elseif ($row['program'] == 'Inteligencia Artificial'): ?>
+                                                    <option value="MARTES Y JUEVES DE 5:00 PM A 9:00 PM Y SÁBADOS DE 11:00 AM A 5:00 PM">MARTES Y JUEVES DE 5:00 PM A 9:00 PM Y SÁBADOS DE 11:00 AM A 5:00 PM</option>
+                                                <?php endif; ?>
+
                                             <?php elseif ($row['mode'] == 'Presencial' && $row['headquarters'] == 'Soacha'): ?>
-                                                <option value="Martes y Jueves 7:00 am a 12:00 pm - Sábados 7:00 am a 12:00 pm">Martes y Jueves 7:00 am a 12:00 pm - Sábados 7:00 am a 12:00 pm</option>
-                                                <option value="Martes y Jueves 1:00 pm a 5:00 pm - Sábados 12:00 pm a 6:00 pm">Martes y Jueves 1:00 pm a 5:00 pm - Sábados 12:00 pm a 6:00 pm</option>
+                                                <?php if ($row['program'] == 'Programación'): ?>
+                                                    <option value="MARTES Y JUEVES DE 6:30 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 10:00 AM">MARTES Y JUEVES DE 6:30 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 10:00 AM</option>
+                                                    <option value="MARTES Y JUEVES DE 12:00 PM A 6:00 PM Y SÁBADOS DE 10:00 AM A 12:00 PM">MARTES Y JUEVES DE 12:00 PM A 6:00 PM Y SÁBADOS DE 10:00 AM A 12:00 PM</option>
+                                                    <option value="MARTES Y JUEVES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 12:00 PM A 6:00 PM">MARTES Y JUEVES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 12:00 PM A 6:00 PM</option>
+                                                <?php elseif ($row['program'] == 'Análisis de datos'): ?>
+                                                    <option value="MARTES Y JUEVES DE 6:30 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 10:00 AM">MARTES Y JUEVES DE 6:30 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 10:00 AM</option>
+                                                    <option value="MARTES Y JUEVES DE 12:00 PM A 6:00 PM Y SÁBADOS DE 10:00 AM A 12:00 PM">MARTES Y JUEVES DE 12:00 PM A 6:00 PM Y SÁBADOS DE 10:00 AM A 12:00 PM</option>
+                                                    <option value="MARTES Y JUEVES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 12:00 PM A 6:00 PM">MARTES Y JUEVES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 12:00 PM A 6:00 PM</option>
+                                                <?php elseif ($row['program'] == 'Inteligencia Artificial'): ?>
+                                                    <option value="MARTES Y JUEVES DE 6:30 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 10:00 AM">MARTES Y JUEVES DE 6:30 AM A 12:00 PM Y SÁBADOS DE 7:00 AM A 10:00 AM</option>
+                                                    <option value="MARTES Y JUEVES DE 12:00 PM A 6:00 PM Y SÁBADOS DE 10:00 AM A 12:00 PM">MARTES Y JUEVES DE 12:00 PM A 6:00 PM Y SÁBADOS DE 10:00 AM A 12:00 PM</option>
+                                                    <option value="MARTES Y JUEVES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 12:00 PM A 6:00 PM">MARTES Y JUEVES DE 6:00 PM A 10:00 PM Y SÁBADOS DE 12:00 PM A 6:00 PM</option>
+                                                <?php endif; ?>
                                             <?php endif; ?>
                                         </select>
                                     </div>

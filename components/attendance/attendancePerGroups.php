@@ -53,9 +53,20 @@ $courses_data = getCourses();
         }
 
         #listaInscritos th,
+
+        .email-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            word-wrap: break-word;
+            font-size: 0.9em;
+            line-height: 1.2;
+        }
+
         #listaInscritos td {
+            padding: 0.5rem;
             vertical-align: middle;
-            white-space: nowrap;
         }
 
         #listaInscritos td:nth-child(3) {
@@ -63,6 +74,7 @@ $courses_data = getCourses();
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
 
         .estado-asistencia {
             width: 25px;
@@ -83,6 +95,41 @@ $courses_data = getCourses();
 
         #historialContainer th {
             background-color: #f8f9fa;
+        }
+
+        .circular-progress {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            margin: auto;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+        }
+
+        .circular-progress circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-background {
+            stroke: #f0f0f0;
+        }
+
+        .progress-bar {
+            stroke: #ec008c;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -159,13 +206,14 @@ $courses_data = getCourses();
                     <tr class="text-center">
                         <th style="width: 5%">ID</th>
                         <th style="width: 10%">Número de ID</th>
-                        <th style="width: 20%">Nombre completo</th>
-                        <th style="width: 20%; word-wrap: break-word; max-width: 200px;">Correo institucional</th>
+                        <th style="width: 15%">Nombre completo</th>
+                        <th style="width: 20%">Correo institucional</th>
                         <th style="width: 8%">Presente</th>
                         <th style="width: 8%">Tarde</th>
                         <th style="width: 8%">Ausente</th>
-                        <th style="width: 8%">Festivo</th>
-                        <th style="width: 13%">Registro</th>
+                        <th style="width: 8%">Cumplimiento</th>
+                        <th style="width: 8%">Horas</th>
+                        <th style="width: 10%">Registro</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -312,6 +360,24 @@ $courses_data = getCourses();
     <!-- jQuery para la solicitud AJAX -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function animateProgressBars() {
+                document.querySelectorAll('.progress-bar').forEach(circle => {
+                    const offset = circle.getAttribute('stroke-dashoffset');
+                    circle.style.strokeDashoffset = circle.getAttribute('stroke-dasharray');
+                    setTimeout(() => {
+                        circle.style.strokeDashoffset = offset;
+                    }, 100);
+                });
+            }
+
+            // Llamar a la animación cuando se actualice la tabla
+            const observer = new MutationObserver(animateProgressBars);
+            observer.observe(document.querySelector('#listaInscritos tbody'), {
+                childList: true
+            });
+        });
+
         $(document).ready(function() {
 
             // Función para habilitar o deshabilitar la sede según la modalidad
@@ -351,12 +417,12 @@ $courses_data = getCourses();
                         if (response && response.html) {
                             $('#listaInscritos tbody').html(response.html);
                         } else {
-                            $('#listaInscritos tbody').html('<tr><td colspan="8" class="text-center">No se encontraron registros</td></tr>');
+                            $('#listaInscritos tbody').html('<tr><td colspan="10" class="text-center">No se encontraron registros</td></tr>');
                         }
                     },
                     error: (xhr, status, error) => {
                         console.error('Error en la solicitud:', error);
-                        $('#listaInscritos tbody').html('<tr><td colspan="8" class="text-center">Error al cargar los datos</td></tr>');
+                        $('#listaInscritos tbody').html('<tr><td colspan="10" class="text-center">Error al cargar los datos</td></tr>');
                     }
                 });
             };

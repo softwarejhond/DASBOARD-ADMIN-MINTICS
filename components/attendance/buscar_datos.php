@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $teacher_id = $_SESSION['username']; // Obtener el username de la sesión
-    
+
 
     // Recoger y validar datos
     $bootcamp   = isset($_POST['bootcamp']) ? (int)$_POST['bootcamp'] : 0;
@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sede       = $_POST['sede'] ?? '';
     $class_date = $_POST['class_date'] ?? '';
     $courseType = $_POST['courseType'] ?? '';
+    $intensidad = $_POST['intensidad'] ?? '0';
 
     if (empty($bootcamp) || empty($modalidad) || empty($sede) || empty($class_date) || empty($courseType)) {
         echo json_encode(['error' => 'Faltan datos requeridos']);
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $teacherColumn = '';
     $courseIdColumn = '';
 
-    switch($courseType) {
+    switch ($courseType) {
         case 'bootcamp':
             $teacherColumn = 'bootcamp_teacher_id';
             $courseIdColumn = 'id_bootcamp';
@@ -82,6 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Construir el contenido de la tabla
     $tableContent = '';
     while ($row = mysqli_fetch_assoc($result)) {
+        $cumplimiento = $intensidad;
+
         $tableContent .= '<tr>
             <td class="text-center align-middle" style="width: 8%">' . htmlspecialchars($row['type_id']) . '</td>
             <td class="text-center align-middle" style="width: auto">' . htmlspecialchars($row['number_id']) . '</td>
@@ -89,16 +92,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td class="align-middle">' . htmlspecialchars($row['institutional_email']) . '</td>
 
             <td class="text-center align-middle">
-                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) .'" class="form-check-input estado-asistencia" data-estado="presente">
+                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" class="form-check-input estado-asistencia" data-estado="presente" data-student-id="' . htmlspecialchars($row['number_id']) . '">
             </td>
             <td class="text-center align-middle">
-                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" class="form-check-input estado-asistencia" data-estado="tarde">
+                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" class="form-check-input estado-asistencia" data-estado="tarde" data-student-id="' . htmlspecialchars($row['number_id']) . '">
             </td>
             <td class="text-center align-middle">
-                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" class="form-check-input estado-asistencia" data-estado="ausente">
+                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" class="form-check-input estado-asistencia" data-estado="ausente" data-student-id="' . htmlspecialchars($row['number_id']) . '">
             </td>
             <td class="text-center align-middle">
-                <input type="radio" name="attendance_status_' . htmlspecialchars($row['number_id']) . '" class="form-check-input estado-asistencia" data-estado="festivo">
+                <input type="number" value="' . $cumplimiento . '" name="cumplimiento_' . htmlspecialchars($row['number_id']) . '" class="form-control text-center cumplimiento-input" data-max="' . $cumplimiento . '" readonly>
             </td>
         </tr>';
     }
