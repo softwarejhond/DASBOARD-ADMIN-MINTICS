@@ -193,6 +193,9 @@ function exportDataToExcel($conn)
             $victimaConflictoArmado = ($row['vulnerable_type'] === 'Victima del conflicto armado') ? 'Sí' : 'No';
 
 
+            // Verificar si el usuario está en la tabla groups
+            $estaEnGroups = !empty($row['id_bootcamp']) || !empty($row['id_leveling_english']) || !empty($row['id_english_code']) || !empty($row['id_skills']);
+
             // Construir fila de datos
             $data[] = [
                 'Ejecutor (contratista)' => '',
@@ -277,9 +280,14 @@ function exportDataToExcel($conn)
                 'area_3_des_contenidos_digitales' => '',
                 'area_4_des_seguridad' => '',
                 'area_5_des_solucion_de_problemas' => '',
-                'Origen' => 'UTT Region 7 LOTE 1',
-                'Matriculado' => ($row['statusAdmin'] == 3) ? 'Validado' : '',
-                'Estado' => ($row['statusAdmin'] == 3) ? 'En formación' : '',
+                'Origen' => 'UTTT-R7L1',
+                'Matriculado' => $estaEnGroups ? 'SI' : '',
+                'Estado' => match ($row['statusAdmin']) {
+                    '1' => 'Beneficiario en programación',
+                    '2' => 'No aprobado',
+                    '3' => 'En formación',
+                    default => 'Por verificar'
+                },
                 'Programa de interés' => $row['program'],
                 'Nivel' => $row['level'],
                 'Documento_Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
