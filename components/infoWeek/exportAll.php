@@ -193,6 +193,9 @@ function exportDataToExcel($conn)
             $victimaConflictoArmado = ($row['vulnerable_type'] === 'Victima del conflicto armado') ? 'Sí' : 'No';
 
 
+            // Verificar si el usuario está en la tabla groups
+            $estaEnGroups = !empty($row['id_bootcamp']) || !empty($row['id_leveling_english']) || !empty($row['id_english_code']) || !empty($row['id_skills']);
+
             // Construir fila de datos
             $data[] = [
                 'Ejecutor (contratista)' => '',
@@ -277,8 +280,8 @@ function exportDataToExcel($conn)
                 'area_3_des_contenidos_digitales' => '',
                 'area_4_des_seguridad' => '',
                 'area_5_des_solucion_de_problemas' => '',
-                'Origen' => 'UTT Region 7 LOTE 1',
-                'Matriculado' => ($row['statusAdmin'] == 3) ? 'Validado' : '',
+                'Origen' => 'UTTT-R7L1',
+                'Matriculado' => $estaEnGroups ? 'SI' : '',
                 'Estado' => match ($row['statusAdmin']) {
                     '1' => 'Beneficiario en programación',
                     '2' => 'No aprobado',
@@ -347,7 +350,7 @@ function exportDataToExcel($conn)
         ->getStartColor()->setARGB('FF90EE90');
 
     // Columnas BX a CI: color amarillo
-    $sheet->getStyle('BT1:CE1')
+    $sheet->getStyle('BT1:CG1')
         ->getFill()->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setARGB('FFFFFF00');
 
