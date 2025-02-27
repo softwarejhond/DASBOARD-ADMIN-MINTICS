@@ -53,26 +53,29 @@ function exportDataToExcel($conn)
 
     // Consulta principal
     $sql = "SELECT 
-        user_register.*, 
-        municipios.municipio, 
-        departamentos.departamento,
-        g.bootcamp_teacher_id,
-        g.id_bootcamp,
-        g.bootcamp_name,
-        g.le_teacher_id,
-        g.id_leveling_english,
-        g.leveling_english_name,
-        g.ec_teacher_id,
-        g.id_english_code,
-        g.english_code_name,
-        g.skills_teacher_id,
-        g.id_skills,
-        g.skills_name,
-        g.creation_date,
-        u1.nombre as bootcamp_teacher_name,
-        u2.nombre as le_teacher_name,
-        u3.nombre as ec_teacher_name,
-        u4.nombre as skills_teacher_name
+    user_register.*, 
+    municipios.municipio, 
+    departamentos.departamento,
+    g.bootcamp_teacher_id,
+    g.id_bootcamp,
+    g.bootcamp_name,
+    g.le_teacher_id,
+    g.id_leveling_english,
+    g.leveling_english_name,
+    g.ec_teacher_id,
+    g.id_english_code,
+    g.english_code_name,
+    g.skills_teacher_id,
+    g.id_skills,
+    g.skills_name,
+    g.creation_date,
+    u1.nombre as bootcamp_teacher_name,
+    u2.nombre as le_teacher_name,
+    u3.nombre as ec_teacher_name,
+    u4.nombre as skills_teacher_name,
+    (SELECT COALESCE(SUM(b_intensity), 0) + COALESCE(SUM(ec_intensity), 0) + COALESCE(SUM(s_intensity), 0) 
+     FROM groups 
+     WHERE number_id = user_register.number_id) as total_intensities
     FROM user_register
     INNER JOIN municipios ON user_register.municipality = municipios.id_municipio
     INNER JOIN departamentos ON user_register.department = departamentos.id_departamento
@@ -104,7 +107,18 @@ function exportDataToExcel($conn)
                       LEFT JOIN advisors a ON cl.idAdvisor = a.id
                       WHERE cl.number_id = ?";
 
-    
+    // Consulta para obtener el conteo de asistencias por estudiante
+    $sqlAttendance = "SELECT student_id, COUNT(*) as total_attendance 
+                        FROM attendance_records 
+                        GROUP BY student_id";
+    $resultAttendance = $conn->query($sqlAttendance);
+    $attendanceCount = [];
+
+    if ($resultAttendance && $resultAttendance->num_rows > 0) {
+        while ($attendance = $resultAttendance->fetch_assoc()) {
+            $attendanceCount[$attendance['student_id']] = $attendance['total_attendance'];
+        }
+    }
 
     if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -210,14 +224,13 @@ function exportDataToExcel($conn)
 
                 'Campesino' => '',
 
-                'Estrato' => ($row['stratum'] == '0' ? 'Sin estratificar' : 
-                            ($row['residence_area'] == 'Rural' ? $row['stratum'] . ' - Rural' : $row['stratum'])),
+                'Estrato' => ($row['stratum'] == '0' ? 'Sin estratificar' : ($row['residence_area'] == 'Rural' ? $row['stratum'] . ' - Rural' : $row['stratum'])),
 
                 'Autoidentificacion_Etnica' => ($row['ethnic_group'] === 'No aplica') ? 'Ninguna de las anteriores' : $row['ethnic_group'],
 
-                'Nivel_educacion' => match($row['training_level']) {
+                'Nivel_educacion' => match ($row['training_level']) {
                     'Primaria (hasta 5°)' => 'Básica Primaria (1-5)',
-                    'Secundaria (Hasta 9°)' => 'Básica Secundaria (6-9)', 
+                    'Secundaria (Hasta 9°)' => 'Básica Secundaria (6-9)',
                     'Media (Bachiller)' => 'Media (10-11)',
                     'Técnico', 'Tecnico' => 'Técnico Profesional',
                     'Pregrado' => 'Profesional Universitario',
@@ -266,7 +279,12 @@ function exportDataToExcel($conn)
                 'area_5_des_solucion_de_problemas' => '',
                 'Origen' => 'UTT Region 7 LOTE 1',
                 'Matriculado' => ($row['statusAdmin'] == 3) ? 'Validado' : '',
-                'Estado' => ($row['statusAdmin'] == 3) ? 'En formación' : '',
+                'Estado' => match ($row['statusAdmin']) {
+                    '1' => 'Beneficiario en programación',
+                    '2' => 'No aprobado',
+                    '3' => 'En formación',
+                    default => 'Por verificar'
+                },
                 'Programa de interés' => $row['program'],
                 'Nivel' => $row['level'],
                 'Documento_Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
@@ -279,8 +297,8 @@ function exportDataToExcel($conn)
                 'Observaciones (menos de 50 cracteres)' => '',
                 'Codigo del curso' => $row['id_bootcamp'],
                 'Nombre del curso' => $row['bootcamp_name'],
-                'Asistencias' => '',
-                'Asistencias programadas' => '',
+                'Asistencias' => $attendanceCount[$row['number_id']] ?? 0,
+                'Asistencias programadas' => $row['total_intensities'] ?? 0,
                 'Documento_Mentor' => '',
                 'Mentor' => '',
                 'Documento_Monitor' => '',
@@ -314,22 +332,22 @@ function exportDataToExcel($conn)
     $lastColumn = Coordinate::stringFromColumnIndex(count($headers));
 
     // Columnas A a BK: color durazno (peach)
-    $sheet->getStyle('A1:BK1')
+    $sheet->getStyle('A1:BF1')
         ->getFill()->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setARGB('FFDAB9');
 
     // Columnas BO a BU: color verde
-    $sheet->getStyle('BL1:BU1')
+    $sheet->getStyle('BG1:BQ1')
         ->getFill()->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setARGB('FF00FF00');
 
     // Columnas BV a BW: color verde claro
-    $sheet->getStyle('BV1:BW1')
+    $sheet->getStyle('BR1:BS1')
         ->getFill()->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setARGB('FF90EE90');
 
     // Columnas BX a CI: color amarillo
-    $sheet->getStyle('BX1:CI1')
+    $sheet->getStyle('BT1:CE1')
         ->getFill()->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setARGB('FFFFFF00');
 
