@@ -68,6 +68,7 @@ function exportDataToExcel($conn)
         g.skills_teacher_id,
         g.id_skills,
         g.skills_name,
+        g.creation_date,
         u1.nombre as bootcamp_teacher_name,
         u2.nombre as le_teacher_name,
         u3.nombre as ec_teacher_name,
@@ -102,6 +103,8 @@ function exportDataToExcel($conn)
                       FROM contact_log cl
                       LEFT JOIN advisors a ON cl.idAdvisor = a.id
                       WHERE cl.number_id = ?";
+
+    
 
     if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -173,102 +176,119 @@ function exportDataToExcel($conn)
             }
 
             //Victima del conflicto armado
-            $victimaConflictoArmado = ($row['vulnerable_type'] === 'Victima del conflicto armado') ? 'Sí' : '';
+            $victimaConflictoArmado = ($row['vulnerable_type'] === 'Victima del conflicto armado') ? 'Sí' : 'No';
 
 
             // Construir fila de datos
             $data[] = [
                 'Ejecutor (contratista)' => '',
-                'ID' => $row['id'],
-                'Tipo documento' => $row['typeID'],
-                'Número' => $row['number_id'],
-                'Primer Nombre' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['first_name'])),
-                'Segundo Nombre' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['second_name'])),
-                'Primer Apellido' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['first_last'])),
-                'Segundo Apellido' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['second_last'])),
-                'Fecha de Nacimiento' => date('d/m/Y', strtotime($row['birthdate'])),
-                'Edad' => $age,
+                'id' => $row['id'],
+                'Tipo_documento' => $row['typeID'],
+                'Número_documento' => $row['number_id'],
+                'Nombre1' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['first_name'])),
+                'Nombre2' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['second_name'])),
+                'Apellido1' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['first_last'])),
+                'Apellido2' => strtoupper(str_replace(['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'], ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U'], $row['second_last'])),
+                'Fecha_nacimiento' => date('d/m/Y', strtotime($row['birthdate'])),
                 'Correo' => $row['email'],
-                'Nacionalidad' => $row['nationality'],
-                'Código Departamento' => $departamentosMap[strtoupper(normalizeString($row['departamento']))] ?? $row['department'],
+                'Codigo_epartamento' => $departamentosMap[strtoupper(normalizeString($row['departamento']))] ?? $row['department'],
                 'Departamento' => $row['departamento'],
+
                 'Region' => '7',
-                'Código Municipio' => (strtoupper(normalizeString($row['municipio'])) === 'BOGOTA D.C.' ||
+
+                'Codigo_municipio' => (strtoupper(normalizeString($row['municipio'])) === 'BOGOTA D.C.' ||
                     strtoupper(normalizeString($row['municipio'])) === 'BOGOTA, D.C.' ||
                     strtoupper(normalizeString($row['municipio'])) === 'BOGOTA')
                     ? '11001'
                     : ($municipiosMap[strtoupper(normalizeString($row['departamento'])) . '|' . strtoupper(normalizeString($row['municipio']))] ?? $row['municipality']),
+
                 'Municipio' => $row['municipio'],
-                'Teléfono principal' => $row['first_phone'],
-                'Teléfono secundario' => $row['second_phone'],
-                'Genero' => $row['gender'],
+
+                'Telefono_movil' => $row['first_phone'],
+
+                'Genero' => ($row['gender'] === 'No binario' || $row['gender'] === 'No reporta') ? 'Otro' : $row['gender'],
+
                 'Campesino' => '',
-                'Estrato' => $row['stratum'],
-                'Auto identificación etnica' => $row['ethnic_group'],
-                'Nivel de educación' => $row['training_level'],
-                'Discapacidad' => $row['disability'],
+
+                'Estrato' => ($row['stratum'] == '0' ? 'Sin estratificar' : 
+                            ($row['residence_area'] == 'Rural' ? $row['stratum'] . ' - Rural' : $row['stratum'])),
+
+                'Autoidentificacion_Etnica' => ($row['ethnic_group'] === 'No aplica') ? 'Ninguna de las anteriores' : $row['ethnic_group'],
+
+                'Nivel_educacion' => match($row['training_level']) {
+                    'Primaria (hasta 5°)' => 'Básica Primaria (1-5)',
+                    'Secundaria (Hasta 9°)' => 'Básica Secundaria (6-9)', 
+                    'Media (Bachiller)' => 'Media (10-11)',
+                    'Técnico', 'Tecnico' => 'Técnico Profesional',
+                    'Pregrado' => 'Profesional Universitario',
+                    'Especialización', 'Maestria', 'Doctorado' => 'Posgrado',
+                    default => $row['training_level']
+                },
+                'Discapacidad' => ($row['disability'] === 'No') ? 'No aplica' : $row['disability'],
+
                 'IP' => '',
                 'Motivaciones' => $row['motivations_belong_program'],
-                'Compromiso 10 horas' => '',
-                'Tipo formación' => $row['mode'],
-                'Acepta requisitos de convotaria' => $row['accepts_tech_talent'],
-                'Victima del conflicto armado' => $victimaConflictoArmado,
-                'Acepta políticas' => $row['accept_data_policies'],
-                'Dispnibilidad de Equipo' => $row['technologies'],
-                'Fecha de creación' => $row['creationDate'],
-                'Presento prueba' => $puntaje ? 'Sí' : 'No',
-                'Fecha de inicio' => '',
-                'Tiempo en segundos' => '',
-                'Eje tematico' => '',
-                'Eje final' => $row['program'],
-                'Puntaje eje tematico seleccionado' => $puntaje,
-                'Linea 1 programación' => '',
-                'Linea 2 inteligencia artificial' => '',
-                'Linea 3 analisis de datos' => '',
-                'Linea 4 blockchain' => '',
-                'Linea 5 arquitectura en la nube' => '',
-                'Linea 6 ciberseguridad' => '',
-                'Linea 1 des programación' => '',
-                'Linea 2 des inteligencia artificial' => '',
-                'Linea 3 des analisis de datos' => '',
-                'Linea 4 des blockchain' => '',
-                'Linea 5 des arquitectura en la nube' => '',
-                'Linea 6 des ciberseguridad' => '',
-                'Area 1 Alfabetización de datos' => '',
-                'Area 2 comunicación y colaboración' => '',
-                'Area 3 contenidos digitales' => '',
-                'Area 4 seguridad' => '',
-                'Area 5 solución de problemas' => '',
-                'Area 6 ingles' => '',
-                'Area 1 des Alfabetización de datos' => '',
-                'Area 2 des comunicación y colaboración' => '',
-                'Area 3 des contenidos digitales' => '',
-                'Area 4 des seguridad' => '',
-                'Area 5 des solución de problemas' => '',
-                'Origen' => '',
-                'Matriculado' => ($row['statusAdmin'] == 3) ? 'si' : '',
+                'Compromiso_10_horas' => $row['availability'],
+                'Tipo_formacion' => $row['mode'],
+                'Acepta_requisitos_convotaria' => $row['accepts_tech_talent'],
+                'Victima_del_conflicto' => $victimaConflictoArmado,
+                'Autoriza_manejo_datos_personales' => $row['accept_data_policies'],
+                'Disponibilidad_d_Equipo' => $row['technologies'],
+                'creationdate' => $row['creationDate'],
+                'Presento' => $puntaje ? 'Sí' : 'No',
+                'fecha_ini' => $row['creation_date'],
+                'tiempo_segundos' => '',
+                'Eje_tematico' => '',
+                'Eje_final' => $row['program'],
+                'Puntaje eje tematico seleccionado' => $puntaje ? $puntaje : 'Sin presentar',
+                'linea_1_programacion' => '',
+                'linea_2_inteligecia_artificial' => '',
+                'linea_3_analisis_de_datos' => '',
+                'linea_4_blockchain' => '',
+                'linea_5_arquitectura_en_la_nube' => '',
+                'linea_6_ciberseguridad' => '',
+                'linea_1_des_programacion' => '',
+                'linea_2_des_inteligecia_artificial' => '',
+                'linea_3_des_analisis_de_datos' => '',
+                'linea_4_des_blockchain' => '',
+                'linea_5_des_arquitectura_en_la_nube' => '',
+                'linea_6_des_ciberseguridad' => '',
+                'area_1_alfabetizacion_datos' => '',
+                'area_2_comunicacion_y_colaboracion' => '',
+                'area_3_contenidos_digitales' => '',
+                'area_4_seguridad' => '',
+                'area_5_solucion_de_problemas' => '',
+                'area_6_ingles' => '',
+                'area_1_des_alfabetizacion_datos' => '',
+                'area_2_des_comunicacion_y_colaboracion' => '',
+                'area_3_des_contenidos_digitales' => '',
+                'area_4_des_seguridad' => '',
+                'area_5_des_solucion_de_problemas' => '',
+                'Origen' => 'UTT Region 7 LOTE 1',
+                'Matriculado' => ($row['statusAdmin'] == 3) ? 'Validado' : '',
                 'Estado' => ($row['statusAdmin'] == 3) ? 'En formación' : '',
                 'Programa de interés' => $row['program'],
                 'Nivel' => $row['level'],
-                'Documento profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
-                'Nombre de profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_name'],
-                'Fecha de inicio del programa de formación' => '',
-                'Cohorte (1, 2, 3, 4, 5, 6, 7 o 8)' => '',
-                'Tipo de programa de formación' => '',
+                'Documento_Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
+                'Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_name'],
+                'Fecha Inicio de la formación (dd/mm/aaaa)' => '',
+                'Cohorte (1,2,3,4,5,6,7 o 8)' => '',
+                'Año Cohorte' => '',
+                'Tipo de formación' => '',
                 'Enlace al certificado en Sharepoint' => '',
                 'Observaciones (menos de 50 cracteres)' => '',
                 'Codigo del curso' => $row['id_bootcamp'],
                 'Nombre del curso' => $row['bootcamp_name'],
                 'Asistencias' => '',
                 'Asistencias programadas' => '',
-                'Documento mentor' => '',
-                'Nombre mentor' => '',
-                'Documento monitor' => '',
-                'Nombre monitor' => '',
-                'Documento ejecutor de ingles' => $row['ec_teacher_id'],
-                'Nombre ejecutor de ingles' => $row['ec_teacher_name'],
-                'Documento ejecutor de habilidades de poder' => $row['skills_teacher_id'],
-                'Nombre ejecutor de habilidades de poder' => $row['skills_teacher_name'],
+                'Documento_Mentor' => '',
+                'Mentor' => '',
+                'Documento_Monitor' => '',
+                'Monitor' => '',
+                'Documento_Ejecutor_ingles' => $row['ec_teacher_id'],
+                'Ejecutor de ingles' => $row['ec_teacher_name'],
+                'Documento_Ejecutor de habilidades de poder' => $row['skills_teacher_id'],
+                'Ejecutor de habilidades de poder' => $row['skills_teacher_name'],
             ];
         }
     }
@@ -326,7 +346,7 @@ function exportDataToExcel($conn)
     ob_clean(); // Limpia cualquier salida previa
     // Configurar headers para descarga
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="inscritos_' . date('Y-m-d') . '.xlsx"');
+    header('Content-Disposition: attachment;filename="informe_semanal_' . date('Y-m-d') . '.xlsx"');
     header('Cache-Control: max-age=0');
 
     $writer = new Xlsx($spreadsheet);

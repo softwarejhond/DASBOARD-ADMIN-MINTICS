@@ -92,7 +92,7 @@ $rol = $infoUsuario['rol'];
 <script src="js/dataTables.js?v=0.2"></script>
 
 <script>
-   $(document).ready(function () {
+$(document).ready(function () {
     // Agregar clase activa al enlace del dashboard
     $('#link-dashboard').addClass('pagina-activa');
 
@@ -117,13 +117,15 @@ $rol = $infoUsuario['rol'];
                 'data-department': data.departamento,
                 'data-headquarters': data.sede,
                 'data-program': data.program,
-                'data-mode': data.mode
+                'data-mode': data.mode,
+                'data-level': data.level,
+                'data-schedule': data.schedule
             });
         }
     });
 
     // Aplicar filtros cuando cambian los select de filtros
-    $('#filterDepartment, #filterHeadquarters, #filterProgram, #filterMode').on('change', function () {
+    $('#filterDepartment, #filterHeadquarters, #filterProgram, #filterMode, #filterLevel, #filterSchedule').on('change', function () {
         table.draw();
     });
 
@@ -133,16 +135,22 @@ $rol = $infoUsuario['rol'];
         var selectedHeadquarters = $('#filterHeadquarters').val();
         var selectedProgram = $('#filterProgram').val();
         var selectedMode = $('#filterMode').val();
+        var selectedLevel = $('#filterLevel').val();
+        var selectedSchedule = $('#filterSchedule').val();
 
         var rowDepartment = $(table.row(dataIndex).node()).data('department');
         var rowHeadquarters = $(table.row(dataIndex).node()).data('headquarters');
         var rowProgram = $(table.row(dataIndex).node()).data('program');
         var rowMode = $(table.row(dataIndex).node()).data('mode');
+        var rowLevel = $(table.row(dataIndex).node()).data('level');
+        var rowSchedule = $(table.row(dataIndex).node()).data('schedule');
 
         return (!selectedDepartment || rowDepartment === selectedDepartment) &&
                (!selectedHeadquarters || rowHeadquarters === selectedHeadquarters) &&
                (!selectedProgram || rowProgram === selectedProgram) &&
-               (!selectedMode || rowMode === selectedMode);
+               (!selectedMode || rowMode === selectedMode) &&
+               (!selectedLevel || rowLevel === selectedLevel) &&
+               (!selectedSchedule || rowSchedule === selectedSchedule);
     });
 });
 

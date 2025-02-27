@@ -133,7 +133,7 @@ try {
         $conn->rollback();
     }
 
-    error_log("Error en enroll_user.php: " . $e->getMessage());
+    error_log("Error en enroll_multiple_user.php: " . $e->getMessage());
     
     http_response_code(500);
     echo json_encode([
