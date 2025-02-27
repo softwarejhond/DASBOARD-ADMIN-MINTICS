@@ -177,12 +177,12 @@
 
             </div>
             <div class="col-sm-12 col-lg-6 col-md-6 mb-3 mb-sm-0 mb-md-1">
-                <div class="card bg-teal-light shadow">
+                <div class="card bg-warning-light shadow">
                     <div class="card-body d-flex align-items-center">
 
                         <div class="text-container text-black">
-                            <h5 class="card-title"> <i class="bi bi-geo-alt-fill fa-2x text-black"></i> Registros por departamento</h5>
-                            <?php include("components/graphics/registerDeparments.php");  ?>
+                            <h5 class="card-title"> <i class="fa-solid fa-code-compare fa-2x text-black"></i> Registros VS  matriculados</h5>
+                            <?php include("components/graphics/registerVsEnrolled.php");  ?>
                         </div>
                     </div>
                 </div>
