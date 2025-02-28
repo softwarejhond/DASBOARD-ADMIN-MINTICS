@@ -196,6 +196,9 @@ function exportDataToExcel($conn)
             // Verificar si el usuario está en la tabla groups
             $estaEnGroups = !empty($row['id_bootcamp']) || !empty($row['id_leveling_english']) || !empty($row['id_english_code']) || !empty($row['id_skills']);
 
+            //Tiene profesor asisnado
+            $profesorAsignado = ($row['bootcamp_teacher_id'] !== '') ? 'Sí' : 'No';
+
             // Construir fila de datos
             $data[] = [
                 'Ejecutor (contratista)' => '',
@@ -293,7 +296,7 @@ function exportDataToExcel($conn)
                 'Documento_Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
                 'Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_name'],
                 'Fecha Inicio de la formación (dd/mm/aaaa)' => '',
-                'Cohorte (1,2,3,4,5,6,7 o 8)' => '',
+                'Cohorte (1,2,3,4,5,6,7 o 8)' => '',// Modal 
                 'Año Cohorte' => '',
                 'Tipo de formación' => '',
                 'Enlace al certificado en Sharepoint' => '',
