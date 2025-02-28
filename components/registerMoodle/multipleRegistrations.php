@@ -58,10 +58,13 @@ $departamentos = ['BOYACÁ', 'CUNDINAMARCA'];
 $programas = [];
 $modalidades = [];
 $sedes = []; // Agregar array para sedes
+$niveles = ['Explorador', 'Integrador', 'Innovador'];
+$horarios = [];
 
 foreach ($data as $row) {
     $depto = $row['departamento'];
     $sede = $row['headquarters'];
+
 
     // Obtener sedes únicas
     if (!in_array($sede, $sedes) && !empty($sede)) {
@@ -76,6 +79,11 @@ foreach ($data as $row) {
     // Obtener modalidades únicas
     if (!in_array($row['mode'], $modalidades)) {
         $modalidades[] = $row['mode'];
+    }
+
+    // Obtener horarios únicos
+    if (!in_array($row['schedules'], $horarios)) {
+        $horarios[] = $row['schedules'];
     }
 }
 
@@ -217,7 +225,45 @@ foreach ($data as $row) {
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-6 col-sm-12 col-lg-3">
+            </div>
+
+            <div class="col-md-6 col-sm-12 col-lg-3"><br>
+                <div class="filter-title"><i class="bi bi-layers"></i> Preferencia</div>
+                <div class="card filter-card card-level" data-icon="⭐">
+                    <div class="card-body">
+                        <select id="filterLevel" class="form-select">
+                            <option value="">Todos los niveles</option>
+                            <option value="Explorador">Explorador</option>
+                            <option value="Integrador">Integrador</option>
+                            <option value="Innovador">Innovador</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 col-lg-3"><br>
+                <div class="filter-title"><i class="bi bi-clock"></i> Horario</div>
+                <div class="card filter-card card-schedule" data-icon="⏰">
+                    <div class="card-body">
+                        <select id="filterSchedule" class="form-select">
+                            <option value="">Todos los horarios</option>
+                            <?php foreach ($horarios as $horario): ?>
+                                <option value="<?= htmlspecialchars($horario) ?>"><?= htmlspecialchars($horario) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 col-lg-3">
+            </div>
+
+
         </div>
+
+
         <table id="listaInscritos" class="table table-hover table-bordered">
             <div class="d-flex justify-content-between align-items-center p-2 mb-2">
                 <!-- Botón para exportar a Excel -->
@@ -225,7 +271,7 @@ foreach ($data as $row) {
                     onclick="window.location.href='components/registerMoodle/export_excel_enrolled.php?action=export'">
                     <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
                 </button>
-            
+
                 <!-- Botón para mostrar usuarios seleccionados -->
                 <button class="btn bg-magenta-dark text-white d-flex align-items-center gap-2"
                     type="button"
@@ -245,7 +291,7 @@ foreach ($data as $row) {
                     <th>Nombre</th>
                     <th>Modalidad</th>
                     <th class="text-center">
-                    <i class="bi bi-patch-check-fill"></i>
+                        <i class="bi bi-patch-check-fill"></i>
                     </th>
                     <th>Email</th>
                     <th>Nuevo Email</th>
@@ -253,6 +299,7 @@ foreach ($data as $row) {
                     <th>Sede</th>
                     <th>Programa</th>
                     <th>Preferencia</th>
+                    <th>Horario</th>
 
                 </tr>
             </thead>
@@ -279,6 +326,8 @@ foreach ($data as $row) {
                         data-department="<?= htmlspecialchars($row['departamento']) ?>"
                         data-headquarters="<?= htmlspecialchars($row['headquarters']) ?>"
                         data-program="<?= htmlspecialchars($row['program']) ?>"
+                        data-level="<?= htmlspecialchars($row['level']) ?>"
+                        data-schedule="<?= htmlspecialchars($row['schedules']) ?>"
                         data-mode="<?= htmlspecialchars($row['mode']) ?>">
                         <td><?php echo htmlspecialchars($row['typeID']); ?></td>
                         <td><?php echo htmlspecialchars($row['number_id']); ?></td>
@@ -307,6 +356,13 @@ foreach ($data as $row) {
                         <td><b class="text-center"><?php echo htmlspecialchars($row['headquarters']); ?></b></td>
                         <td><?php echo htmlspecialchars($row['program']); ?></td>
                         <td><?php echo htmlspecialchars($row['level']); ?></td>
+                        <td class="text-center">
+                            <a class="btn bg-indigo-light"
+                                tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="top"
+                                title="<?php echo empty($row['schedules']) ? 'Sin horario asignado' : htmlspecialchars($row['schedules']); ?>">
+                                <i class="bi bi-clock-history"></i>
+                            </a>
+                        </td>
 
                     </tr>
                 <?php endforeach; ?>
@@ -324,13 +380,13 @@ foreach ($data as $row) {
 
 
             <div class="offcanvas-body">
-            <div class="m-3">
+                <div class="m-3">
                     <button id="enrollSelectedUsers" class="btn bg-magenta-dark text-white w-100">
-                    <i class="bi bi-patch-check-fill"></i> Matricular Seleccionados
+                        <i class="bi bi-patch-check-fill"></i> Matricular Seleccionados
                     </button>
                 </div>
                 <div id="selectedUsersContainer"></div>
-            
+
             </div>
         </div>
 
@@ -515,7 +571,7 @@ foreach ($data as $row) {
             <p><b>Detalles:</b></p>`;
 
             errors.forEach(err => {
-            message += `<p>• ${err.student}: ${err.message}</p>`;
+                message += `<p>• ${err.student}: ${err.message}</p>`;
             });
         }
 
@@ -535,18 +591,18 @@ foreach ($data as $row) {
         }).then(() => {
             // Mostrar alerta de correos
             Swal.fire({
-            title: 'Usuarios matriculados exitosamente',
-            html: `<div class="text-center">
+                title: 'Usuarios matriculados exitosamente',
+                html: `<div class="text-center">
                 <p><b>Resultados:</b></p>
                 <ul>
                 <li>Correos enviados: ${emailSuccesses} de ${successes}</li>
                 </ul>
                 ${errors.length > 0 ? message : ''}
             </div>`,
-            icon: emailSuccesses > 0 ? 'success' : 'error',
-            confirmButtonText: 'Entendido'
+                icon: emailSuccesses > 0 ? 'success' : 'error',
+                confirmButtonText: 'Entendido'
             }).then(() => {
-            updateSelectedUsersList();
+                updateSelectedUsersList();
             });
         });
 
@@ -803,6 +859,14 @@ foreach ($data as $row) {
             };
         }
     }
+
+    $(document).ready(function() {
+        $('[data-toggle="popover"]').popover({
+            placement: 'top',
+            trigger: 'focus',
+            html: true
+        });
+    });
 </script>
 </body>
 

@@ -94,18 +94,31 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </div>
             <?php endif; ?>
             <?php if ($rol === 'Administrador' ):?>
-            <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar todo">
-                <label class="checkbox-wrapper">
-                    <span class="checkbox-tile">
-                        <span class="checkbox-icon">
-                            <i class="bi bi-file-earmark-excel-fill icono text-indigo-dark "></i>
-                        </span>
-                        <span class="checkbox-label">Ingresar</span>
-                    </span>
-                </label>
-            </div>
+                <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Asignar mentores a grupos">
+                    <a href="asignarMentores.php"><label class="checkbox-wrapper">
+                            <span class="checkbox-tile">
+                                <span class="checkbox-icon">
+                                    <i class="bi bi-pencil-square icono text-indigo-dark "></i>
+                                </span>
+                                <span class="checkbox-label">Ingresar</span>
+                            </span>
+                        </label>
+                    </a>
+                </div>
             <?php endif; ?>
-
+            <?php if ($rol === 'Administrador' ):?>
+                <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Asignar monitores a grupos">
+                    <a href="asignarMonitores.php"><label class="checkbox-wrapper">
+                            <span class="checkbox-tile">
+                                <span class="checkbox-icon">
+                                    <i class="bi bi-pencil-square icono text-indigo-dark "></i>
+                                </span>
+                                <span class="checkbox-label">Ingresar</span>
+                            </span>
+                        </label>
+                    </a>
+                </div>
+            <?php endif; ?>
         </fieldset>
 
     </div>
