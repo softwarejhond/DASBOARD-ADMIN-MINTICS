@@ -197,7 +197,24 @@ function exportDataToExcel($conn)
             $estaEnGroups = !empty($row['id_bootcamp']) || !empty($row['id_leveling_english']) || !empty($row['id_english_code']) || !empty($row['id_skills']);
 
             //Tiene profesor asisnado
-            $profesorAsignado = ($row['bootcamp_teacher_id'] !== '') ? 'Sí' : 'No';
+            $tieneProfesor = '';
+            if (!$estaEnGroups) {
+                $tieneProfesor = '';
+            } else if ($row['bootcamp_teacher_id'] > 0 || 
+                $row['le_teacher_id'] > 0 || 
+                $row['ec_teacher_id'] > 0 || 
+                $row['skills_teacher_id'] > 0) {
+                $tieneProfesor = 'En formacion';
+            } elseif ($row['bootcamp_teacher_id'] == 0 && 
+                     $row['le_teacher_id'] == 0 && 
+                     $row['ec_teacher_id'] == 0 && 
+                     $row['skills_teacher_id'] == 0) {
+                $tieneProfesor = 'Beneficiario en programacion';
+            } elseif ($row['statusAdmin'] === '2') {
+                $tieneProfesor = 'Rechazado';
+            } else {
+                $tieneProfesor = 'Por verificar'; 
+            }
 
             // Construir fila de datos
             $data[] = [
@@ -285,18 +302,13 @@ function exportDataToExcel($conn)
                 'area_5_des_solucion_de_problemas' => '',
                 'Origen' => 'UTTT-R7L1',
                 'Matriculado' => $estaEnGroups ? 'SI' : '',
-                'Estado' => match ($row['statusAdmin']) {
-                    '1' => 'Beneficiario en programación',
-                    '2' => 'No aprobado',
-                    '3' => 'En formación',
-                    default => 'Por verificar'
-                },
+                'Estado' => $tieneProfesor,
                 'Programa de interés' => $row['program'],
                 'Nivel' => $row['level'],
                 'Documento_Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
                 'Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_name'],
                 'Fecha Inicio de la formación (dd/mm/aaaa)' => '',
-                'Cohorte (1,2,3,4,5,6,7 o 8)' => '',// Modal 
+                'Cohorte (1,2,3,4,5,6,7 o 8)' => '',
                 'Año Cohorte' => '',
                 'Tipo de formación' => '',
                 'Enlace al certificado en Sharepoint' => '',

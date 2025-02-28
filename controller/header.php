@@ -1,5 +1,8 @@
 <?php
 $rol = $infoUsuario['rol']; // Obtener el rol del usuario
+
+require_once __DIR__ . '/../components/modals/cohortes.php';
+
 ?>
 <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
     <div class="container-fluid">
@@ -18,19 +21,25 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 <li class="nav-item">
                     <a class="nav-link" href="profile.php">Perfil</a>
                 </li>
-         
-                <?php if ($rol === 'Administrador'): ?>
-                <!-- Sistema PQRS -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPQRS" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        PQRS
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#cohortModal">
+                        <i class="bi bi-calendar3"></i> Cohortes
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownPQRS">
-                        <li><a class="dropdown-item" href="seguimiento_pqr.php">Seguimiento PQRS</a></li>
-                    
-                    </ul>
                 </li>
-            
+
+                <?php if ($rol === 'Administrador'): ?>
+                    <!-- Sistema PQRS -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPQRS" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            PQRS
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownPQRS">
+                            <li><a class="dropdown-item" href="seguimiento_pqr.php">Seguimiento PQRS</a></li>
+
+                        </ul>
+                    </li>
+
                 <?php endif; ?>
             </ul>
             <!-- Mostrar el nombre del usuario logueado -->

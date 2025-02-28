@@ -107,6 +107,22 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
             <?php endif; ?>
+            <!-- <?php if ($rol === 'Administrador'): ?>
+                <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar datos">
+                    <form method="POST" action="components/registerMoodle/export_courses.php">
+                        <button type="submit" name="export" class="btn-unstyled">
+                            <label class="checkbox-wrapper">
+                                <span class="checkbox-tile">
+                                    <span class="checkbox-icon">
+                                        <i class="bi bi-file-earmark-excel-fill icono text-indigo-dark"></i>
+                                    </span>
+                                    <span class="checkbox-label">Exportar</span>
+                                </span>
+                            </label>
+                        </button>
+                    </form>
+                </div>
+            <?php endif; ?> -->
 
         </fieldset>
 
