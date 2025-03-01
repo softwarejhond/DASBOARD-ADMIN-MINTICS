@@ -26,7 +26,7 @@ try {
     }
 
     // Obtener ID del monitor
-    $stmt = $conn->prepare("SELECT username FROM users WHERE username = ? AND rol = 8");
+    $stmt = $conn->prepare("SELECT username FROM users WHERE username = ? AND rol = 7");
     $stmt->bind_param("s", $monitorUsername);
     $stmt->execute();
     $result = $stmt->get_result();
