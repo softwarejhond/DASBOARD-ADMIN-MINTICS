@@ -47,6 +47,8 @@ function rolUsuario($rol)
             return "Monitor";
         case 8:
             return "Mentor";
+        case 9:
+            return "Superasesor";
         default:
             return "Rol desconocido";
     }

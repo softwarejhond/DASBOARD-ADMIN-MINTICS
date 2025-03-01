@@ -107,6 +107,21 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
             <?php endif; ?>
+
+            <?php if ($rol === 'Administrador' || $rol === 'Superasesor'): ?>
+                <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Puntajes de formularios">
+                    <a href="editTest.php">
+                        <label class="checkbox-wrapper">
+                            <span class="checkbox-tile">
+                                <span class="checkbox-icon">
+                                    <i class="bi bi-list-ol icono text-indigo-dark"></i>
+                                </span>
+                                <span class="checkbox-label">Puntajes</span>
+                            </span>
+                        </label>
+                    </a>
+                </div>
+            <?php endif; ?>
             <!-- <?php if ($rol === 'Administrador'): ?>
                 <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar datos">
                     <form method="POST" action="components/registerMoodle/export_courses.php">
