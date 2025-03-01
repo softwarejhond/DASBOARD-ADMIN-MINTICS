@@ -100,11 +100,16 @@ foreach ($data as $row) {
                         <select id="bootcamp" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php
+                                    $categoryAllowed = in_array($course['categoryid'], [14, 11, 10, 7, 6, 5]);
+                                    if ($categoryAllowed):
+                                    ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
-                            <?php endif; ?>
+                            <?php endif; ?></option>
                         </select>
                     </div>
                 </div>
@@ -117,9 +122,11 @@ foreach ($data as $row) {
                         <select id="ingles" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php if ($course['categoryid'] == 4): ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
@@ -134,9 +141,11 @@ foreach ($data as $row) {
                         <select id="english_code" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php if ($course['categoryid'] == 12): ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
@@ -151,9 +160,11 @@ foreach ($data as $row) {
                         <select id="skills" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php if ($course['categoryid'] == 13): ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>

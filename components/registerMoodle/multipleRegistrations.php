@@ -90,8 +90,6 @@ foreach ($data as $row) {
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container-fluid px-2">
@@ -107,11 +105,16 @@ foreach ($data as $row) {
                         <select id="bootcamp" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php 
+                                    $categoryAllowed = in_array($course['categoryid'], [14, 11, 10, 7, 6, 5]);
+                                    if ($categoryAllowed):
+                                    ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?php echo htmlspecialchars($course['id'] . ' - ' . $course['fullname']); ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
-                            <?php endif; ?>
+                            <?php endif; ?></option>
                         </select>
                     </div>
                 </div>
@@ -124,9 +127,11 @@ foreach ($data as $row) {
                         <select id="ingles" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php if ($course['categoryid'] == 4): ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
@@ -141,9 +146,11 @@ foreach ($data as $row) {
                         <select id="english_code" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php if ($course['categoryid'] == 12): ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
@@ -158,9 +165,11 @@ foreach ($data as $row) {
                         <select id="skills" class="form-select course-select">
                             <?php if (!empty($courses_data)): ?>
                                 <?php foreach ($courses_data as $course): ?>
-                                    <option value="<?= htmlspecialchars($course['id']) ?>">
-                                        <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
-                                    </option>
+                                    <?php if ($course['categoryid'] == 13): ?>
+                                        <option value="<?php echo htmlspecialchars($course['id']); ?>">
+                                            <?= htmlspecialchars($course['id'] . ' - ' . $course['fullname']) ?>
+                                        </option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
@@ -634,7 +643,7 @@ foreach ($data as $row) {
     }
 
     // Modificar la función getFormDataFromRow en multipleRegistrations.php
-    function getFormDataFromRow(row) {
+    async function getFormDataFromRow(row) {
         // Obtener datos del usuario desde el Map de usuarios seleccionados
         const numberId = row.dataset.numberId;
         const userData = selectedUsers.get(numberId) || {};
@@ -679,20 +688,6 @@ foreach ($data as $row) {
             id_skills: getCourseData('skills').id,
             skills_name: getCourseData('skills').name
         };
-
-        // Verificar que todos los campos requeridos estén presentes
-        const requiredFields = [
-            'type_id', 'number_id', 'full_name', 'email', 'institutional_email',
-            'department', 'headquarters', 'program', 'mode', 'password',
-            'id_bootcamp', 'bootcamp_name', 'id_leveling_english', 'leveling_english_name',
-            'id_english_code', 'english_code_name', 'id_skills', 'skills_name'
-        ];
-
-        const missingFields = requiredFields.filter(field => !formData[field]);
-        if (missingFields.length > 0) {
-            console.error('Campos faltantes:', missingFields);
-            throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
-        }
 
         return formData;
     }
