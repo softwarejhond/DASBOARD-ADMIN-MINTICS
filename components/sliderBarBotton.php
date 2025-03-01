@@ -24,7 +24,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
             <?php endif; ?>
-            <?php if ($rol === 'Administrador' || $rol === 'Académico'): ?>
+            <?php if ($rol === 'Administrador' || $rol === 'Académico' || $rol === 'Asesor'): ?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Lista de matriculados">
                 <a href="activeMoodle.php">
                     <label class="checkbox-wrapper">
@@ -66,7 +66,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 </a>
             </div>
             <?php endif; ?>
-            <?php if ($rol === 'Administrador' || $rol === 'Académico'): ?>
+            <?php if ($rol === 'Administrador' || $rol === 'Académico' || $rol === 'Asesor'): ?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Asistencia grupal">    
                 <a href="attendanceGroup.php">
                     <label class="checkbox-wrapper">
@@ -98,7 +98,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     <a href="asignarMentores.php"><label class="checkbox-wrapper">
                             <span class="checkbox-tile">
                                 <span class="checkbox-icon">
-                                    <i class="bi bi-pencil-square icono text-indigo-dark "></i>
+                                    <i class="bi bi-microsoft-teams icono text-indigo-dark "></i>
                                 </span>
                                 <span class="checkbox-label">Ingresar</span>
                             </span>

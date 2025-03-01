@@ -18,7 +18,15 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 <li class="nav-item">
                     <a class="nav-link" href="profile.php">Perfil</a>
                 </li>
-         
+                <?php if ($rol === 'Administrador' || $rol==='Empleabilidad'): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="encuestas.php">Empleabilidad?</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="estudiantes.php">Asistencia Talleres</a>
+                </li>
+                <?php endif; ?>
                 <?php if ($rol === 'Administrador'): ?>
                 <!-- Sistema PQRS -->
                 <li class="nav-item dropdown">
