@@ -26,7 +26,7 @@ try {
     }
 
     // Obtener ID del mentor
-    $stmt = $conn->prepare("SELECT username FROM users WHERE username = ? AND rol = 7");
+    $stmt = $conn->prepare("SELECT username FROM users WHERE username = ? AND rol = 8");
     $stmt->bind_param("s", $mentorUsername);
     $stmt->execute();
     $result = $stmt->get_result();

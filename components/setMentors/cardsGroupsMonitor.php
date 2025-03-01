@@ -5,35 +5,45 @@ if ($conn->connect_error) {
 }
 
 // Consulta para obtener cursos con su tipo
-$sql = 'SELECT 
-    id_bootcamp AS id, 
-    bootcamp_name AS nombre, 
-    "bootcamp_monitor_id" AS tipocampo,
-    bootcamp_monitor_id AS monitor_actual 
-FROM groups WHERE id_bootcamp IS NOT NULL
-UNION
-SELECT 
-    id_leveling_english, 
-    leveling_english_name, 
-    "le_monitor_id",
-    le_monitor_id AS monitor_actual 
-FROM groups WHERE id_leveling_english IS NOT NULL
-UNION
-SELECT 
-    id_english_code, 
-    english_code_name, 
-    "ec_monitor_id",
-    ec_monitor_id AS monitor_actual 
-FROM groups WHERE id_english_code IS NOT NULL
-UNION
-SELECT 
-    id_skills, 
-    skills_name, 
-    "skills_monitor_id",
-    skills_monitor_id AS monitor_actual 
-FROM groups WHERE id_skills IS NOT NULL';
+$sql = 'WITH RankedGroups AS (
+    SELECT 
+        id_bootcamp AS id, 
+        bootcamp_name AS nombre, 
+        "bootcamp_monitor_id" AS tipocampo,
+        bootcamp_monitor_id AS monitor_actual,
+        ROW_NUMBER() OVER (PARTITION BY id_bootcamp) AS rn
+    FROM groups WHERE id_bootcamp IS NOT NULL
+    UNION ALL
+    SELECT 
+        id_leveling_english, 
+        leveling_english_name, 
+        "le_monitor_id",
+        le_monitor_id AS monitor_actual,
+        ROW_NUMBER() OVER (PARTITION BY id_leveling_english) AS rn
+    FROM groups WHERE id_leveling_english IS NOT NULL
+    UNION ALL
+    SELECT 
+        id_english_code, 
+        english_code_name, 
+        "ec_monitor_id",
+        ec_monitor_id AS monitor_actual,
+        ROW_NUMBER() OVER (PARTITION BY id_english_code) AS rn
+    FROM groups WHERE id_english_code IS NOT NULL
+    UNION ALL
+    SELECT 
+        id_skills, 
+        skills_name, 
+        "skills_monitor_id",
+        skills_monitor_id AS monitor_actual,
+        ROW_NUMBER() OVER (PARTITION BY id_skills) AS rn
+    FROM groups WHERE id_skills IS NOT NULL
+)
+SELECT id, nombre, tipocampo, monitor_actual
+FROM RankedGroups 
+WHERE rn = 1
+ORDER BY id';
 
-$sql_monitors = "SELECT id, username, nombre FROM users WHERE rol = 8";
+$sql_monitors = "SELECT id, username, nombre FROM users WHERE rol = 7";
 
 // Ejecuta la consulta de cursos
 $resultado = $conn->query($sql);

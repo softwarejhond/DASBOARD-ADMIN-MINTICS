@@ -1,6 +1,8 @@
 <?php
 $rol = $infoUsuario['rol']; // Obtener el rol del usuario
+require_once __DIR__ . '/../components/modals/cohortes.php';
 ?>
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
     <div class="container-fluid">
         <button class="btn btn-tertiary mr-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptionsLabel">
@@ -15,12 +17,17 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="main.php">Inicio</a>
                 </li>
+                <?php if ($rol === 'Administrador'): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="profile.php">Perfil</a>
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#cohortModal">
+                       Cohortes
+                    </a>
                 </li>
+                <?php endif; ?>
+                
                 <?php if ($rol === 'Administrador' || $rol==='Empleabilidad'): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="encuestas.php">Empleabilidad?</a>
+                    <a class="nav-link" href="encuestas.php">Empleabilidad</a>
                 </li>
                 
                 <li class="nav-item">
@@ -38,7 +45,9 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     
                     </ul>
                 </li>
-            
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.php">Perfil</a>
+                </li>
                 <?php endif; ?>
             </ul>
             <!-- Mostrar el nombre del usuario logueado -->
