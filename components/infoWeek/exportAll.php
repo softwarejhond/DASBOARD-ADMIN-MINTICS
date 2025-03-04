@@ -69,10 +69,28 @@ function exportDataToExcel($conn)
     g.id_skills,
     g.skills_name,
     g.creation_date,
+    g.cohort,
+    g.bootcamp_mentor_id,
+    g.le_mentor_id,
+    g.ec_mentor_id,
+    g.skills_mentor_id,
+    g.bootcamp_monitor_id,
+    g.le_monitor_id,
+    g.ec_monitor_id,
+    g.skills_monitor_id,
+    c.start_date,
     u1.nombre as bootcamp_teacher_name,
     u2.nombre as le_teacher_name,
     u3.nombre as ec_teacher_name,
     u4.nombre as skills_teacher_name,
+    u5.nombre as bootcamp_mentor_name,
+    u6.nombre as le_mentor_name,
+    u7.nombre as ec_mentor_name,
+    u8.nombre as skills_mentor_name,
+    u9.nombre as bootcamp_monitor_name,
+    u10.nombre as le_monitor_name,
+    u11.nombre as ec_monitor_name,
+    u12.nombre as skills_monitor_name,
     (SELECT COALESCE(SUM(b_intensity), 0) + COALESCE(SUM(ec_intensity), 0) + COALESCE(SUM(s_intensity), 0) 
      FROM groups 
      WHERE number_id = user_register.number_id) as total_intensities
@@ -84,6 +102,15 @@ function exportDataToExcel($conn)
     LEFT JOIN users u2 ON g.le_teacher_id = u2.username
     LEFT JOIN users u3 ON g.ec_teacher_id = u3.username
     LEFT JOIN users u4 ON g.skills_teacher_id = u4.username
+    LEFT JOIN users u5 ON g.bootcamp_mentor_id = u5.username
+    LEFT JOIN users u6 ON g.le_mentor_id = u6.username
+    LEFT JOIN users u7 ON g.ec_mentor_id = u7.username
+    LEFT JOIN users u8 ON g.skills_mentor_id = u8.username
+    LEFT JOIN users u9 ON g.bootcamp_monitor_id = u9.username
+    LEFT JOIN users u10 ON g.le_monitor_id = u10.username
+    LEFT JOIN users u11 ON g.ec_monitor_id = u11.username
+    LEFT JOIN users u12 ON g.skills_monitor_id = u12.username
+    LEFT JOIN cohorts c ON g.cohort = c.cohort_number
     WHERE departamentos.id_departamento IN (15, 25)
     AND user_register.status = '1' 
     ORDER BY user_register.first_name ASC";
@@ -308,8 +335,8 @@ function exportDataToExcel($conn)
                 'Documento_Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_id'],
                 'Profesor principal a cargo del programa de formación' => $row['bootcamp_teacher_name'],
                 'Fecha Inicio de la formación (dd/mm/aaaa)' => '',
-                'Cohorte (1,2,3,4,5,6,7 o 8)' => '',
-                'Año Cohorte' => '',
+                'Cohorte (1,2,3,4,5,6,7 o 8)' => $row['cohort'],
+                'Año Cohorte' => $row['start_date'] ? date('Y', strtotime($row['start_date'])) : '',
                 'Tipo de formación' => '',
                 'Enlace al certificado en Sharepoint' => '',
                 'Observaciones (menos de 50 cracteres)' => '',
@@ -317,10 +344,10 @@ function exportDataToExcel($conn)
                 'Nombre del curso' => $row['bootcamp_name'],
                 'Asistencias' => $attendanceCount[$row['number_id']] ?? 0,
                 'Asistencias programadas' => $row['total_intensities'] ?? 0,
-                'Documento_Mentor' => '',
-                'Mentor' => '',
-                'Documento_Monitor' => '',
-                'Monitor' => '',
+                'Documento_Mentor' => $row['bootcamp_mentor_id'],
+                'Mentor' => $row['bootcamp_mentor_name'],
+                'Documento_Monitor' => $row['bootcamp_monitor_id'],
+                'Monitor' => $row['bootcamp_monitor_name'],
                 'Documento_Ejecutor_ingles' => $row['ec_teacher_id'],
                 'Ejecutor de ingles' => $row['ec_teacher_name'],
                 'Documento_Ejecutor de habilidades de poder' => $row['skills_teacher_id'],
