@@ -1,19 +1,31 @@
 <?php
+
+$respuesta = 'Sin respuesta';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
     $tipo = isset($_POST['tipo']) ? trim($_POST['tipo']) : null;
     $asunto = isset($_POST['asunto']) ? trim($_POST['asunto']) : null;
     $descripcion = isset($_POST['descripcion']) ? trim($_POST['descripcion']) : null;
     $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : null;
+    $cedula = isset($_POST['cedula']) ? trim($_POST['cedula']) : null;
     $email = isset($_POST['email']) ? trim($_POST['email']) : null;
     $telefono1 = isset($_POST['telefono1']) ? trim($_POST['telefono1']) : null;
     $telefono2 = isset($_POST['telefono2']) ? trim($_POST['telefono2']) : null;
-    $fecha_resolucion = isset($_POST['fecha_resolucion']) ? trim($_POST['fecha_resolucion']) : null;
-    $respuesta = isset($_POST['respuesta']) ? trim($_POST['respuesta']) : null;
-    $admin_id = isset($_POST['admin_id']) ? intval($_POST['admin_id']) : null;
-    $estado = isset($_POST['estado']) ? intval($_POST['estado']) : null;
+    // Lógica para la fecha de resolución
+    $estado = isset($_POST['estado']) ? intval($_POST['estado']) : null;  // Obtener el estado desde el POST
+    if ($estado == 3) { 
+        $fecha_resolucion_db = date('Y-m-d H:i:s');
+    } else {
+        $fecha_resolucion_db = null;
+    }
 
-    if ($id <= 0 || empty($tipo) || empty($asunto) || empty($nombre) || empty($email) || empty($telefono1) || empty($admin_id) || empty($estado)) {
+    // Obtener respuesta del POST
+    $respuesta = isset($_POST['respuesta']) ? trim($_POST['respuesta']) : 'Sin respuesta';
+
+    $admin_id = isset($_POST['admin_id']) ? intval($_POST['admin_id']) : null;
+
+    if ($id <= 0 || empty($tipo) || empty($asunto) || empty($nombre) || empty($cedula) || empty($email) || empty($telefono1) || empty($admin_id) || empty($estado)) {
         echo "<script>alert('Error: Todos los campos obligatorios deben completarse.'); window.history.back();</script>";
         exit;
     }
@@ -47,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 asunto = ?, 
                 descripcion = ?, 
                 nombre = ?, 
+                cedula = ?, 
                 email = ?, 
                 telefono1 = ?, 
                 telefono2 = ?, 
@@ -65,15 +78,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt->bind_param(
-        "sssssssssiis",
+        "ssssssssssiii", //¡CORREGIDO!  Todos son strings excepto admin_id, estado, id
         $tipo,
         $asunto,
         $descripcion,
         $nombre,
+        $cedula,
         $email,
         $telefono1,
         $telefono2,
-        $fecha_resolucion,
+        $fecha_resolucion_db,
         $respuesta,
         $admin_id,
         $estado,
@@ -88,28 +102,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt->close();
-    $conn->close();
+    // NO CERRAR LA CONEXIÓN AQUÍ. SE CIERRA EN EL ARCHIVO PRINCIPAL (admin_pqrs.php)
 }
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Incluir otros archivos CSS y JS necesarios -->
+<!-- Incluir otros archivos CSS y JS necesarios -->
 
 <!-- Modal HTML -->
-<div class="modal fade" id="editarPQRModal-<?php echo htmlspecialchars($fila["id"]); ?>" tabindex="-1"
-    aria-labelledby="editarPQRModalLabel-<?php echo htmlspecialchars($fila["id"]); ?>" aria-hidden="true">
+<div class="modal fade" id="editarPQRModal-<?php echo htmlspecialchars($id_pqr_actual); ?>" tabindex="-1"
+    aria-labelledby="editarPQRModalLabel-<?php echo htmlspecialchars($id_pqr_actual); ?>" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-indigo-dark text-white">
-                <h5 class="modal-title" id="editarPQRModalLabel-<?php echo htmlspecialchars($fila["id"]); ?>">Editar
+                <h5 class="modal-title" id="editarPQRModalLabel-<?php echo htmlspecialchars($id_pqr_actual); ?>">Editar
                     Radicado:
-                    <?php echo htmlspecialchars($fila["numero_radicado"]); ?>
+                    <?php 
+                      //BUSCAR LA DATA CON EL ID DE LA PQR ACTUAL
+                      $sql_pqr = "SELECT * FROM pqr WHERE id = $id_pqr_actual";
+                      $resultado_pqr = $conn->query($sql_pqr);
+                      $fila = $resultado_pqr->fetch_assoc();
+                      echo htmlspecialchars($fila["numero_radicado"]); 
+                      
+                    ?>
                 </h5>
                 <button type="button" class="btn-close bg-gray-ligth" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $id_pqr); ?>">
+                <!-- IMPORTANTE: Usa $id_pqr_actual en la URL del action del formulario -->
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $id_pqr_actual); ?>">
                     <!-- Campo oculto para el ID de la PQR -->
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($fila["id"]); ?>">
                     <!-- Campo oculto para el ID de la PQR (para JavaScript) -->
@@ -126,78 +148,75 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $tipos = str_getcsv($matches[1], ',', "'");
                     ?>
 
-                    <div class="mb-3">
-                        <label for="tipo" class="form-label">Tipo:</label>
+                    <div class="row mb-3">
+                        <label for="tipo" class="col-sm-3 col-form-label text-start">Tipo:</label>
                         <select class="form-select" id="tipo" name="tipo">
                             <?php
                             foreach ($tipos as $tipo) {
                                 $selected = ($fila["tipo"] == $tipo) ? "selected" : "";
-                                echo "<option value='" . htmlspecialchars($tipo) . "' " . $selected . ">" . htmlspecialchars($tipo) . "</option>";
+                                echo "<option value='" . htmlspecialchars($tipo) . "' " . $selected . "' " . $selected . ">" . htmlspecialchars($tipo) . "</option>";
                             }
                             ?>
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="asunto" class="form-label">Asunto:</label>
+                    <div class="row mb-3">
+                        <label for="asunto" class="col-sm-3 col-form-label text-start">Asunto:</label>
                         <input type="text" class="form-control" id="asunto" name="asunto"
                             value="<?php echo htmlspecialchars($fila["asunto"]); ?>">
                     </div>
 
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre:</label>
+                    <div class="row mb-3">
+                        <label for="nombre" class="col-sm-3 col-form-label text-start">Nombre:</label>
                         <input type="text" class="form-control" id="nombre" name="nombre"
                             value="<?php echo htmlspecialchars($fila["nombre"]); ?>">
                     </div>
 
+                    <div class="row mb-3">
+                        <label for="cedula" class="col-sm-3 col-form-label text-start">Cédula:</label>
+                        <input type="text" class="form-control" id="cedula" name="cedula"
+                            value="<?php echo htmlspecialchars($fila["cedula"]); ?>" required>
+                    </div>
+
+
                     <!-- Campo Email -->
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email:</label>
+                    <div class="row mb-3">
+                        <label for="email" class="col-sm-3 col-form-label text-start">Correo:</label>
                         <input type="email" class="form-control" id="email" name="email"
                             value="<?php echo htmlspecialchars($fila["email"]); ?>">
                     </div>
 
-                    <div class="mb-3">
-                        <label for="telefono1" class="form-label">Teléfono 1:</label>
+                    <div class="row mb-3">
+                        <label for="telefono1" class="col-sm-4 col-form-label text-start">Teléfono 1:</label>
                         <input type="tel" class="form-control" id="telefono1" name="telefono1"
                             value="<?php echo htmlspecialchars($fila["telefono1"]); ?>" required
                             data-error="El teléfono 1 es obligatorio.">
                         <div class="invalid-feedback"></div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="telefono2" class="form-label">Teléfono 2:</label>
+                    <div class="row mb-3">
+                        <label for="telefono2" class="col-sm-4 col-form-label text-start">Teléfono 2:</label>
                         <input type="tel" class="form-control" id="telefono2" name="telefono2"
                             value="<?php echo htmlspecialchars($fila["telefono2"]); ?>">
                         <div class="invalid-feedback"></div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="fecha_resolucion" class="form-label">Fecha de Resolución:</label>
-                        <input type="datetime-local" class="form-control" id="fecha_resolucion"
-                            name="fecha_resolucion"
-                            value="<?php echo htmlspecialchars($fila["fecha_resolucion"]); ?>">
-                        <div class="invalid-feedback"></div>
-                    </div>
-
                     <!-- Campo Descripción -->
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción:</label>
+                    <div class="row mb-3">
+                        <label for="descripcion" class="col-sm-3 col-form-label text-start">Descripción:</label>
                         <textarea class="form-control" id="descripcion" name="descripcion"
                             rows="3"><?php echo htmlspecialchars($fila["descripcion"]); ?></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="respuesta" class="form-label">Respuesta:</label>
-                        <textarea class="form-control" id="respuesta" name="respuesta"
-                            rows="3"><?php echo htmlspecialchars($fila["respuesta"]); ?></textarea>
-                        <div class="invalid-feedback"></div>
+                    <div class="row mb-3">
+                        <label for="respuesta" class="col-sm-3 col-form-label text-start">Respuesta:</label>
+                        <textarea class="form-control" id="respuesta" name="respuesta" rows="3"><?php echo htmlspecialchars($respuesta); ?></textarea>
                     </div>
 
                     <!-- Select para el estado -->
-                    <div class="mb-3">
-                        <label for="estado" class="form-label">Estado:</label>
+                    <div class="row mb-3">
+                        <label for="estado" class="col-sm-3 col-form-label text-start">Estado:</label>
                         <select class="form-select" id="estado" name="estado">
                             <?php
                             $sql_estados = "SELECT id, nombre FROM estados";
@@ -213,8 +232,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <!-- Input para el admin_id -->
-                    <div class="mb-3">
-                        <label for="admin_id" class="form-label">Administrador Asignado:</label>
+                    <div class="row mb-3">
+                        <label for="admin_id" class="col-sm-9 col-form-label text-start">Administrador asignado:</label>
                         <select class="form-select" id="admin_id" name="admin_id" required
                             data-error="Debe seleccionar un administrador.">
                             <option value="">-- Seleccionar Administrador --</option>
@@ -233,9 +252,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </select>
                     </div>
 
-                    <button type="submit" class="bton btn btn-update">Guardar
+                    <button type="submit" class="btn btn-update bg-indigo-dark text-white">Guardar
                         Cambios</button>
-                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-cancel bg-gray-light" data-bs-dismiss="modal">Cancelar</button>
                 </form>
             </div>
         </div>
@@ -244,134 +263,136 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <script>
     $(document).ready(function() {
-    setTimeout(function() {
-        // Función para obtener el ID de la PQR del ID del modal abierto (ya no es necesaria)
+        setTimeout(function() {
+            // Función para obtener el ID de la PQR del ID del modal abierto (ya no es necesaria)
 
-        // Ejecutar el código cuando un modal de edición se muestra
-        $('.modal[id^="editarPQRModal-"]').on('shown.bs.modal', function (event) {
-            let modalId = $(this).attr('id'); // Obtener el ID del modal directamente
-            let formulario = document.querySelector(`#${modalId} form`);
+            // Ejecutar el código cuando un modal de edición se muestra
+            $('.modal[id^="editarPQRModal-"]').on('shown.bs.modal', function(event) {
+                let modalId = $(this).attr('id'); // Obtener el ID del modal directamente
+                let formulario = document.querySelector(`#${modalId} form`);
 
-            function mostrarError(campo, mensaje) {
-                campo.classList.add("is-invalid");
-                let mensajeError = campo.closest('.mb-3')?.querySelector('.invalid-feedback');
-                if (mensajeError) mensajeError.textContent = mensaje;
-            }
+                function mostrarError(campo, mensaje) {
+                    campo.classList.add("is-invalid");
+                    let mensajeError = campo.closest('.mb-3')?.querySelector('.invalid-feedback');
+                    if (mensajeError) mensajeError.textContent = mensaje;
+                }
 
-            function limpiarError(campo) {
-                campo.classList.remove("is-invalid");
-                campo.classList.add("is-valid");
-                let mensajeError = campo.closest('.mb-3')?.querySelector('.invalid-feedback');
-                if (mensajeError) mensajeError.textContent = "";
-            }
+                function limpiarError(campo) {
+                    campo.classList.remove("is-invalid");
+                    campo.classList.add("is-valid");
+                    let mensajeError = campo.closest('.mb-3')?.querySelector('.invalid-feedback');
+                    if (mensajeError) mensajeError.textContent = "";
+                }
 
-            if (formulario) { // Verificar si el formulario existe
-                formulario.addEventListener("submit", function (event) {
-                    event.preventDefault();
+                if (formulario) { // Verificar si el formulario existe
+                    formulario.addEventListener("submit", function(event) {
+                        event.preventDefault();
 
-                    let formularioValido = true;
-                    let campos = formulario.querySelectorAll("input, select, textarea");
+                        let formularioValido = true;
+                        let campos = formulario.querySelectorAll("input, select, textarea");
 
-                    // Validar campos vacíos
-                    campos.forEach(campo => {
-                        if (campo.hasAttribute('required') && !campo.value.trim()) {
-                            formularioValido = false;
-                            mostrarError(campo, campo.getAttribute("data-error") || "Este campo es obligatorio.");
-                        } else {
-                            limpiarError(campo);
-                        }
-                    });
-
-                    // Validar email dentro del modal activo
-                    let emailCampo = formulario.querySelector("#email");
-                    if (emailCampo) {
-                        let email = emailCampo.value.trim();
-                        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (email && !emailRegex.test(email)) {
-                            formularioValido = false;
-                            mostrarError(emailCampo, "Ingrese un email válido.");
-                        } else {
-                            limpiarError(emailCampo);
-                        }
-                    }
-
-                    // Validar admin_id dentro del modal activo
-                    let adminIdCampo = formulario.querySelector("#admin_id");
-                    if (adminIdCampo) {
-                        let adminId = adminIdCampo.value.trim();
-                        if (adminId && isNaN(adminId)) {
-                            formularioValido = false;
-                            mostrarError(adminIdCampo, "Seleccione un administrador válido.");
-                        } else {
-                            limpiarError(adminIdCampo);
-                        }
-                    }
-
-                    if (!formularioValido) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Error',
-                            text: 'Por favor, corrige los errores en el formulario.',
+                        // Validar campos vacíos
+                        campos.forEach(campo => {
+                            if (campo.hasAttribute('required') && !campo.value.trim()) {
+                                formularioValido = false;
+                                mostrarError(campo, campo.getAttribute("data-error") || "Este campo es obligatorio.");
+                            } else {
+                                limpiarError(campo);
+                            }
                         });
-                        return; // DETIENE EL ENVÍO DEL FORMULARIO
-                    }
 
-                    Swal.fire({
-                        title: '¿Estás seguro de guardar los cambios?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Sí, guardar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            let formData = new FormData(formulario);
-                            fetch(formulario.action, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    return response.text().then(text => { throw new Error(text); });
-                                }
-                                return response.text();
-                            })
-                            .then(data => {
-                                console.log('Respuesta del servidor:', data);
-                                Swal.fire(
-                                    '¡Guardado!',
-                                    'Los cambios han sido guardados correctamente.',
-                                    'success'
-                                ).then(() => {
-                                    let modal = document.querySelector(`#${modalId}`);
-                                    $(modal).modal('hide'); // Cerrar el modal
-                                    location.reload(); // Recargar la página solo si fue exitoso
-                                });
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                Swal.fire(
-                                    '¡Error!',
-                                    'Hubo un problema al guardar los cambios. Inténtalo de nuevo.',
-                                    'error'
-                                );
+                        // Validar email dentro del modal activo
+                        let emailCampo = formulario.querySelector("#email");
+                        if (emailCampo) {
+                            let email = emailCampo.value.trim();
+                            let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (email && !emailRegex.test(email)) {
+                                formularioValido = false;
+                                mostrarError(emailCampo, "Ingrese un email válido.");
+                            } else {
+                                limpiarError(emailCampo);
+                            }
+                        }
+
+                        // Validar admin_id dentro del modal activo
+                        let adminIdCampo = formulario.querySelector("#admin_id");
+                        if (adminIdCampo) {
+                            let adminId = adminIdCampo.value.trim();
+                            if (adminId && isNaN(adminId)) {
+                                formularioValido = false;
+                                mostrarError(adminIdCampo, "Seleccione un administrador válido.");
+                            } else {
+                                limpiarError(adminIdCampo);
+                            }
+                        }
+
+                        if (!formularioValido) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Error',
+                                text: 'Por favor, corrige los errores en el formulario.',
                             });
+                            return; // DETIENE EL ENVÍO DEL FORMULARIO
                         }
-                    });
-                });
 
-                // Validación en tiempo real
-                formulario.querySelectorAll("input, select, textarea").forEach(function (campo) {
-                    campo.addEventListener("input", function () {
-                        if (campo.classList.contains("is-invalid")) {
-                            limpiarError(campo);
-                        }
+                        Swal.fire({
+                            title: '¿Estás seguro de guardar los cambios?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, guardar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                let formData = new FormData(formulario);
+                                fetch(formulario.action, {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            return response.text().then(text => {
+                                                throw new Error(text);
+                                            });
+                                        }
+                                        return response.text();
+                                    })
+                                    .then(data => {
+                                        console.log('Respuesta del servidor:', data);
+                                        Swal.fire(
+                                            '¡Guardado!',
+                                            'Los cambios han sido guardados correctamente.',
+                                            'success'
+                                        ).then(() => {
+                                            let modal = document.querySelector(`#${modalId}`);
+                                            $(modal).modal('hide'); // Cerrar el modal
+                                            location.reload(); // Recargar la página solo si fue exitoso
+                                        });
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        Swal.fire(
+                                            '¡Error!',
+                                            'Hubo un problema al guardar los cambios. Inténtalo de nuevo.',
+                                            'error'
+                                        );
+                                    });
+                            }
+                        });
                     });
-                });
-            }
-        });
-    }, 50); // Retraso de 50 milisegundos
-});
+
+                    // Validación en tiempo real
+                    formulario.querySelectorAll("input, select, textarea").forEach(function(campo) {
+                        campo.addEventListener("input", function() {
+                            if (campo.classList.contains("is-invalid")) {
+                                limpiarError(campo);
+                            }
+                        });
+                    });
+                }
+            });
+        }, 50); // Retraso de 50 milisegundos
+    });
 </script>
 <!-- Fin del Modal HTML -->

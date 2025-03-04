@@ -14,7 +14,7 @@ $estado = isset($_POST['estado']) ? $_POST['estado'] : '';
 $tipo = isset($_POST['tipo']) ? $_POST['tipo'] : '';
 
 // Construir consulta SQL con filtros
-$sql = "SELECT p.numero_radicado, p.tipo, p.asunto, p.descripcion, p.nombre, p.email, 
+$sql = "SELECT p.numero_radicado, p.tipo, p.asunto, p.descripcion, p.nombre, p.cedula, p.email, 
                p.telefono1, p.telefono2, p.fecha_creacion, p.fecha_resolucion, p.respuesta, e.nombre AS estado
         FROM pqr p
         LEFT JOIN estados e ON p.estado = e.id";
@@ -39,7 +39,7 @@ $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
 // Definir encabezados
-$encabezados = ['Radicado', 'Tipo', 'Asunto', 'Descripción', 'Nombre', 'Email', 'Teléfono 1', 'Teléfono 2', 'Fecha Creación', 'Fecha Resolución', 'Respuesta', 'Estado'];
+$encabezados = ['Radicado', 'Tipo', 'Asunto', 'Descripción', 'Nombre', 'Cédula', 'Email', 'Teléfono 1', 'Teléfono 2', 'Fecha Creación', 'Fecha Resolución', 'Respuesta', 'Estado'];
 $sheet->fromArray([$encabezados], NULL, 'A1');
 
 // Agregar los datos

@@ -36,7 +36,7 @@
 
         <!-- ******** BOTÓN DE EXPORTACIÓN ******** -->
         <div class="col-auto">
-            <button type="button" class="btn btn-success" onclick="exportData()"><i class="fas fa-file-excel"></i> Exportar a Excel</button>
+            <button type="button" class="btn btn-success mt-4" onclick="exportData()"><i class="fas fa-file-excel"></i> Exportar a Excel</button>
         </div>
 
         <script>
@@ -80,6 +80,7 @@
     <table id="tablaPQRS" class="table table-striped table-bordered">
         <thead>
             <tr>
+
                 <th>Radicado</th>
                 <th>Tipo</th>
                 <th>Asunto</th>
@@ -120,8 +121,8 @@
                 echo "<span class='badge " . $clase_estado . "'>" . $estado_nombre . "</span>"; // Badge con la clase de color
                 echo "</td>";
                 echo "<td>
-                    <button type='button' class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#detallePQRModal-" . htmlspecialchars($fila["id"]) . "' title='Ver Detalles'><i class='fas fa-eye'></i></button>
-                    <button type='button' class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#editarPQRModal-" . htmlspecialchars($fila["id"]) . "' title='Editar'><i class='fas fa-edit'></i></button>
+                    <button type='button' class='btn bg-indigo-dark btn-sm' data-bs-toggle='modal' data-bs-target='#detallePQRModal-" . htmlspecialchars($fila["id"]) . "' title='Ver Detalles'><i class='fas fa-eye'></i></button>
+                    <button type='button' class='btn bg-orange-dark btn-sm' data-bs-toggle='modal' data-bs-target='#editarPQRModal-" . htmlspecialchars($fila["id"]) . "' title='Editar'><i class='fas fa-edit'></i></button>
                 </td>";
                 echo "</tr>";
             }

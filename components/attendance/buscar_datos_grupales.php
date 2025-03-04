@@ -126,19 +126,15 @@ try {
         // Obtener el total de horas para el tipo de curso
         $totalHorasRequeridas = getHorasTotalesCurso($courseType);
 
-        // Calcular el porcentaje de asistencia (original)
+        // Calcular el porcentaje
         $attendance_percent = ($totalHorasRequeridas > 0) ? ($horasAsistidas / $totalHorasRequeridas) * 100 : 0;
-        
-        // Calcular el porcentaje de inasistencia (nuevo - regresivo)
-        $inattendance_percent = 100 - $attendance_percent;
 
         // Redondear para mejor visualización
         $horasAsistidasRound = round($horasAsistidas, 1);
         $totalHorasRequeridasRound = $totalHorasRequeridas;
 
         $circumference = 2 * pi() * 21;
-        // Cambiar el cálculo del offset para que sea regresivo
-        $offset = $circumference * ($attendance_percent / 100);
+        $offset = $circumference - ($circumference * ($attendance_percent / 100));
 
         $tableContent .= '<tr>
             <td class="text-center align-middle" style="width: 8%">' . htmlspecialchars($row['type_id']) . '</td>
@@ -169,7 +165,7 @@ try {
                             stroke-dasharray="' . $circumference . '" 
                             stroke-dashoffset="' . $offset . '" />
                     </svg>
-                    <div class="progress-text">' . round($inattendance_percent) . '%</div>
+                    <div class="progress-text">' . round($attendance_percent) . '%</div>
                 </div>
             </td>
             

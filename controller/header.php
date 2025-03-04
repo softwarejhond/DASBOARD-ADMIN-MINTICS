@@ -31,7 +31,7 @@ require_once __DIR__ . '/../components/modals/cohortes.php';
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="estudiantes.php">Asistencia Talleres</a>
+                    <a class="nav-link" href="asistencias.php">Asistencia Talleres</a>
                 </li>
                 <?php endif; ?>
                 <?php if ($rol === 'Administrador'): ?>

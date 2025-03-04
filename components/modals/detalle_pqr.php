@@ -61,9 +61,9 @@ $usaurio = htmlspecialchars($_SESSION["username"]); //No se usa
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-indigo-dark text-white">
-                <h5 class="modal-title" id="detallePQRModalLabel-<?php echo htmlspecialchars($fila["id"]); ?>">Detalles de la 
+                <h5 class="modal-title" id="detallePQRModalLabel-<?php echo htmlspecialchars($fila["id"]); ?>">Detalles de la
                     <?php echo htmlspecialchars($fila["numero_radicado"]); ?>
-                    </h5>
+                </h5>
                 <button type="button" class="btn-close btn-close-white bg-gray-ligth" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
@@ -71,45 +71,49 @@ $usaurio = htmlspecialchars($_SESSION["username"]); //No se usa
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-6">
-                            <p class="subTitle"><i class="fas fa-tags"></i> <strong>Tipo:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["tipo"]); ?></span> 
+                            <p class="subTitle text-start"><i class="fas fa-tags"></i> <strong>Tipo:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["tipo"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="fas fa-heading"></i> <strong>Asunto:</strong><br>
-                                <span class="result"><?php echo htmlspecialchars($fila["asunto"]); ?></span>
+                            <p class="subTitle text-start"><i class="fas fa-heading"></i> <strong>Asunto:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["asunto"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="fas fa-user"></i> <strong>Nombre:</strong><br>
-                                <span class="result"><?php echo htmlspecialchars($fila["nombre"]); ?></span>
+                            <p class="subTitle text-start"><i class="fas fa-user"></i> <strong>Nombre:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["nombre"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="fas fa-envelope"></i> <strong>Email:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["email"]); ?></span> 
+                            <p class="subTitle text-start"><i class="fas fa-id-card"></i> <strong>Cédula:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["cedula"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="fas fa-phone"></i> <strong>Teléfono 1:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["telefono1"]); ?></span> 
+
+                            <p class="subTitle text-start"><i class="fas fa-envelope"></i> <strong>Correo:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["email"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="fas fa-phone"></i> <strong>Teléfono 2:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["telefono2"]); ?></span> 
+                            <p class="subTitle text-start"><i class="fas fa-phone"></i> <strong>Teléfono 1:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["telefono1"]); ?></span>
+                            </p>
+                            <p class="subTitle text-start"><i class="fas fa-phone"></i> <strong>Teléfono 2:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["telefono2"]); ?></span>
                             </p>
                         </div>
                         <div class="col-md-6">
-                            <p class="subTitle"><i class="fas fa-exclamation-circle"></i> <strong>Estado:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["estado_nombre"]); ?></span> 
+                            <p class="subTitle text-start"><i class="fas fa-exclamation-circle"></i> <strong>Estado:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["estado_nombre"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="far fa-calendar-alt"></i> <strong>Fecha de creación:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["fecha_creacion"]); ?></span> 
+                            <p class="subTitle text-start"><i class="far fa-calendar-alt"></i> <strong>Fecha de creación:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["fecha_creacion"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="far fa-calendar-check"></i> <strong>Fecha de resolución:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["fecha_resolucion"]); ?></span> 
+                            <p class="subTitle text-start"><i class="far fa-calendar-check"></i> <strong>Fecha de resolución:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars(isset($fila["fecha_resolucion"]) ? $fila["fecha_resolucion"] : ''); ?></span>
                             </p>
-                            <p class="subTitle"><i class="fas fa-user-tie"></i> <strong>Administrador asignado:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["admin_nombre"]); ?></span> 
+                            <p class="subTitle text-start"><i class="fas fa-user-tie"></i> <strong>Administrador asignado:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["admin_nombre"]); ?></span>
                             </p>
-                            <p class="subTitle"><i class="fas fa-reply-all"></i> <strong>Respuesta:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["respuesta"]); ?></span> 
+                            <p class="subTitle text-start"><i class="fas fa-reply-all"></i> <strong>Respuesta:</strong><br>
+                            <span class="result text-start"><?php echo htmlspecialchars($fila["respuesta"] ?? ''); ?></span>
                             </p>
                         </div>
                         <div class="col-md-12">
-                            <p class="subTitle"><i class="fas fa-comment-dots"></i> <strong>Descripción:</strong><br>
-                               <span class="result"><?php echo htmlspecialchars($fila["descripcion"]); ?></span> 
+                            <p class="subTitle text-start"><i class="fas fa-comment-dots"></i> <strong>Descripción:</strong><br>
+                                <span class="result text-start"><?php echo htmlspecialchars($fila["descripcion"]); ?></span>
                             </p>
                         </div>
                         <?php if ($rol == 1): ?>
@@ -124,7 +128,7 @@ $usaurio = htmlspecialchars($_SESSION["username"]); //No se usa
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn bg-gray-ligth" data-bs-dismiss="modal"><i
+                <button type="button" class="btn btn-cancel bg-gray-ligth" data-bs-dismiss="modal"><i
                         class="fas fa-times"></i> Cerrar</button>
             </div>
         </div>
