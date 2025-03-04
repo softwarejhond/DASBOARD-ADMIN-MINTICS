@@ -66,7 +66,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                 </a>
             </div>
             <?php endif; ?>
-            <?php if ($rol === 'Administrador' || $rol === 'Académico' || $rol === 'Asesor'): ?>
+            <?php if ($rol === 'Administrador' || $rol === 'Académico' || $rol === 'Asesor' || $rol === 'Monitor'): ?>
             <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Asistencia grupal">    
                 <a href="attendanceGroup.php">
                     <label class="checkbox-wrapper">

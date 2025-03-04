@@ -6,8 +6,6 @@ include("conexion.php");
 // Iniciar sesión
 session_start();
 
-
-
 // Verificar si la conexión a la base de datos fue exitosa
 if (!$conn) {
     die("Error de conexión: " . mysqli_connect_error());
@@ -16,6 +14,7 @@ if (!$conn) {
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     // Redirigir a la página de inicio de sesión si no está autenticado
+    echo "Redirigiendo a la página de inicio de sesión...";
     header('Location: login.php');
     exit;
 }

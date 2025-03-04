@@ -307,6 +307,7 @@ $courses_data = getCourses();
         $('#saveAttendance').click(function() {
             const attendanceData = {};
             const intensityData = {}; // Nuevo objeto para almacenar las intensidades
+            const selectedIntensity = parseInt($('#intensidad').val()); // Valor del select
 
             $('input[type="radio"]:checked').each(function() {
                 const studentId = $(this).attr('name').split('_')[2];
@@ -324,7 +325,9 @@ $courses_data = getCourses();
                 class_date: $('#class_date').val(),
                 course_type: $('#courseType').val(),
                 attendance: attendanceData,
-                intensity_data: intensityData // Enviar los valores de intensidad por estudiante
+                intensity_data: intensityData, // Enviar los valores de intensidad por estudiante
+                selected_intensity: selectedIntensity // Para la columna reals
+
             };
 
             $.ajax({

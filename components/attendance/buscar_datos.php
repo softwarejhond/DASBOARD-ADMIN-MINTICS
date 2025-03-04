@@ -57,8 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Preparar la consulta
     $sql = "SELECT * FROM groups 
-            WHERE $teacherColumn = ? 
-            AND $courseIdColumn = ? 
+            WHERE $courseIdColumn = ? 
             AND mode = ? 
             AND headquarters = ?";
     $stmt = mysqli_prepare($conn, $sql);
@@ -67,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    mysqli_stmt_bind_param($stmt, "siss", $teacher_id, $bootcamp, $modalidad, $sede);
+    // Modificar los parámetros eliminando el teacher_id
+    mysqli_stmt_bind_param($stmt, "iss", $bootcamp, $modalidad, $sede);
 
     if (!mysqli_stmt_execute($stmt)) {
         echo json_encode(['error' => 'Error en la ejecución: ' . mysqli_stmt_error($stmt)]);

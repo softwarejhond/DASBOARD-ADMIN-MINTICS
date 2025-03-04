@@ -121,20 +121,7 @@ $rol = $infoUsuario['rol']; // Obtener el rol del usuario
                     </a>
                 </div>
                 <?php endif; ?>
-                <?php if ($rol === 'Administrador'): ?>
-                    <div class="checkbox me-3 text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Exportar datos">
-                        <a href="components/infoWeek/exportAll.php?action=export">
-                            <label class="checkbox-wrapper">
-                                <span class="checkbox-tile">
-                                    <span class="checkbox-icon">
-                                        <i class="bi bi-file-earmark-excel-fill icono text-success-dark"></i>
-                                    </span>
-                                    <span class="checkbox-label">Exportar</span>
-                                </span>
-                            </label>
-                        </a>
-                    </div>
-                <?php endif; ?>
+          
 
                 <div class="checkbox" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Visítanos">
                     <a href="https://agenciaeaglesoftware.com/" target="_blank">
